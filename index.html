@@ -127,15 +127,15 @@ function create () {
     this.physics.add.overlap(player, stars, collectStar, null, this);
     this.physics.add.collider(player, bombs, hitBomb, null, this);
 
-    let buttonSize = 2;
-    let buttonLeft = this.add.image(this.scale.width - 300, this.scale.height - 100, 'buttonLeft').setInteractive();
+    let buttonSize = 3;
+    let buttonLeft = this.add.image(this.scale.width - 340, this.scale.height - 100, 'buttonLeft').setInteractive();
     buttonLeft.setScale(buttonSize);
     buttonLeft.setFlipX(true); // Specchia l'immagine
 
-    let buttonRight = this.add.image(this.scale.width - 150, this.scale.height - 100, 'buttonRight').setInteractive();
+    let buttonRight = this.add.image(this.scale.width - 110, this.scale.height - 100, 'buttonRight').setInteractive();
     buttonRight.setScale(buttonSize);
 
-    let buttonUp = this.add.image(this.scale.width - 225, this.scale.height - 200, 'buttonUp').setInteractive();
+    let buttonUp = this.add.image(this.scale.width - 225, this.scale.height - 240, 'buttonUp').setInteractive();
     buttonUp.setScale(buttonSize);
 
     buttonLeft.on('pointerdown', function () {
