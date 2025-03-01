@@ -7,7 +7,6 @@
     <style>
         body {
             margin: 0;
-            overflow: hidden;
         }
     </style>
 </head>
@@ -28,7 +27,7 @@ var config = {
     },
     /*
     scale: {
-        mode: Phaser.Scale.FIT, // Ridimensiona il gioco automaticamente
+        mode: Phaser.Scale.RESIZE, // Ridimensiona il gioco automaticamente
         autoCenter: Phaser.Scale.CENTER_BOTH // Centra il gioco automaticamente
     },*/
     scene: {
@@ -46,8 +45,8 @@ var cursors;
 var score = 0;
 var gameOver = false;
 var scoreText;
-var leftPressed = false;
-var rightPressed = false;
+let isMovingLeft = false;
+let isMovingRight = false;
 
 var game = new Phaser.Game(config);
 
@@ -65,7 +64,7 @@ function preload () {
 }
 
 function create () {
-    this.add.image(400, 300, 'sky');
+    this.add.image(game.config.width / 2, game.config.height / 2, 'sky').setDisplaySize(game.config.width, game.config.height);
 
     platforms = this.physics.add.staticGroup();
     let platformWidth = 120;
@@ -128,19 +127,31 @@ function create () {
     this.physics.add.overlap(player, stars, collectStar, null, this);
     this.physics.add.collider(player, bombs, hitBomb, null, this);
 
-    let buttonLeft = this.add.image(100, 500, 'buttonLeft').setInteractive();
-    buttonLeft.setScale(-1, 1); // Specchia l'immagine
-    let buttonRight = this.add.image(200, 500, 'buttonRight').setInteractive();
-    let buttonUp = this.add.image(150, 400, 'buttonUp').setInteractive();
+    let buttonSize = 2;
+    let buttonLeft = this.add.image(this.scale.width - 300, this.scale.height - 100, 'buttonLeft').setInteractive();
+    buttonLeft.setScale(buttonSize);
+    buttonLeft.setFlipX(true); // Specchia l'immagine
+
+    let buttonRight = this.add.image(this.scale.width - 150, this.scale.height - 100, 'buttonRight').setInteractive();
+    buttonRight.setScale(buttonSize);
+
+    let buttonUp = this.add.image(this.scale.width - 225, this.scale.height - 200, 'buttonUp').setInteractive();
+    buttonUp.setScale(buttonSize);
 
     buttonLeft.on('pointerdown', function () {
-        player.setVelocityX(-300);
-        player.anims.play('left', true);
+        isMovingLeft = true;
     });
 
     buttonRight.on('pointerdown', function () {
-        player.setVelocityX(300);
-        player.anims.play('right', true);
+        isMovingRight = true;
+    });
+
+    buttonLeft.on('pointerup', function () {
+        isMovingLeft = false;
+    });
+
+    buttonRight.on('pointerup', function () {
+        isMovingRight = false;
     });
 
     buttonUp.on('pointerdown', function () {
@@ -148,10 +159,6 @@ function create () {
             player.setVelocityY(-600);
         }
     });
-
-    // Ferma il movimento quando il tocco finisce
-    buttonLeft.on('pointerup', stopMovement);
-    buttonRight.on('pointerup', stopMovement);
 }
 
 function stopMovement() {
@@ -162,11 +169,11 @@ function stopMovement() {
 function update () {
     if (gameOver) return;
 
-    if (cursors.left.isDown || leftPressed) {
+    if (cursors.left.isDown || isMovingLeft) {
         player.setVelocityX(-300);
         player.anims.play('left', true);
     } 
-    else if (cursors.right.isDown || rightPressed) {
+    else if (cursors.right.isDown || isMovingRight) {
         player.setVelocityX(300);
         player.anims.play('right', true);
     } 
@@ -175,13 +182,14 @@ function update () {
         player.anims.play('turn');
     }
 
-    if ((cursors.up.isDown || leftPressed) && player.body.touching.down) {
+    if ((cursors.up.isDown) && player.body.touching.down) {
         player.setVelocityY(-600);
     }
-
+    
+    /*
     window.addEventListener('resize', () => {
         game.scale.resize(window.innerWidth, window.innerHeight);
-    });
+    });*/
 }
 
 function collectStar (player, star) {
