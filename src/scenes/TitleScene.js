@@ -15,8 +15,9 @@ class TitleScene extends Phaser.Scene {
 
         let startButton = this.add.text(this.scale.width / 2 - 40, this.scale.height / 2 + 50, 'START', { fontSize: '40px', fill: '#0f0' }).setInteractive();
         startButton.on('pointerdown', () => {
+            /*
             this.scale.startFullscreen();
-            this.scale.lockOrientation('landscape');
+            this.scale.lockOrientation('landscape');*/
             this.scene.start('FirstScene');
         });
         this.scale.on('resize', this.resize, this);
