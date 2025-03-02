@@ -110,8 +110,8 @@ class FirstScene extends Phaser.Scene {
         this.bombs = this.physics.add.group();
         console.log("personalScale:");
         console.log(this.personalScale);
-        const fontSize = 25 * this.personalScale;
-        this.scoreText = this.add.text(30*this.personalScale, this.scale.height * 0.07, 'Score: 0', { 
+        const fontSize = 30 * this.personalScale;
+        this.scoreText = this.add.text(30*this.personalScale, this.scale.height * 0.05, 'Score: 0', { 
             fontFamily: 'PressStart2P', 
             fontSize: fontSize, 
             fill: '#000' 
@@ -125,7 +125,7 @@ class FirstScene extends Phaser.Scene {
 
         const buttonWidth = 101;
         let buttonSize = this.personalScale;
-        let buttonY = this.scale.height * 0.85;
+        let buttonY = this.scale.height * 0.8;
         console.log(this.scale.width);
         console.log(this.scale.height);
         let buttonLeft = this.add.image(this.scale.width - 2*this.personalScale*buttonWidth, buttonY, 'buttonLeft').setInteractive();
