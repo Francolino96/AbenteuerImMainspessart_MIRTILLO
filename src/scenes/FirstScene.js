@@ -7,23 +7,25 @@ class FirstScene extends Phaser.Scene {
     preload() {
         this.load.image('sky', 'assets/sky.png');
         this.load.image('ground', 'assets/Sprites_ground.png');
+        this.load.image('deepGround', 'assets/Sprites_deep-ground.png');
         this.load.image('box', 'assets/Sprites_box.png');
         this.load.image('star', 'assets/Sprites_strawberry.png');
         this.load.image('bomb', 'assets/Sprites_acorn.png');
         this.load.spritesheet('player', 'assets/Sprites_player_m.png', { frameWidth: 66.7, frameHeight: 101 });
 
         // bottoni touch
-        this.load.image('buttonRight', 'assets/Sprites_arrow-button.png');
-        this.load.image('buttonLeft', 'assets/Sprites_arrow-button.png');
-        this.load.image('buttonUp', 'assets/Sprites_arrow-button.png');
+        this.load.image('buttonRight', 'assets/Sprites_right-arrow-button.png');
+        this.load.image('buttonLeft', 'assets/Sprites_left-arrow-button.png');
+        this.load.image('buttonUp', 'assets/Sprites_up-arrow-button.png');
         this.load.image('fullscreenIcon', 'assets/Sprites_boar.png');
 
         // audio
         this.load.audio('soundtrack', 'sounds/soundtrack.mp3');
         this.load.audio('jump', 'sounds/jump.mp3');
+        this.load.audio('coin', 'sounds/coin.mp3');
         this.load.audio('collect', 'sounds/coin.mp3');
-        this.load.audio('gameOver', 'sounds/gameOver.mp3');
         this.load.audio('gameStart', 'sounds/gameStart.mp3');
+        this.load.audio('gameOver', 'sounds/gameOver.mp3');
     }
 
     create() {
@@ -41,6 +43,7 @@ class FirstScene extends Phaser.Scene {
         this.isJumping = false;
         this.personalScale = (this.scale.height + this.scale.width)/2000;
         this.music = this.sound.add('soundtrack', { loop: true, volume: 0.5 });
+        this.gameOverSound = this.sound.add('gameOver');
         this.music.play();
         let jumpSound = this.sound.add('jump');
         let gameHeight = this.scale.height;
@@ -52,10 +55,17 @@ class FirstScene extends Phaser.Scene {
 
         this.platforms = this.physics.add.staticGroup();
         let platformWidth = 101;
+        
         let numPlatforms = Math.ceil(this.scale.width / platformWidth);
-
         for (let i = 0; i < numPlatforms; i++) {
             this.platforms.create(i * platformWidth + platformWidth / 2, gameHeight - platformWidth/2, 'ground');
+        }
+        
+        let numRows = Math.ceil((this.scale.height - (gameHeight - platformWidth / 2)) / platformWidth);
+        for (let row = 1; row <= numRows; row++) {
+            for (let i = 0; i < numPlatforms; i++) {
+                this.add.image(i * platformWidth + platformWidth / 2, gameHeight - platformWidth / 2 + row * platformWidth, 'deepGround');
+            }
         }
 
         this.platforms.create(579, gameHeight - 350, 'box');
@@ -128,16 +138,14 @@ class FirstScene extends Phaser.Scene {
         let buttonY = this.scale.height * 0.8;
         console.log(this.scale.width);
         console.log(this.scale.height);
-        let buttonLeft = this.add.image(this.scale.width - 2*this.personalScale*buttonWidth, buttonY, 'buttonLeft').setInteractive();
+        let buttonLeft = this.add.image(this.scale.width - 2.1*this.personalScale*buttonWidth, buttonY, 'buttonLeft').setInteractive();
         buttonLeft.setScale(buttonSize);
-        buttonLeft.setFlipX(true);
 
         let buttonRight = this.add.image(this.scale.width - this.personalScale*buttonWidth, buttonY, 'buttonRight').setInteractive();
         buttonRight.setScale(buttonSize);
 
         let buttonUp = this.add.image(this.personalScale*buttonWidth, buttonY, 'buttonUp').setInteractive();
         buttonUp.setScale(buttonSize);
-        buttonUp.angle = -90;
 
         buttonLeft.on('pointerdown', () => {
             console.log("sono nel bottonLeft.on(pointerdown)")
@@ -229,7 +237,7 @@ class FirstScene extends Phaser.Scene {
         if (this.music && this.music.isPlaying) {
             this.music.stop();
         }
-    
+        this.gameOverSound.play();
         this.time.delayedCall(500, () => { // Aspetta 1 secondo prima di cambiare scena
             this.scene.start('GameOverScene');
         }, [], this);
