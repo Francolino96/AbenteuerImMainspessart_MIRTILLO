@@ -45,7 +45,7 @@ class FirstScene extends Phaser.Scene {
         let jumpSound = this.sound.add('jump');
         let gameHeight = this.scale.height;
         if (this.scale.isPortrait) {
-            gameHeight = this.scale.height * 0.7;  // Occupa solo metà schermo in altezza
+            gameHeight = this.scale.height * 0.75;  // Occupa solo metà schermo in altezza
         }
 
         this.add.image(this.scale.width / 2, gameHeight / 2, 'sky').setDisplaySize(this.scale.width, gameHeight);
@@ -111,7 +111,7 @@ class FirstScene extends Phaser.Scene {
         console.log("personalScale:");
         console.log(this.personalScale);
         const fontSize = 25 * this.personalScale;
-        this.scoreText = this.add.text(30*this.personalScale, this.scale.height * 0.2, 'Score: 0', { 
+        this.scoreText = this.add.text(30*this.personalScale, this.scale.height * 0.07, 'Score: 0', { 
             fontFamily: 'PressStart2P', 
             fontSize: fontSize, 
             fill: '#000' 
@@ -125,7 +125,7 @@ class FirstScene extends Phaser.Scene {
 
         const buttonWidth = 101;
         let buttonSize = this.personalScale;
-        let buttonY = this.scale.height * 0.8;
+        let buttonY = this.scale.height * 0.85;
         console.log(this.scale.width);
         console.log(this.scale.height);
         let buttonLeft = this.add.image(this.scale.width - 2*this.personalScale*buttonWidth, buttonY, 'buttonLeft').setInteractive();
