@@ -8,12 +8,28 @@ class TitleScene extends Phaser.Scene {
     }
 
     create(){
+        this.personalScale = (this.scale.height + this.scale.width)/2000;
         this.background = this.add.sprite(this.scale.width / 2, this.scale.height / 2, 'background_image');
         this.background.setDisplaySize(this.scale.width, this.scale.height);
+        let title = this.add.text(this.scale.width / 2, this.scale.height / 2 - 140, 'Abenteuer', { 
+            fontFamily: 'PressStart2P', 
+            fontSize: 50*this.personalScale, 
+            fill: '#fff',
+            align: 'center'
+        }).setOrigin(0.5); // Centra il testo rispetto al punto di ancoraggio
+        
+        let subtitle = this.add.text(this.scale.width / 2, this.scale.height / 2 - 60, 'im Main-Spessart', { 
+            fontFamily: 'PressStart2P', 
+            fontSize: 28.3*this.personalScale, 
+            fill: '#fff',
+            align: 'center'
+        }).setOrigin(0.5);
 
-        this.add.text(this.scale.width / 2 - 80, this.scale.height / 2 - 50, 'Abenteuer im Main-Spessart', { fontSize: '50px', fill: '#fff' });
-
-        let startButton = this.add.text(this.scale.width / 2 - 40, this.scale.height / 2 + 50, 'START', { fontSize: '40px', fill: '#0f0' }).setInteractive();
+        let startButton = this.add.text(this.scale.width / 2, this.scale.height / 2 + 90, 'START', { 
+            fontFamily: 'PressStart2P', 
+            fontSize: 25*this.personalScale, 
+            fill: '#0f0' 
+        }).setOrigin(0.5).setInteractive();
         startButton.on('pointerdown', () => {
             /*
             this.scale.startFullscreen();
