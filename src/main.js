@@ -14,6 +14,14 @@ let config = {
             debug: true
         }
     },
-    scene: [TitleScene, FirstScene]
+    scene: [TitleScene, FirstScene],
+    scale: {
+        mode: Phaser.Scale.RESIZE, // Permette il ridimensionamento automatico
+        autoCenter: Phaser.Scale.CENTER_BOTH // Centra il gioco
+    }
 };
 let game = new Phaser.Game(config);
+
+window.addEventListener('resize', () => {
+    game.scale.resize(window.innerWidth, window.innerHeight);
+});
