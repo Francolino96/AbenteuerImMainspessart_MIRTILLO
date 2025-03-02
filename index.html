@@ -61,9 +61,22 @@ function preload () {
     this.load.image('buttonRight', 'assets/Button-Arrow-Right.png');
     this.load.image('buttonLeft', 'assets/Button-Arrow-Right.png');
     this.load.image('buttonUp', 'assets/Button-Arrow-Up.png');
+
+    //audio
+    this.load.audio('soundtrack', 'sounds/soundtrack.mp3');
+    this.load.audio('jump', 'sounds/jump.mp3');
+    this.load.audio('collect', 'sounds/coin.mp3');
+    this.load.audio('gameOver', 'sounds/gameOver.mp3');
+    this.load.audio('gameStart', 'sounds/gameStart.mp3');
 }
 
 function create () {
+    if (!this.scale.isFullscreen) {
+        this.scale.startFullscreen();
+    }
+    let music = this.sound.add('soundtrack', { loop: true, volume: 0.5 });
+    music.play();
+    let jumpSound = this.sound.add('jump');
     this.add.image(game.config.width / 2, game.config.height / 2, 'sky').setDisplaySize(game.config.width, game.config.height);
 
     platforms = this.physics.add.staticGroup();
@@ -128,14 +141,14 @@ function create () {
     this.physics.add.collider(player, bombs, hitBomb, null, this);
 
     let buttonSize = 3;
-    let buttonLeft = this.add.image(this.scale.width - 340, this.scale.height - 100, 'buttonLeft').setInteractive();
+    let buttonLeft = this.add.image((this.scale.width)/2 - 110, this.scale.height - 120, 'buttonLeft').setInteractive();
     buttonLeft.setScale(buttonSize);
     buttonLeft.setFlipX(true); // Specchia l'immagine
 
-    let buttonRight = this.add.image(this.scale.width - 110, this.scale.height - 100, 'buttonRight').setInteractive();
+    let buttonRight = this.add.image((this.scale.width)/2 + 110, this.scale.height - 120, 'buttonRight').setInteractive();
     buttonRight.setScale(buttonSize);
 
-    let buttonUp = this.add.image(this.scale.width - 225, this.scale.height - 240, 'buttonUp').setInteractive();
+    let buttonUp = this.add.image((this.scale.width)/2, this.scale.height - 260, 'buttonUp').setInteractive();
     buttonUp.setScale(buttonSize);
 
     buttonLeft.on('pointerdown', function () {
@@ -157,6 +170,7 @@ function create () {
     buttonUp.on('pointerdown', function () {
         if (player.body.touching.down) {
             player.setVelocityY(-600);
+            jumpSound.play();
         }
     });
 }
