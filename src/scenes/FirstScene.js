@@ -13,11 +13,10 @@ class FirstScene extends Phaser.Scene {
         this.load.image('bomb', 'assets/Sprites_acorn.png');
         this.load.spritesheet('player', 'assets/Sprites_player_m.png', { frameWidth: 66.7, frameHeight: 101 });
 
-        // bottoni touch
+        // bottoni movimento
         this.load.image('buttonRight', 'assets/Sprites_right-arrow-button.png');
         this.load.image('buttonLeft', 'assets/Sprites_left-arrow-button.png');
         this.load.image('buttonUp', 'assets/Sprites_up-arrow-button.png');
-        this.load.image('fullscreenIcon', 'assets/Sprites_boar.png');
 
         // audio
         this.load.audio('soundtrack', 'sounds/soundtrack.mp3');
@@ -26,6 +25,11 @@ class FirstScene extends Phaser.Scene {
         this.load.audio('collect', 'sounds/coin.mp3');
         this.load.audio('gameStart', 'sounds/gameStart.mp3');
         this.load.audio('gameOver', 'sounds/gameOver.mp3');
+
+        // bottoni volume
+        this.load.image('volume_low', 'assets/Sprites_low-volume.png');
+        this.load.image('volume_high', 'assets/Sprites_high-volume.png');
+        this.load.image('volume_mute', 'assets/Sprites_no-volume.png');
     }
 
     create() {
@@ -41,40 +45,69 @@ class FirstScene extends Phaser.Scene {
         this.isMovingLeft = false;
         this.isMovingRight = false;
         this.isJumping = false;
-        this.personalScale = (this.scale.height + this.scale.width)/2000;
+        this.gameHeight = this.scale.height;
+        this.gameWidth = this.scale.width;
+        this.personalScale = (this.gameHeight + this.gameWidth)/2000;
+
         this.music = this.sound.add('soundtrack', { loop: true, volume: 0.5 });
         this.gameOverSound = this.sound.add('gameOver');
         this.music.play();
         let jumpSound = this.sound.add('jump');
-        let gameHeight = this.scale.height;
-        if (this.scale.isPortrait) {
-            gameHeight = this.scale.height * 0.75;  // Occupa solo metà schermo in altezza
-        }
+        
+        this.add.image(this.gameWidth / 2, this.gameHeight / 2, 'sky').setDisplaySize(this.gameWidth, this.gameHeight);
 
-        this.add.image(this.scale.width / 2, gameHeight / 2, 'sky').setDisplaySize(this.scale.width, gameHeight);
+        this.volumeStates = ['mute', 'low', 'high'];
+        this.currentVolumeState = 0; // 0 = high, 1 = low, 2 = mute
+        this.volumeIcons = {
+            high: 'volume_high',
+            low: 'volume_low',
+            mute: 'volume_mute'
+        };
+        this.volumeLevels = {
+            high: 0.5,
+            low: 0.1,
+            mute: 0.0
+        };
+
+        this.volumeButton = this.add.image(this.gameWidth - 30*this.personalScale-80, this.gameHeight * 0.05, this.volumeIcons.mute).setInteractive().setScrollFactor(0);
+
+        this.sound.setVolume(this.volumeLevels.mute);
+
+        this.volumeButton.on('pointerdown', () => {
+            this.currentVolumeState = (this.currentVolumeState + 1) % this.volumeStates.length;
+            const newState = this.volumeStates[this.currentVolumeState];
+            this.volumeButton.setTexture(this.volumeIcons[newState]);
+            this.sound.setVolume(this.volumeLevels[newState]);}
+        );
+
+
+        if (this.scale.isPortrait) {
+            this.gameHeight = this.gameHeight * 0.75;  // Occupa solo metà schermo in altezza
+        }
 
         this.platforms = this.physics.add.staticGroup();
         let platformWidth = 101;
         
-        let numPlatforms = Math.ceil(this.scale.width / platformWidth);
+        let numPlatforms = Math.ceil(this.gameWidth / platformWidth);
         for (let i = 0; i < numPlatforms; i++) {
-            this.platforms.create(i * platformWidth + platformWidth / 2, gameHeight - platformWidth/2, 'ground');
+            this.platforms.create(i * platformWidth + platformWidth / 2, this.gameHeight - platformWidth/2, 'ground');
         }
-        
-        let numRows = Math.ceil((this.scale.height - (gameHeight - platformWidth / 2)) / platformWidth);
+
+        let numRows = Math.ceil((this.scale.height - (this.gameHeight - platformWidth / 2)) / platformWidth);
         for (let row = 1; row <= numRows; row++) {
             for (let i = 0; i < numPlatforms; i++) {
-                this.add.image(i * platformWidth + platformWidth / 2, gameHeight - platformWidth / 2 + row * platformWidth, 'deepGround');
+                this.add.image(i * platformWidth + platformWidth / 2, this.gameHeight - platformWidth / 2 + row * platformWidth, 'deepGround');
             }
         }
 
-        this.platforms.create(579, gameHeight - 350, 'box');
-        this.platforms.create(478, gameHeight - 350, 'box');
-        this.platforms.create(62, gameHeight - 500, 'box');
-        this.platforms.create(750, gameHeight - 600, 'box');
-        this.platforms.create(163, gameHeight - 500, 'box');
+        this.platforms.create(579, this.gameHeight - 350, 'box');
+        this.platforms.create(478, this.gameHeight - 350, 'box');
+        this.platforms.create(62, this.gameHeight - 500, 'box');
+        this.platforms.create(750, this.gameHeight - 600, 'box');
+        this.platforms.create(163, this.gameHeight - 500, 'box');
         
         this.player = this.physics.add.sprite(100, 450, 'player');
+        this.cameras.main.startFollow(this.player, true, 0.05, 0.05);
         this.player.setScale(this.personalScale);
         this.player.setBounce(0.1);
         this.player.setCollideWorldBounds(true);
@@ -105,6 +138,7 @@ class FirstScene extends Phaser.Scene {
             repeat: -1
         });
 
+        this.spaceKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
         this.cursors = this.input.keyboard.createCursorKeys();
 
         this.ingredients = this.physics.add.group({
@@ -121,11 +155,11 @@ class FirstScene extends Phaser.Scene {
         console.log("personalScale:");
         console.log(this.personalScale);
         const fontSize = 30 * this.personalScale;
-        this.scoreText = this.add.text(30*this.personalScale, this.scale.height * 0.05, 'Score: 0', { 
+        this.scoreText = this.add.text(30*this.personalScale, this.gameHeight * 0.05, 'Score: 0', { 
             fontFamily: 'PressStart2P', 
             fontSize: fontSize, 
             fill: '#000' 
-        });
+        }).setScrollFactor(0);
 
         this.physics.add.collider(this.player, this.platforms);
         this.physics.add.collider(this.ingredients, this.platforms);
@@ -136,15 +170,15 @@ class FirstScene extends Phaser.Scene {
         const buttonWidth = 101;
         let buttonSize = this.personalScale;
         let buttonY = this.scale.height * 0.8;
-        console.log(this.scale.width);
+        console.log(this.gameWidth);
         console.log(this.scale.height);
-        let buttonLeft = this.add.image(this.scale.width - 2.1*this.personalScale*buttonWidth, buttonY, 'buttonLeft').setInteractive();
+        let buttonLeft = this.add.image(this.gameWidth - 2.1*this.personalScale*buttonWidth, buttonY, 'buttonLeft').setInteractive().setScrollFactor(0);
         buttonLeft.setScale(buttonSize);
 
-        let buttonRight = this.add.image(this.scale.width - this.personalScale*buttonWidth, buttonY, 'buttonRight').setInteractive();
+        let buttonRight = this.add.image(this.gameWidth - this.personalScale*buttonWidth, buttonY, 'buttonRight').setInteractive().setScrollFactor(0);
         buttonRight.setScale(buttonSize);
 
-        let buttonUp = this.add.image(this.personalScale*buttonWidth, buttonY, 'buttonUp').setInteractive();
+        let buttonUp = this.add.image(this.personalScale*buttonWidth, buttonY, 'buttonUp').setInteractive().setScrollFactor(0);
         buttonUp.setScale(buttonSize);
 
         buttonLeft.on('pointerdown', () => {
@@ -204,7 +238,7 @@ class FirstScene extends Phaser.Scene {
                 this.player.anims.play('jump');
         }
 
-        if ((this.cursors.up.isDown || this.isJumping) && this.player.body.touching.down) {
+        if ((this.cursors.up.isDown || this.spaceKey.isDown || this.isJumping) && this.player.body.touching.down) {
             this.player.setVelocityY(-1000);
             this.player.anims.play('jump');
         }
