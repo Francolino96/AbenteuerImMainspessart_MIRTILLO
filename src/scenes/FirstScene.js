@@ -21,7 +21,6 @@ class FirstScene extends Phaser.Scene {
         // audio
         this.load.audio('soundtrack', 'sounds/soundtrack.mp3');
         this.load.audio('jump', 'sounds/jump.mp3');
-        this.load.audio('coin', 'sounds/coin.mp3');
         this.load.audio('collect', 'sounds/coin.mp3');
         this.load.audio('gameStart', 'sounds/gameStart.mp3');
         this.load.audio('gameOver', 'sounds/gameOver.mp3');
@@ -30,16 +29,22 @@ class FirstScene extends Phaser.Scene {
         this.load.image('volume_low', 'assets/Sprites_low-volume.png');
         this.load.image('volume_high', 'assets/Sprites_high-volume.png');
         this.load.image('volume_mute', 'assets/Sprites_no-volume.png');
+
+        // vite
+        this.load.image('emptyHeart', 'assets/Sprites_empty-heart.png');
+        this.load.image('heart', 'assets/Sprites_heart.png');
     }
 
     create() {
         this.scale.refresh();
+        this.lives = 3;
         this.player;
         this.ingredients;
         this.bombs;
         this.platforms;
         this.score = 0;
         this.cursors;
+        this.isInvincible = false;
         this.gameOver = false;
         this.scoreText;
         this.isMovingLeft = false;
@@ -49,36 +54,13 @@ class FirstScene extends Phaser.Scene {
         this.gameWidth = this.scale.width;
         this.personalScale = (this.gameHeight + this.gameWidth)/2000;
 
+        this.collectSound = this.sound.add('collect', { loop: false, volume: 0.05 });
+        this.gameOverSound = this.sound.add('gameOver');  
+        this.jumpSound = this.sound.add('jump');
         this.music = this.sound.add('soundtrack', { loop: true, volume: 0.5 });
-        this.gameOverSound = this.sound.add('gameOver');
         this.music.play();
-        let jumpSound = this.sound.add('jump');
         
         this.add.image(this.gameWidth / 2, this.gameHeight / 2, 'sky').setDisplaySize(this.gameWidth, this.gameHeight);
-
-        this.volumeStates = ['mute', 'low', 'high'];
-        this.currentVolumeState = 0; // 0 = high, 1 = low, 2 = mute
-        this.volumeIcons = {
-            high: 'volume_high',
-            low: 'volume_low',
-            mute: 'volume_mute'
-        };
-        this.volumeLevels = {
-            high: 0.5,
-            low: 0.1,
-            mute: 0.0
-        };
-
-        this.volumeButton = this.add.image(this.gameWidth - 30*this.personalScale-80, this.gameHeight * 0.05, this.volumeIcons.mute).setInteractive().setScrollFactor(0);
-
-        this.sound.setVolume(this.volumeLevels.mute);
-
-        this.volumeButton.on('pointerdown', () => {
-            this.currentVolumeState = (this.currentVolumeState + 1) % this.volumeStates.length;
-            const newState = this.volumeStates[this.currentVolumeState];
-            this.volumeButton.setTexture(this.volumeIcons[newState]);
-            this.sound.setVolume(this.volumeLevels[newState]);}
-        );
 
 
         if (this.scale.isPortrait) {
@@ -155,7 +137,7 @@ class FirstScene extends Phaser.Scene {
         console.log("personalScale:");
         console.log(this.personalScale);
         const fontSize = 30 * this.personalScale;
-        this.scoreText = this.add.text(30*this.personalScale, this.gameHeight * 0.05, 'Score: 0', { 
+        this.scoreText = this.add.text(20*this.personalScale, this.gameHeight * 0.1, 'Score: 0', { 
             fontFamily: 'PressStart2P', 
             fontSize: fontSize, 
             fill: '#000' 
@@ -165,7 +147,7 @@ class FirstScene extends Phaser.Scene {
         this.physics.add.collider(this.ingredients, this.platforms);
         this.physics.add.collider(this.bombs, this.platforms);
         this.physics.add.overlap(this.player, this.ingredients, this.collectStar, null, this);
-        this.physics.add.collider(this.player, this.bombs, this.hitBomb, null, this);
+        this.physics.add.overlap(this.player, this.bombs, this.takeDamage, null, this);
 
         const buttonWidth = 101;
         let buttonSize = this.personalScale;
@@ -204,13 +186,49 @@ class FirstScene extends Phaser.Scene {
         buttonUp.on('pointerdown', () => {
             if (this.player.body.touching.down) {
                 this.isJumping = true;
-                jumpSound.play();
             }
         });
 
         buttonUp.on('pointerup', () => {
             this.isJumping = false;
         })
+
+        this.hearts = [];
+        let heartX = 20;
+        let heartY = 20;
+        let heartSpacing = 80; // Distanza tra i cuori
+
+        // Crea e memorizza le immagini dei cuori
+        for (let i = 0; i < 3; i++) {
+            let heart = this.add.image(heartX + i * heartSpacing, heartY, 'heart').setOrigin(0, 0).setScrollFactor(0);
+            this.hearts.push(heart);
+        }
+
+
+        //BOTTONE VOLUME
+        this.volumeStates = ['mute', 'low', 'high'];
+        this.currentVolumeState = 0; // 0 = high, 1 = low, 2 = mute
+        this.volumeIcons = {
+            high: 'volume_high',
+            low: 'volume_low',
+            mute: 'volume_mute'
+        };
+        this.volumeLevels = {
+            high: 0.5,
+            low: 0.1,
+            mute: 0.0
+        };
+
+        this.volumeButton = this.add.image(this.gameWidth - 30*this.personalScale-80, this.gameHeight * 0.05, this.volumeIcons.mute).setInteractive().setScrollFactor(0);
+
+        this.sound.setVolume(this.volumeLevels.mute);
+
+        this.volumeButton.on('pointerdown', () => {
+            this.currentVolumeState = (this.currentVolumeState + 1) % this.volumeStates.length;
+            const newState = this.volumeStates[this.currentVolumeState];
+            this.volumeButton.setTexture(this.volumeIcons[newState]);
+            this.sound.setVolume(this.volumeLevels[newState]);}
+        );
     }
 
     update() {
@@ -240,11 +258,14 @@ class FirstScene extends Phaser.Scene {
 
         if ((this.cursors.up.isDown || this.spaceKey.isDown || this.isJumping) && this.player.body.touching.down) {
             this.player.setVelocityY(-1000);
+            this.jumpSound.play();
             this.player.anims.play('jump');
         }
     }
 
     collectStar(player, star) {
+        console.log("sono dentro collectStar");
+        this.collectSound.play();
         star.disableBody(true, true);
         this.score += 10;
         this.scoreText.setText('Score: ' + this.score);
@@ -263,7 +284,32 @@ class FirstScene extends Phaser.Scene {
         }
     }
 
-    hitBomb(player, bomb) { 
+    takeDamage(player, bomb) {
+        if (this.lives > 0 && !this.isInvincible) { // Evita danni multipli
+            this.lives--;
+            console.log(this.lives);
+            this.hearts[this.lives].setTexture('emptyHeart');
+
+            this.player.setTint(0xffff00);
+
+            this.cameras.main.shake(300, 0.005);
+
+            this.isInvincible = true;
+            console.log(this.isInvincible);
+
+            this.time.delayedCall(500, () => {
+                this.player.clearTint();
+                this.isInvincible = false;
+            });
+
+            if (this.lives === 0) {
+                this.die();
+            }
+        }
+    }
+    
+
+    die() { 
         this.physics.pause();
         this.player.setTint(0xff0000);
         this.player.anims.play('turn');

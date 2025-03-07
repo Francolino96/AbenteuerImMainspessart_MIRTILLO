@@ -1,4 +1,5 @@
 import TitleScene from './scenes/TitleScene.js';
+import CharacterSelectionScene from './scenes/CharacterSelectionScene.js';
 import FirstScene from './scenes/FirstScene.js';
 import GameOverScene from './scenes/GameOverScene.js';
 
@@ -14,7 +15,7 @@ let config = {
             debug: true
         }
     },
-    scene: [TitleScene, FirstScene, GameOverScene],
+    scene: [TitleScene, CharacterSelectionScene, FirstScene, GameOverScene],
     scale: {
         mode: Phaser.Scale.RESIZE, // Permette il ridimensionamento automatico
         autoCenter: Phaser.Scale.CENTER_BOTH // Centra il gioco
