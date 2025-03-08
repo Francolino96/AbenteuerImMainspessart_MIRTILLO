@@ -14,26 +14,26 @@ class CharacterSelectionScene extends Phaser.Scene {
         this.personalScale = (this.scale.height + this.scale.width)/2000;
         this.selectedCharacter = 1; // Default
 
-        this.add.text(this.scale.width / 2, this.scale.height / 2 - 140, 'Select the player', { 
+        this.add.text(this.scale.width / 2, this.scale.height / 2 - 350, 'Select the player', { 
             fontFamily: 'PressStart2P', 
             fontSize: 30*this.personalScale,
             fill: '#fff' 
         }).setOrigin(0.5);
 
         
-        this.selectionBox = this.add.rectangle(this.scale.width / 2 - 100, this.scale.height / 2 + 50, 120, 120, 0xffff00).setStrokeStyle(2, 0xffff00).setOrigin(0.5);
+        this.selectionBox = this.add.rectangle(this.scale.width / 2 - 200, this.scale.height / 2 + 50, 300, 400, 0xffff88).setStrokeStyle(2, 0xffff88).setOrigin(0.5);
         // Mostra il primo personaggio
-        this.char1 = this.add.image(this.scale.width / 2 - 100, this.scale.height / 2 + 50, 'player1').setInteractive().setOrigin(0.5);
-        this.char2 = this.add.image(this.scale.width / 2 + 100, this.scale.height / 2 + 50, 'player2').setInteractive().setOrigin(0.5);
+        this.char1 = this.add.image(this.scale.width / 2 - 200, this.scale.height / 2 + 50, 'player1').setInteractive().setScale(2*this.personalScale).setOrigin(0.5);
+        this.char2 = this.add.image(this.scale.width / 2 + 200, this.scale.height / 2 + 50, 'player2').setInteractive().setScale(2*this.personalScale).setOrigin(0.5);
 
         // Evidenzia il personaggio selezionato
 
         // Cliccando su un personaggio, lo seleziona
-        this.char1.on('pointerdown', () => this.selectCharacter(1, this.scale.width / 2 - 100));
-        this.char2.on('pointerdown', () => this.selectCharacter(2, this.scale.width / 2 + 100));
+        this.char1.on('pointerdown', () => this.selectCharacter(1, this.scale.width / 2 - 200));
+        this.char2.on('pointerdown', () => this.selectCharacter(2, this.scale.width / 2 + 200));
 
         // Pulsante per confermare
-        this.startButton = this.add.text(this.scale.width / 2, this.scale.height / 2 + 340, 'START', { 
+        this.startButton = this.add.text(this.scale.width / 2, this.scale.height / 2 + 480, 'START', { 
             fontFamily: 'PressStart2P',
             fontSize: 25*this.personalScale, 
             fill: '#fff', 

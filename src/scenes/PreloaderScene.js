@@ -25,10 +25,10 @@ class PreloaderScene extends Phaser.Scene {
             progressBar.fillStyle(0xff0000, 1);
 
             // Calcola le dimensioni e la posizione della "fill bar"
-            let fillWidth = 290 * value; // 301 è la larghezza totale del frame
-            let fillHeight = 90;        // Altezza totale
-            let frameX = centerX - 290 / 2;
-            let frameY = centerY - 90 / 2;
+            let fillWidth = 2 * 290 * value; // 301 è la larghezza totale del frame
+            let fillHeight = 2 * 90;        // Altezza totale
+            let frameX = centerX - 290;
+            let frameY = centerY - 90;
             
             // Disegna il rettangolo rosso all'interno del frame
             progressBar.fillRect(frameX, frameY, fillWidth, fillHeight);
@@ -36,15 +36,15 @@ class PreloaderScene extends Phaser.Scene {
 
         // Mostra il frame della barra di caricamento
         // Assicurati che l'immagine 'chargingBarFrame' sia già stata caricata (es. in una BootScene)
-        this.add.image(centerX, centerY, 'chargingBarFrame').setOrigin(0.5);
+        this.add.image(centerX, centerY, 'chargingBarFrame').setScale(2).setOrigin(0.5);
 
         this.loadingText = this.add.text(
-            this.scale.width / 2 - (10*20*this.personalScale)/2,
-            this.scale.height / 2 - 160,
+            this.scale.width / 2 - (10*30*this.personalScale)/2,
+            this.scale.height / 2 - 250,
             'Loading',
             { 
                 fontFamily: 'PressStart2P', 
-                fontSize: 20 * this.personalScale, 
+                fontSize: 30 * this.personalScale, 
                 fill: '#fff',
                 align: 'center'
             }
