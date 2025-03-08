@@ -5,37 +5,10 @@ class FirstScene extends Phaser.Scene {
     }
 
     preload() {
-        this.load.image('sky', 'assets/sky.png');
-        this.load.image('ground', 'assets/Sprites_ground.png');
-        this.load.image('deepGround', 'assets/Sprites_deep-ground.png');
-        this.load.image('box', 'assets/Sprites_box.png');
-        this.load.image('star', 'assets/Sprites_strawberry.png');
-        this.load.image('bomb', 'assets/Sprites_acorn.png');
-        this.load.spritesheet('player', 'assets/Sprites_player_m.png', { frameWidth: 66.7, frameHeight: 101 });
-
-        // bottoni movimento
-        this.load.image('buttonRight', 'assets/Sprites_right-arrow-button.png');
-        this.load.image('buttonLeft', 'assets/Sprites_left-arrow-button.png');
-        this.load.image('buttonUp', 'assets/Sprites_up-arrow-button.png');
-
-        // audio
-        this.load.audio('soundtrack', 'sounds/soundtrack.mp3');
-        this.load.audio('jump', 'sounds/jump.mp3');
-        this.load.audio('collect', 'sounds/coin.mp3');
-        this.load.audio('gameStart', 'sounds/gameStart.mp3');
-        this.load.audio('gameOver', 'sounds/gameOver.mp3');
-
-        // bottoni volume
-        this.load.image('volume_low', 'assets/Sprites_low-volume.png');
-        this.load.image('volume_high', 'assets/Sprites_high-volume.png');
-        this.load.image('volume_mute', 'assets/Sprites_no-volume.png');
-
-        // vite
-        this.load.image('emptyHeart', 'assets/Sprites_empty-heart.png');
-        this.load.image('heart', 'assets/Sprites_heart.png');
     }
 
     create() {
+        this.cameras.main.fadeIn(800, 0, 0, 0); // 1000ms di transizione dal nero alla scena
         this.scale.refresh();
         this.lives = 3;
         this.player;
@@ -264,7 +237,6 @@ class FirstScene extends Phaser.Scene {
     }
 
     collectStar(player, star) {
-        console.log("sono dentro collectStar");
         this.collectSound.play();
         star.disableBody(true, true);
         this.score += 10;
@@ -311,16 +283,20 @@ class FirstScene extends Phaser.Scene {
 
     die() { 
         this.physics.pause();
-        this.player.setTint(0xff0000);
         this.player.anims.play('turn');
+        this.player.setTintFill(0xff0000);
         this.gameOver = true;
         if (this.music && this.music.isPlaying) {
             this.music.stop();
         }
         this.gameOverSound.play();
-        this.time.delayedCall(500, () => { // Aspetta 1 secondo prima di cambiare scena
-            this.scene.start('GameOverScene');
-        }, [], this);
+
+        this.time.delayedCall(1000, () => {
+            this.cameras.main.fadeOut(800, 0, 0, 0);
+            this.time.delayedCall(800, () => {
+                this.scene.start('GameOverScene');
+            });
+        });
     }
 }
 

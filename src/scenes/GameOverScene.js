@@ -7,10 +7,11 @@ class GameOverScene extends Phaser.Scene {
     }
 
     create(){
+        this.cameras.main.fadeIn(800, 0, 0, 0);
         this.personalScale = (this.scale.height + this.scale.width)/2000;
         this.cameras.main.setBackgroundColor('#444');
 
-        let title = this.add.text(this.scale.width / 2, this.scale.height / 2 - 140, 'Game Over!', { 
+        this.add.text(this.scale.width / 2, this.scale.height / 2 - 140, 'Game Over!', { 
             fontFamily: 'PressStart2P', 
             fontSize: 50*this.personalScale, 
             fill: '#f00',
@@ -22,8 +23,12 @@ class GameOverScene extends Phaser.Scene {
             fontSize: 25*this.personalScale, 
             fill: '#fff' 
         }).setOrigin(0.5).setInteractive();
+
         startButton.on('pointerdown', () => {
-            this.scene.start('FirstScene');
+            this.cameras.main.fadeOut(800, 0, 0, 0);
+            this.time.delayedCall(800, () => {
+                this.scene.start('FirstScene');
+            });
         });
     }
 

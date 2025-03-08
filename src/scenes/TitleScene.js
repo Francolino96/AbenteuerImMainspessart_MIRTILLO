@@ -5,6 +5,11 @@ class TitleScene extends Phaser.Scene {
 
     preload () {
         this.load.image('background_image', 'assets/sky.png');
+        let newFont = new FontFace('PressStart2P', 'url(PressStart2P-Regular.ttf)');
+        newFont.load().then(function(loadedFont) {
+            document.fonts.add(loadedFont);
+        });
+
     }
 
     create(){
@@ -30,8 +35,12 @@ class TitleScene extends Phaser.Scene {
             fontSize: 25*this.personalScale, 
             fill: '#0f0' 
         }).setOrigin(0.5).setInteractive();
+
         startButton.on('pointerdown', () => {
-            this.scene.start('CharacterSelectionScene');
+            this.cameras.main.fadeOut(800, 0, 0, 0); // 1000ms (1s) di transizione verso il nero
+            this.time.delayedCall(800, () => {
+                this.scene.start('CharacterSelectionScene'); // Cambia scena dopo il fade
+            });
         });
         this.scale.on('resize', this.resize, this);
     }
