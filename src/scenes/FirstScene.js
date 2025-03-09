@@ -4,19 +4,19 @@ class FirstScene extends Phaser.Scene {
         super({key: 'FirstScene'});
     }
 
-    preload() {
-    }
-
     create() {
-        this.cameras.main.fadeIn(800, 0, 0, 0); // 1000ms di transizione dal nero alla scena
         this.scale.refresh();
+        this.mapWidth = this.scale.width * 3;
+        this.mapHeight = this.scale.height;
+        this.physics.world.setBounds(0, 0, this.mapWidth, this.mapHeight); // Espande la larghezza del mondo
+        this.cameras.main.setBounds(0, 0, this.mapWidth, this.mapHeight);
+        this.cameras.main.fadeIn(800, 0, 0, 0); // 1000ms di transizione dal nero alla scena
         this.lives = 3;
         this.player;
         this.ingredients;
         this.strawberries = 0;
         this.bombs;
         this.platforms;
-        this.score = 0;
         this.cursors;
         this.isInvincible = false;
         this.gameOver = false;
@@ -25,9 +25,11 @@ class FirstScene extends Phaser.Scene {
         this.isMovingLeft = false;
         this.isMovingRight = false;
         this.isJumping = false;
-        this.gameHeight = this.scale.height;
-        this.gameWidth = this.scale.width;
-        this.personalScale = (this.gameHeight + this.gameWidth)/2000;
+        this.screenHeight = this.scale.height;
+        this.screenWidth = this.scale.width;
+        console.log('screenWidth: ' + this.screenWidth);
+        console.log('screenHeight: ' + this.screenHeight);
+        this.personalScale = (this.screenHeight + this.screenWidth)/2000;
 
         this.collectSound = this.sound.add('collect', { loop: false, volume: 0.05 });
         this.gameOverSound = this.sound.add('gameOver');  
@@ -35,35 +37,38 @@ class FirstScene extends Phaser.Scene {
         this.music = this.sound.add('soundtrack', { loop: true, volume: 0.5 });
         this.music.play();
         
-        this.add.image(this.gameWidth / 2, this.gameHeight / 2, 'sky').setDisplaySize(this.gameWidth, this.gameHeight);
+        this.add.image(this.mapWidth / 2, this.mapHeight / 2, 'sky').setDisplaySize(this.mapWidth, this.mapHeight);
 
 
         if (this.scale.isPortrait) {
-            this.gameHeight = this.gameHeight * 0.75;  // Occupa solo metà schermo in altezza
+            this.mapHeight = this.mapHeight * 0.75;  // Occupa solo metà schermo in altezza
         }
+
+        console.log('mapWidth: ' + this.mapWidth);
+        console.log('mapHeight: ' + this.mapHeight);
 
         this.platforms = this.physics.add.staticGroup();
         let platformWidth = 101;
         
-        let numPlatforms = Math.ceil(this.gameWidth / platformWidth);
+        let numPlatforms = Math.ceil(this.mapWidth / platformWidth);
         for (let i = 0; i < numPlatforms; i++) {
-            this.platforms.create(i * platformWidth + platformWidth / 2, this.gameHeight - platformWidth/2, 'ground');
+            this.platforms.create(i * platformWidth + platformWidth / 2, this.mapHeight - platformWidth/2, 'ground');
         }
 
-        let numRows = Math.ceil((this.scale.height - (this.gameHeight - platformWidth / 2)) / platformWidth);
+        let numRows = Math.ceil((this.screenHeight - (this.mapHeight - platformWidth / 2)) / platformWidth);
         for (let row = 1; row <= numRows; row++) {
             for (let i = 0; i < numPlatforms; i++) {
-                this.add.image(i * platformWidth + platformWidth / 2, this.gameHeight - platformWidth / 2 + row * platformWidth, 'deepGround');
+                this.add.image(i * platformWidth + platformWidth / 2, this.mapHeight - platformWidth / 2 + row * platformWidth, 'deepGround');
             }
         }
 
-        this.platforms.create(579, this.gameHeight - 350, 'box');
-        this.platforms.create(478, this.gameHeight - 350, 'box');
-        this.platforms.create(62, this.gameHeight - 500, 'box');
-        this.platforms.create(750, this.gameHeight - 600, 'box');
-        this.platforms.create(163, this.gameHeight - 500, 'box');
+        this.platforms.create(579, this.mapHeight - 350, 'box');
+        this.platforms.create(478, this.mapHeight - 350, 'box');
+        this.platforms.create(62, this.mapHeight - 500, 'box');
+        this.platforms.create(750, this.mapHeight - 600, 'box');
+        this.platforms.create(163, this.mapHeight - 500, 'box');
         
-        this.player = this.physics.add.sprite(100, 450, 'player');
+        this.player = this.physics.add.sprite(100, 400, 'player');
         this.cameras.main.startFollow(this.player, true, 0.05, 0.05);
         this.player.setScale(this.personalScale);
         this.player.setBounce(0.1);
@@ -112,10 +117,10 @@ class FirstScene extends Phaser.Scene {
         console.log("personalScale:");
         console.log(this.personalScale);
         const fontSize = 30 * this.personalScale;
-        this.scoreText = this.add.text(20*this.personalScale, this.gameHeight * 0.1, 'Score: 0', { 
+        this.scoreText = this.add.text(20*this.personalScale, this.screenHeight * 0.08, 'Score: 0/30', { 
             fontFamily: 'PressStart2P', 
             fontSize: fontSize, 
-            fill: '#000' 
+            fill: '#fff' 
         }).setScrollFactor(0);
 
         this.physics.add.collider(this.player, this.platforms);
@@ -126,13 +131,11 @@ class FirstScene extends Phaser.Scene {
 
         const buttonWidth = 101;
         let buttonSize = this.personalScale;
-        let buttonY = this.scale.height * 0.8;
-        console.log(this.gameWidth);
-        console.log(this.scale.height);
-        let buttonLeft = this.add.image(this.gameWidth - 2.1*this.personalScale*buttonWidth, buttonY, 'buttonLeft').setInteractive().setScrollFactor(0);
+        let buttonY = this.screenHeight * 0.8;
+        let buttonLeft = this.add.image(this.screenWidth - 2.1*this.personalScale*buttonWidth, buttonY, 'buttonLeft').setInteractive().setScrollFactor(0);
         buttonLeft.setScale(buttonSize);
 
-        let buttonRight = this.add.image(this.gameWidth - this.personalScale*buttonWidth, buttonY, 'buttonRight').setInteractive().setScrollFactor(0);
+        let buttonRight = this.add.image(this.screenWidth - this.personalScale*buttonWidth, buttonY, 'buttonRight').setInteractive().setScrollFactor(0);
         buttonRight.setScale(buttonSize);
 
         let buttonUp = this.add.image(this.personalScale*buttonWidth, buttonY, 'buttonUp').setInteractive().setScrollFactor(0);
@@ -169,8 +172,8 @@ class FirstScene extends Phaser.Scene {
         })
 
         this.hearts = [];
-        let heartX = 20;
-        let heartY = 20;
+        let heartX = 30;
+        let heartY = 80;
         let heartSpacing = 80; // Distanza tra i cuori
 
         // Crea e memorizza le immagini dei cuori
@@ -194,7 +197,7 @@ class FirstScene extends Phaser.Scene {
             mute: 0.0
         };
 
-        this.volumeButton = this.add.image(this.gameWidth - 30*this.personalScale-80, this.gameHeight * 0.05, this.volumeIcons.mute).setInteractive().setScrollFactor(0);
+        this.volumeButton = this.add.image(this.screenWidth - 30*this.personalScale-80, this.screenHeight * 0.05, this.volumeIcons.mute).setInteractive().setScrollFactor(0);
 
         this.sound.setVolume(this.volumeLevels.mute);
 
@@ -242,8 +245,7 @@ class FirstScene extends Phaser.Scene {
         this.collectSound.play();
         strawberry.disableBody(true, true);
         this.strawberries += 1;
-        this.score += 10;
-        this.scoreText.setText('Score: ' + this.score);
+        this.scoreText.setText('Score: ' + this.strawberries + '/30');
 
         if (this.strawberries >=30){
             this.win();
@@ -287,10 +289,13 @@ class FirstScene extends Phaser.Scene {
     
 
     die() { 
-        this.physics.pause();
-        this.player.anims.play('turn');
-        this.player.setTintFill(0xff0000);
         this.gameOver = true;
+        this.isInvincible = true;     
+        this.input.keyboard.removeAllKeys(true);
+        this.player.setVelocityX(0);
+        this.player.anims.play('turn');
+        this.player.anims.stop();
+        this.player.setTintFill(0xff0000);
         if (this.music && this.music.isPlaying) {
             this.music.stop();
         }
@@ -311,8 +316,7 @@ class FirstScene extends Phaser.Scene {
         this.player.setVelocityX(0);
         this.player.anims.play('turn');
         this.player.anims.stop();
-        this.time.delayedCall (2000, () => {
-            this.physics.pause();
+        this.time.delayedCall (1000, () => {
             if (this.music && this.music.isPlaying) {
                 this.music.stop();
             }

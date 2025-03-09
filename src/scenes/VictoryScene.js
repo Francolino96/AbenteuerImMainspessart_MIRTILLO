@@ -8,21 +8,21 @@ class VictoryScene extends Phaser.Scene {
         this.cameras.main.setBackgroundColor("#000");
         this.cameras.main.fadeIn(800, 0, 0, 0);
 
-        this.add.text(this.scale.width/2, this.scale.height/2 -200, "You collected\nall the ingredients!", {
+        this.add.text(this.scale.width/2, this.scale.height/2 -200, "You collected\nall the\ningredients!", {
             fontFamily: "PressStart2P",
             fontSize: 35*this.personalScale, 
             fill: "#fff",
             align: 'center'
         }).setOrigin(0.5);
 
-        this.add.text(this.scale.width/2, this.scale.height/2 +40, "Now we can\nmake gelato!", {
+        this.add.text(this.scale.width/2, this.scale.height/2, "Now we can\nmake gelato!", {
             fontFamily: "PressStart2P",
             fontSize: 35*this.personalScale, 
             fill: "#fff",
             align: 'center'
         }).setOrigin(0.5);
 
-        let replayButton = this.add.text(this.scale.width / 2, this.scale.height / 2 + 350, "NEXT", {
+        let replayButton = this.add.text(this.scale.width / 2, this.scale.height / 2 + 250, "NEXT", {
             fontFamily: "PressStart2P",
             fontSize: 25*this.personalScale, 
             fill: "#0f0"

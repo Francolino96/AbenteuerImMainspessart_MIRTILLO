@@ -8,21 +8,21 @@ class AnswerScene extends Phaser.Scene {
         this.cameras.main.setBackgroundColor("#000");
         this.cameras.main.fadeIn(800, 0, 0, 0);
 
-        this.add.text(this.scale.width/2, this.scale.height/2 -300, "How many strawberries\nare there in a\n gelato scoup?", {
+        this.add.text(this.scale.width/2, this.scale.height/2 -150, "How many\nstrawberries\nare there in a\n gelato scoup?", {
             fontFamily: "PressStart2P",
             fontSize: 35*this.personalScale, 
             fill: "#fff",
             align: 'center'
         }).setOrigin(0.5);
 
-        this.add.text(this.scale.width/2, this.scale.height/2 +40, "5 strawberries", {
+        this.add.text(this.scale.width/2, this.scale.height/2 + 50, "5 strawberries", {
             fontFamily: "PressStart2P",
             fontSize: 35*this.personalScale, 
-            fill: "#00f",
+            fill: "#99f",
             align: 'center'
         }).setOrigin(0.5);
 
-        let replayButton = this.add.text(this.scale.width / 2, this.scale.height / 2 + 350, "PLAY AGAIN", {
+        let replayButton = this.add.text(this.scale.width / 2, this.scale.height / 2 + 250, "PLAY AGAIN", {
             fontFamily: "PressStart2P",
             fontSize: 25*this.personalScale, 
             fill: "#0f0"
