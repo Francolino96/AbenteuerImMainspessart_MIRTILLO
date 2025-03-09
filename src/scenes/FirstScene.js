@@ -49,7 +49,7 @@ class FirstScene extends Phaser.Scene {
         }
 
         this.platforms = this.physics.add.staticGroup();
-        let platformWidth = 101;
+        let platformWidth = 100;
         
         let numPlatforms = Math.ceil(this.mapWidth / platformWidth);
         for (let i = 0; i < numPlatforms; i++) {
