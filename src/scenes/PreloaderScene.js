@@ -76,7 +76,7 @@ class PreloaderScene extends Phaser.Scene {
         this.load.image('ground', 'assets/Sprites_ground.png');
         this.load.image('deepGround', 'assets/Sprites_deep-ground.png');
         this.load.image('box', 'assets/Sprites_box.png');
-        this.load.image('star', 'assets/Sprites_strawberry.png');
+        this.load.image('strawberry', 'assets/Sprites_strawberry.png');
         this.load.image('bomb', 'assets/Sprites_acorn.png');
         
         // bottoni movimento

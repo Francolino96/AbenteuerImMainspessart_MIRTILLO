@@ -2,10 +2,7 @@ class GameOverScene extends Phaser.Scene {
     constructor(){
         super({key: 'GameOverScene'});
     }
-
-    preload () {
-    }
-
+    
     create(){
         this.cameras.main.fadeIn(800, 0, 0, 0);
         this.personalScale = (this.scale.height + this.scale.width)/2000;

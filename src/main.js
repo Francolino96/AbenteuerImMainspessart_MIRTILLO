@@ -4,6 +4,8 @@ import FirstScene from './scenes/FirstScene.js';
 import GameOverScene from './scenes/GameOverScene.js';
 import PreloaderScene from './scenes/PreloaderScene.js';
 import BootScene from './scenes/BootScene.js';
+import VictoryScene from './scenes/VictoryScene.js';
+import AnswerScene from './scenes/AnswerScene.js';
 
 let config = {
     type: Phaser.AUTO,
@@ -17,7 +19,7 @@ let config = {
             debug: false
         }
     },
-    scene: [TitleScene, CharacterSelectionScene, BootScene, PreloaderScene, FirstScene, GameOverScene],
+    scene: [TitleScene, CharacterSelectionScene, BootScene, PreloaderScene, FirstScene, GameOverScene, VictoryScene, AnswerScene],
     scale: {
         mode: Phaser.Scale.RESIZE, // Permette il ridimensionamento automatico
         autoCenter: Phaser.Scale.CENTER_BOTH // Centra il gioco

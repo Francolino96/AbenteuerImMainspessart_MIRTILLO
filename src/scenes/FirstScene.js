@@ -13,12 +13,14 @@ class FirstScene extends Phaser.Scene {
         this.lives = 3;
         this.player;
         this.ingredients;
+        this.strawberries = 0;
         this.bombs;
         this.platforms;
         this.score = 0;
         this.cursors;
         this.isInvincible = false;
         this.gameOver = false;
+        this.victory = false;
         this.scoreText;
         this.isMovingLeft = false;
         this.isMovingRight = false;
@@ -97,7 +99,7 @@ class FirstScene extends Phaser.Scene {
         this.cursors = this.input.keyboard.createCursorKeys();
 
         this.ingredients = this.physics.add.group({
-            key: 'star',
+            key: 'strawberry',
             repeat: 11,
             setXY: { x: 12, y: 0, stepX: 70 }
         });
@@ -119,7 +121,7 @@ class FirstScene extends Phaser.Scene {
         this.physics.add.collider(this.player, this.platforms);
         this.physics.add.collider(this.ingredients, this.platforms);
         this.physics.add.collider(this.bombs, this.platforms);
-        this.physics.add.overlap(this.player, this.ingredients, this.collectStar, null, this);
+        this.physics.add.overlap(this.player, this.ingredients, this.collectStrawberry, null, this);
         this.physics.add.overlap(this.player, this.bombs, this.takeDamage, null, this);
 
         const buttonWidth = 101;
@@ -205,7 +207,7 @@ class FirstScene extends Phaser.Scene {
     }
 
     update() {
-        if (this.gameOver) return;
+        if (this.gameOver || this.victory) return;
 
         if (this.cursors.left.isDown || this.isMovingLeft) {
             this.player.setVelocityX(-500);
@@ -236,11 +238,16 @@ class FirstScene extends Phaser.Scene {
         }
     }
 
-    collectStar(player, star) {
+    collectStrawberry(player, strawberry) {
         this.collectSound.play();
-        star.disableBody(true, true);
+        strawberry.disableBody(true, true);
+        this.strawberries += 1;
         this.score += 10;
         this.scoreText.setText('Score: ' + this.score);
+
+        if (this.strawberries >=30){
+            this.win();
+        }
 
         if (this.ingredients.countActive(true) === 0) {
             this.ingredients.children.iterate(function (child) {
@@ -257,9 +264,8 @@ class FirstScene extends Phaser.Scene {
     }
 
     takeDamage(player, bomb) {
-        if (this.lives > 0 && !this.isInvincible) { // Evita danni multipli
+        if (this.lives > 0 && !this.isInvincible) {
             this.lives--;
-            console.log(this.lives);
             this.hearts[this.lives].setTexture('emptyHeart');
 
             this.player.setTint(0xffff00);
@@ -267,7 +273,6 @@ class FirstScene extends Phaser.Scene {
             this.cameras.main.shake(300, 0.005);
 
             this.isInvincible = true;
-            console.log(this.isInvincible);
 
             this.time.delayedCall(500, () => {
                 this.player.clearTint();
@@ -297,6 +302,29 @@ class FirstScene extends Phaser.Scene {
                 this.scene.start('GameOverScene');
             });
         });
+    }
+
+    win() { 
+        this.victory = true;
+        this.isInvincible = true;     
+        this.input.keyboard.removeAllKeys(true);
+        this.player.setVelocityX(0);
+        this.player.anims.play('turn');
+        this.player.anims.stop();
+        this.time.delayedCall (2000, () => {
+            this.physics.pause();
+            if (this.music && this.music.isPlaying) {
+                this.music.stop();
+            }
+            //this.gameOverSound.play();
+
+            this.time.delayedCall(1000, () => {
+                this.cameras.main.fadeOut(800, 0, 0, 0);
+                this.time.delayedCall(800, () => {
+                    this.scene.start('VictoryScene');
+                });
+            });
+        })
     }
 }
 
