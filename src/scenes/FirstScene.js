@@ -41,14 +41,12 @@ class FirstScene extends Phaser.Scene {
         this.music.play();
         
         this.add.image(this.mapWidth / 2, this.mapHeight / 2, 'sky').setDisplaySize(this.mapWidth, this.mapHeight);
-
-
-        if (this.scale.isPortrait) {
-            this.mapHeight = this.mapHeight * 0.75;  // Occupa solo metà schermo in altezza
-        }
-
         console.log('mapWidth: ' + this.mapWidth);
         console.log('mapHeight: ' + this.mapHeight);
+
+        if (this.screenHeight > this.screenWidth) {
+            this.mapHeight = this.mapHeight * 0.75;  // Occupa solo metà schermo in altezza
+        }
 
         this.platforms = this.physics.add.staticGroup();
         let platformWidth = 101;
@@ -70,6 +68,11 @@ class FirstScene extends Phaser.Scene {
         this.platforms.create(62, this.mapHeight - 500, 'box');
         this.platforms.create(750, this.mapHeight - 600, 'box');
         this.platforms.create(163, this.mapHeight - 500, 'box');
+
+        this.platforms.create(1500, this.mapHeight - 400, 'box');
+        this.platforms.create(1601, this.mapHeight - 400, 'box');
+        this.platforms.create(1702, this.mapHeight - 400, 'box');
+        this.platforms.create(1803, this.mapHeight - 400, 'box');
         
         this.player = this.physics.add.sprite(100, 400, 'player');
         this.cameras.main.startFollow(this.player, true, 0.05, 0.05);
@@ -141,7 +144,7 @@ class FirstScene extends Phaser.Scene {
             fill: '#fff' 
         }).setOrigin(0, 0).setScrollFactor(0);
 
-        let sugarIcon = this.add.image(20, this.screenHeight * 0.1, 'sugar').setOrigin(0, 0).setScrollFactor(0);
+        let sugarIcon = this.add.image(40, this.screenHeight * 0.1, 'sugar').setOrigin(0, 0).setScrollFactor(0);
         sugarIcon.angle = -10;
         this.sugText = this.add.text(20*this.personalScale + 120, this.screenHeight * 0.1 -10, '0/10', { 
             fontFamily: 'PressStart2P', 
@@ -246,16 +249,16 @@ class FirstScene extends Phaser.Scene {
         );
 
         //fungo
-        this.mushroom = this.physics.add.sprite(2500, 1300, 'mushroom');
+        this.mushroom = this.physics.add.sprite(2300, this.mapHeight*0.85, 'mushroom');
         this.mushroom.setScale(this.personalScale);
         this.physics.add.collider(this.mushroom, this.platforms);
-        this.physics.add.overlap(this.player, this.mushroom, this.hitBoarOrMushroom, null, this); // Non vogliamo che si fermi ai limiti del mondo
+        this.physics.add.collider(this.player, this.mushroom, this.hitBoarOrMushroom, null, this); // Non vogliamo che si fermi ai limiti del mondo
         this.mushroom.setGravityY(500);
 
 
 
         // cinghiale 
-        this.boar = this.physics.add.sprite(500, 1300, 'boar'); // 500 è un'altezza iniziale da regolare
+        this.boar = this.physics.add.sprite(500, this.mapHeight*0.85, 'boar'); // 500 è un'altezza iniziale da regolare
         this.boar.setScale(this.personalScale);
         this.physics.add.collider(this.boar, this.platforms);
         this.physics.add.overlap(this.player, this.boar, this.hitBoarOrMushroom, null, this);
@@ -342,10 +345,10 @@ class FirstScene extends Phaser.Scene {
 
     hitBoarOrMushroom(player, enemy){
         if (player.body.y + (player.body.height)/2 < enemy.body.y) {
-            player.setVelocityY(-600);
+            player.setVelocityY(-1000);
             if (enemy.texture.key === 'mushroom') { 
                 enemy.setTexture('mushroom_smashed');
-                this.time.delayedCall(300, () => enemy.destroy(), [], this);
+                this.time.delayedCall(200, () => enemy.destroy(), [], this);
             }
         }
         else {
