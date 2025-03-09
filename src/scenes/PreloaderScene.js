@@ -40,7 +40,7 @@ class PreloaderScene extends Phaser.Scene {
 
         this.loadingText = this.add.text(
             this.scale.width / 2 - (10*30*this.personalScale)/2,
-            this.scale.height / 2 - 250,
+            this.scale.height / 2 - 150,
             'Loading',
             { 
                 fontFamily: 'PressStart2P', 
@@ -65,19 +65,32 @@ class PreloaderScene extends Phaser.Scene {
 
         // Carica qui tutti gli asset necessari per il gioco
         if (this.chosenCharacter === 1){
-            this.load.spritesheet('player', 'assets/Sprites_player_m.png', { frameWidth: 66.7, frameHeight: 101 });
+            this.load.spritesheet('player', 'assets/Sprites_player_m.png', { 
+                frameWidth: 66.7, 
+                frameHeight: 101 
+            });
         }
         else if (this.chosenCharacter === 2){
-            this.load.spritesheet('player', 'assets/Sprites_player_f.png', { frameWidth: 66.7, frameHeight: 100 });
+            this.load.spritesheet('player', 'assets/Sprites_player_f.png', { 
+                frameWidth: 66.7, 
+                frameHeight: 100 
+            });
         }
         else console.log("Errore nel caricamento del chosenCharacter"); 
-
+        
         this.load.image('sky', 'assets/sky.png');
         this.load.image('ground', 'assets/Sprites_ground.png');
         this.load.image('deepGround', 'assets/Sprites_deep-ground.png');
         this.load.image('box', 'assets/Sprites_box.png');
+        this.load.spritesheet('boar', 'assets/Sprites_boar.png', {
+            frameWidth: 133,  // Larghezza di ogni frame
+            frameHeight: 101  // Altezza di ogni frame
+        });
+        this.load.image('mushroom', 'assets/Sprites_mushroom.png');
+        this.load.image('mushroom_smashed', 'assets/Sprites_mushroom_2.png');
         this.load.image('strawberry', 'assets/Sprites_strawberry.png');
-        this.load.image('bomb', 'assets/Sprites_acorn.png');
+        this.load.image('sugar', 'assets/Sprites_sugar_cube.png');
+        this.load.image('acorn', 'assets/Sprites_acorn.png');
         
         // bottoni movimento
         this.load.image('buttonRight', 'assets/Sprites_right-arrow-button.png');

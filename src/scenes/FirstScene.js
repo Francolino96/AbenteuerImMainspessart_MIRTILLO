@@ -13,9 +13,11 @@ class FirstScene extends Phaser.Scene {
         this.cameras.main.fadeIn(800, 0, 0, 0); // 1000ms di transizione dal nero alla scena
         this.lives = 3;
         this.player;
-        this.ingredients;
-        this.strawberries = 0;
-        this.bombs;
+        this.strawberries;
+        this.sugar;
+        this.sugarCollected = 0;
+        this.strawberriesCollected = 0;
+        this.acorns;
         this.platforms;
         this.cursors;
         this.isInvincible = false;
@@ -29,6 +31,7 @@ class FirstScene extends Phaser.Scene {
         this.screenWidth = this.scale.width;
         console.log('screenWidth: ' + this.screenWidth);
         console.log('screenHeight: ' + this.screenHeight);
+        const scene = this;
         this.personalScale = (this.screenHeight + this.screenWidth)/2000;
 
         this.collectSound = this.sound.add('collect', { loop: false, volume: 0.05 });
@@ -103,32 +106,66 @@ class FirstScene extends Phaser.Scene {
         this.spaceKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
         this.cursors = this.input.keyboard.createCursorKeys();
 
-        this.ingredients = this.physics.add.group({
+        this.strawberries = this.physics.add.group({
             key: 'strawberry',
-            repeat: 11,
-            setXY: { x: 12, y: 0, stepX: 70 }
+            repeat: 9,
+            setXY: { x: 12, y: 0, stepX: 200 }
+        });
+        
+        this.strawberries.children.iterate(function (strawberry) {
+            strawberry.x = Phaser.Math.Between(100, scene.mapWidth - 100);
+            strawberry.y = Phaser.Math.Between(50, 300);
+            strawberry.setBounceY(Phaser.Math.FloatBetween(0.4, 0.8));
         });
 
-        this.ingredients.children.iterate(function (child) {
-            child.setBounceY(Phaser.Math.FloatBetween(0.4, 0.8));
+        this.sugar = this.physics.add.group({
+            key: 'sugar',
+            repeat: 4,
+            setXY: { x: 150, y: 0, stepX: 250 }
+        });
+        this.sugar.children.iterate(function (sugar) {
+            sugar.x = Phaser.Math.Between(100, scene.mapWidth - 100);
+            sugar.y = Phaser.Math.Between(50, 300);
+            sugar.setBounceY(Phaser.Math.FloatBetween(0.4, 0.8));
         });
 
-        this.bombs = this.physics.add.group();
+        this.acorns = this.physics.add.group();
         console.log("personalScale:");
         console.log(this.personalScale);
         const fontSize = 30 * this.personalScale;
-        this.scoreText = this.add.text(20*this.personalScale, this.screenHeight * 0.08, 'Score: 0/30', { 
+        let strawberryIcon = this.add.image(20, this.screenHeight * 0.05, 'strawberry').setOrigin(0, 0).setScrollFactor(0);
+        strawberryIcon.angle = -40;
+        this.strText = this.add.text(20*this.personalScale + 120, this.screenHeight * 0.05 -10, '0/10', { 
             fontFamily: 'PressStart2P', 
             fontSize: fontSize, 
             fill: '#fff' 
-        }).setScrollFactor(0);
+        }).setOrigin(0, 0).setScrollFactor(0);
+
+        let sugarIcon = this.add.image(20, this.screenHeight * 0.1, 'sugar').setOrigin(0, 0).setScrollFactor(0);
+        sugarIcon.angle = -10;
+        this.sugText = this.add.text(20*this.personalScale + 120, this.screenHeight * 0.1 -10, '0/10', { 
+            fontFamily: 'PressStart2P', 
+            fontSize: fontSize, 
+            fill: '#fff' 
+        }).setOrigin(0, 0).setScrollFactor(0);
 
         this.physics.add.collider(this.player, this.platforms);
-        this.physics.add.collider(this.ingredients, this.platforms);
-        this.physics.add.collider(this.bombs, this.platforms);
-        this.physics.add.overlap(this.player, this.ingredients, this.collectStrawberry, null, this);
-        this.physics.add.overlap(this.player, this.bombs, this.takeDamage, null, this);
+        this.physics.add.collider(this.strawberries, this.platforms);
+        this.physics.add.collider(this.sugar, this.platforms);
+        this.physics.add.collider(this.acorns, this.platforms);
+        this.physics.add.overlap(this.player, this.strawberries, this.collectStrawberries, null, this);
+        this.physics.add.overlap(this.player, this.sugar, this.collectSugar, null, this);
+        this.physics.add.overlap(this.player, this.acorns, this.takeDamage, null, this);
 
+        for (let i = 0; i < 2; i++){
+            var x = Phaser.Math.Between(100, this.mapWidth-100);
+            var acorn = this.acorns.create(x, 16, 'acorn');
+            acorn.setBounce(1);
+            acorn.setCollideWorldBounds(true);
+            acorn.setVelocity(Phaser.Math.Between(-200, 200), 20);
+            acorn.allowGravity = false;
+        }
+        
         const buttonWidth = 101;
         let buttonSize = this.personalScale;
         let buttonY = this.screenHeight * 0.8;
@@ -172,13 +209,13 @@ class FirstScene extends Phaser.Scene {
         })
 
         this.hearts = [];
-        let heartX = 30;
-        let heartY = 80;
+        let heartX = this.screenWidth - 90;
+        let heartY = this.screenHeight * 0.09;
         let heartSpacing = 80; // Distanza tra i cuori
 
         // Crea e memorizza le immagini dei cuori
         for (let i = 0; i < 3; i++) {
-            let heart = this.add.image(heartX + i * heartSpacing, heartY, 'heart').setOrigin(0, 0).setScrollFactor(0);
+            let heart = this.add.image(heartX - i * heartSpacing, heartY, 'heart').setOrigin(1, 0).setScrollFactor(0);
             this.hearts.push(heart);
         }
 
@@ -207,6 +244,35 @@ class FirstScene extends Phaser.Scene {
             this.volumeButton.setTexture(this.volumeIcons[newState]);
             this.sound.setVolume(this.volumeLevels[newState]);}
         );
+
+        //fungo
+        this.mushroom = this.physics.add.sprite(2500, 1300, 'mushroom');
+        this.mushroom.setScale(this.personalScale);
+        this.physics.add.collider(this.mushroom, this.platforms);
+        this.physics.add.overlap(this.player, this.mushroom, this.hitBoarOrMushroom, null, this); // Non vogliamo che si fermi ai limiti del mondo
+        this.mushroom.setGravityY(500);
+
+
+
+        // cinghiale 
+        this.boar = this.physics.add.sprite(500, 1300, 'boar'); // 500 è un'altezza iniziale da regolare
+        this.boar.setScale(this.personalScale);
+        this.physics.add.collider(this.boar, this.platforms);
+        this.physics.add.overlap(this.player, this.boar, this.hitBoarOrMushroom, null, this);
+        this.boar.setCollideWorldBounds(false);  // Non vogliamo che si fermi ai limiti del mondo
+        this.boar.setGravityY(500);  // Imposta la gravità in modo che cada sul terreno
+
+        // Creazione animazione cinghiale
+        this.anims.create({
+            key: 'boarRun',
+            frames: this.anims.generateFrameNumbers('boar', { start: 0, end: 2 }), // 3 frame
+            frameRate: 10,  // Velocità animazione
+            repeat: -1 // Loop infinito
+        });
+        this.boar.play('boarRun');
+        this.boar.setVelocityX(400);  
+        this.boar.setFlipX(false);  
+        this.boarDirection = 1;
     }
 
     update() {
@@ -239,44 +305,62 @@ class FirstScene extends Phaser.Scene {
             this.jumpSound.play();
             this.player.anims.play('jump');
         }
+
+
+        // cinghiale
+
+        if (this.boar.x >= 3000) {
+            this.boar.setVelocityX(-400);  // Inverti direzione a sinistra
+            this.boar.setFlipX(true);  // Rovescia immagine orizzontalmente
+        } else if (this.boar.x <= 0) {
+            this.boar.setVelocityX(400);  // Inverti direzione a destra
+            this.boar.setFlipX(false);  // Torna all'orientamento normale
+        }
     }
 
-    collectStrawberry(player, strawberry) {
+    collectSugar(player, sugar) {
         this.collectSound.play();
-        strawberry.disableBody(true, true);
-        this.strawberries += 1;
-        this.scoreText.setText('Score: ' + this.strawberries + '/30');
+        sugar.disableBody(true, true);
+        this.sugarCollected += 1;
+        this.sugText.setText(this.sugarCollected + '/5');
 
-        if (this.strawberries >=30){
+        if (this.sugarCollected >=5 && this.strawberriesCollected >= 10){
             this.win();
         }
-
-        if (this.ingredients.countActive(true) === 0) {
-            this.ingredients.children.iterate(function (child) {
-                child.enableBody(true, child.x, 0, true, true);
-            });
-
-            var x = (this.player.x < 400) ? Phaser.Math.Between(400, 800) : Phaser.Math.Between(0, 400);
-            var bomb = this.bombs.create(x, 16, 'bomb');
-            bomb.setBounce(1);
-            bomb.setCollideWorldBounds(true);
-            bomb.setVelocity(Phaser.Math.Between(-200, 200), 20);
-            bomb.allowGravity = false;
-        }
     }
 
-    takeDamage(player, bomb) {
+    collectStrawberries(player, strawberries) {
+        this.collectSound.play();
+        strawberries.disableBody(true, true);
+        this.strawberriesCollected += 1;
+        this.strText.setText(this.strawberriesCollected + '/10');
+
+        if (this.strawberriesCollected >=10 && this.sugarCollected >=5){
+            this.win();
+        }
+    }  
+
+    hitBoarOrMushroom(player, enemy){
+        if (player.body.y + (player.body.height)/2 < enemy.body.y) {
+            player.setVelocityY(-600);
+            if (enemy.texture.key === 'mushroom') { 
+                enemy.setTexture('mushroom_smashed');
+                this.time.delayedCall(300, () => enemy.destroy(), [], this);
+            }
+        }
+        else {
+            this.takeDamage(player, enemy);
+        }
+    }
+    takeDamage(player, enemy) {
         if (this.lives > 0 && !this.isInvincible) {
             this.lives--;
             this.hearts[this.lives].setTexture('emptyHeart');
-
             this.player.setTint(0xffff00);
-
             this.cameras.main.shake(300, 0.005);
-
             this.isInvincible = true;
 
-            this.time.delayedCall(500, () => {
+            this.time.delayedCall(1500, () => {
                 this.player.clearTint();
                 this.isInvincible = false;
             });
