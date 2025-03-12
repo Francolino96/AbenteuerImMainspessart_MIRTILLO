@@ -32,7 +32,7 @@ class FirstScene extends Phaser.Scene {
         console.log('screenWidth: ' + this.screenWidth);
         console.log('screenHeight: ' + this.screenHeight);
         const scene = this;
-        this.personalScale = (this.screenHeight + this.screenWidth)/1500;
+        this.personalScale = (this.screenHeight + this.screenWidth)/2000;
 
         this.collectSound = this.sound.add('collect', { loop: false, volume: 0.05 });
         this.gameOverSound = this.sound.add('gameOver');  
