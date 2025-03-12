@@ -32,7 +32,7 @@ class FirstScene extends Phaser.Scene {
         console.log('screenWidth: ' + this.screenWidth);
         console.log('screenHeight: ' + this.screenHeight);
         const scene = this;
-        this.personalScale = (this.screenHeight + this.screenWidth)/2000;
+        this.personalScale = (this.screenHeight + this.screenWidth)/1500;
 
         this.collectSound = this.sound.add('collect', { loop: false, volume: 0.05 });
         this.gameOverSound = this.sound.add('gameOver');  
@@ -62,17 +62,17 @@ class FirstScene extends Phaser.Scene {
                 this.add.image(i * platformWidth + platformWidth / 2, this.mapHeight - platformWidth / 2 + row * platformWidth, 'deepGround');
             }
         }
-
-        this.platforms.create(579, this.mapHeight - 350, 'box');
+   
         this.platforms.create(478, this.mapHeight - 350, 'box');
+        this.platforms.create(578, this.mapHeight - 350, 'box');
         this.platforms.create(62, this.mapHeight - 500, 'box');
+        this.platforms.create(162, this.mapHeight - 500, 'box');
         this.platforms.create(750, this.mapHeight - 600, 'box');
-        this.platforms.create(163, this.mapHeight - 500, 'box');
 
         this.platforms.create(1500, this.mapHeight - 400, 'box');
-        this.platforms.create(1601, this.mapHeight - 400, 'box');
-        this.platforms.create(1702, this.mapHeight - 400, 'box');
-        this.platforms.create(1803, this.mapHeight - 400, 'box');
+        this.platforms.create(1600, this.mapHeight - 400, 'box');
+        this.platforms.create(1700, this.mapHeight - 400, 'box');
+        this.platforms.create(1800, this.mapHeight - 400, 'box');
         
         this.player = this.physics.add.sprite(100, 400, 'player');
         this.cameras.main.startFollow(this.player, true, 0.05, 0.05);
@@ -106,9 +106,6 @@ class FirstScene extends Phaser.Scene {
             repeat: -1
         });
 
-        this.spaceKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
-        this.cursors = this.input.keyboard.createCursorKeys();
-
         this.strawberries = this.physics.add.group({
             key: 'strawberry',
             repeat: 9,
@@ -132,21 +129,58 @@ class FirstScene extends Phaser.Scene {
             sugar.setBounceY(Phaser.Math.FloatBetween(0.4, 0.8));
         });
 
+        //fungo
+        this.mushroom = this.physics.add.sprite(2300, this.mapHeight*0.75, 'mushroom');
+        this.mushroom.setScale(this.personalScale);
+        this.mushroom.setGravityY(500);
+
+
+
+        // cinghiale 
+        this.boar = this.physics.add.sprite(500, this.mapHeight*0.75, 'boar'); // 500 è un'altezza iniziale da regolare
+        this.boar.setScale(this.personalScale);
+        this.boar.setCollideWorldBounds(false);  // Non vogliamo che si fermi ai limiti del mondo
+        this.boar.setGravityY(500);  // Imposta la gravità in modo che cada sul terreno
+
+        // Creazione animazione cinghiale
+        this.anims.create({
+            key: 'boarRun',
+            frames: this.anims.generateFrameNumbers('boar', { start: 0, end: 2 }), // 3 frame
+            frameRate: 10,  // Velocità animazione
+            repeat: -1 // Loop infinito
+        });
+        this.boar.play('boarRun');
+        this.boar.setVelocityX(400);  
+        this.boar.setFlipX(false);  
+        this.boarDirection = 1;
+
         this.acorns = this.physics.add.group();
+
+        for (let i = 0; i < 2; i++){
+            var x = Phaser.Math.Between(100, this.mapWidth-100);
+            var acorn = this.acorns.create(x, 16, 'acorn');
+            acorn.setBounce(1);
+            acorn.setCollideWorldBounds(true);
+            acorn.setVelocity(Phaser.Math.Between(-200, 200), 20);
+            acorn.allowGravity = false;
+        }
+
+
         console.log("personalScale:");
         console.log(this.personalScale);
         const fontSize = 30 * this.personalScale;
-        let strawberryIcon = this.add.image(20, this.screenHeight * 0.05, 'strawberry').setOrigin(0, 0).setScrollFactor(0);
+
+        let strawberryIcon = this.add.image(20, this.screenHeight * 0.1, 'strawberry').setOrigin(0, 0).setScrollFactor(0);
         strawberryIcon.angle = -40;
-        this.strText = this.add.text(20*this.personalScale + 120, this.screenHeight * 0.05 -10, '0/10', { 
+        this.strText = this.add.text(20*this.personalScale + 120, this.screenHeight * 0.1 -10, '0/10', { 
             fontFamily: 'PressStart2P', 
             fontSize: fontSize, 
             fill: '#fff' 
         }).setOrigin(0, 0).setScrollFactor(0);
 
-        let sugarIcon = this.add.image(40, this.screenHeight * 0.1, 'sugar').setOrigin(0, 0).setScrollFactor(0);
+        let sugarIcon = this.add.image(40, this.screenHeight * 0.15, 'sugar').setOrigin(0, 0).setScrollFactor(0);
         sugarIcon.angle = -10;
-        this.sugText = this.add.text(20*this.personalScale + 120, this.screenHeight * 0.1 -10, '0/10', { 
+        this.sugText = this.add.text(20*this.personalScale + 120, this.screenHeight * 0.15 -10, '0/10', { 
             fontFamily: 'PressStart2P', 
             fontSize: fontSize, 
             fill: '#fff' 
@@ -159,16 +193,14 @@ class FirstScene extends Phaser.Scene {
         this.physics.add.overlap(this.player, this.strawberries, this.collectStrawberries, null, this);
         this.physics.add.overlap(this.player, this.sugar, this.collectSugar, null, this);
         this.physics.add.overlap(this.player, this.acorns, this.takeDamage, null, this);
-
-        for (let i = 0; i < 2; i++){
-            var x = Phaser.Math.Between(100, this.mapWidth-100);
-            var acorn = this.acorns.create(x, 16, 'acorn');
-            acorn.setBounce(1);
-            acorn.setCollideWorldBounds(true);
-            acorn.setVelocity(Phaser.Math.Between(-200, 200), 20);
-            acorn.allowGravity = false;
-        }
+        this.physics.add.collider(this.boar, this.platforms);
+        this.physics.add.overlap(this.player, this.boar, this.hitBoarOrMushroom, null, this);
+        this.physics.add.collider(this.mushroom, this.platforms);
+        this.physics.add.collider(this.player, this.mushroom, this.hitBoarOrMushroom, null, this); // Non vogliamo che si fermi ai limiti del mondo
         
+        this.spaceKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
+        this.cursors = this.input.keyboard.createCursorKeys();
+
         const buttonWidth = 101;
         let buttonSize = this.personalScale;
         let buttonY = this.screenHeight * 0.8;
@@ -213,7 +245,7 @@ class FirstScene extends Phaser.Scene {
 
         this.hearts = [];
         let heartX = this.screenWidth - 90;
-        let heartY = this.screenHeight * 0.09;
+        let heartY = this.screenHeight * 0.14;
         let heartSpacing = 80; // Distanza tra i cuori
 
         // Crea e memorizza le immagini dei cuori
@@ -237,7 +269,7 @@ class FirstScene extends Phaser.Scene {
             mute: 0.0
         };
 
-        this.volumeButton = this.add.image(this.screenWidth - 30*this.personalScale-80, this.screenHeight * 0.05, this.volumeIcons.mute).setInteractive().setScrollFactor(0);
+        this.volumeButton = this.add.image(this.screenWidth - 30*this.personalScale-80, this.screenHeight * 0.1, this.volumeIcons.mute).setInteractive().setScrollFactor(0);
 
         this.sound.setVolume(this.volumeLevels.mute);
 
@@ -247,39 +279,15 @@ class FirstScene extends Phaser.Scene {
             this.volumeButton.setTexture(this.volumeIcons[newState]);
             this.sound.setVolume(this.volumeLevels[newState]);}
         );
-
-        //fungo
-        this.mushroom = this.physics.add.sprite(2300, this.mapHeight*0.85, 'mushroom');
-        this.mushroom.setScale(this.personalScale);
-        this.physics.add.collider(this.mushroom, this.platforms);
-        this.physics.add.collider(this.player, this.mushroom, this.hitBoarOrMushroom, null, this); // Non vogliamo che si fermi ai limiti del mondo
-        this.mushroom.setGravityY(500);
-
-
-
-        // cinghiale 
-        this.boar = this.physics.add.sprite(500, this.mapHeight*0.85, 'boar'); // 500 è un'altezza iniziale da regolare
-        this.boar.setScale(this.personalScale);
-        this.physics.add.collider(this.boar, this.platforms);
-        this.physics.add.overlap(this.player, this.boar, this.hitBoarOrMushroom, null, this);
-        this.boar.setCollideWorldBounds(false);  // Non vogliamo che si fermi ai limiti del mondo
-        this.boar.setGravityY(500);  // Imposta la gravità in modo che cada sul terreno
-
-        // Creazione animazione cinghiale
-        this.anims.create({
-            key: 'boarRun',
-            frames: this.anims.generateFrameNumbers('boar', { start: 0, end: 2 }), // 3 frame
-            frameRate: 10,  // Velocità animazione
-            repeat: -1 // Loop infinito
-        });
-        this.boar.play('boarRun');
-        this.boar.setVelocityX(400);  
-        this.boar.setFlipX(false);  
-        this.boarDirection = 1;
     }
 
     update() {
         if (this.gameOver || this.victory) return;
+
+        if (!this.input.activePointer.isDown) {
+            this.isMovingLeft = false;
+            this.isMovingRight = false;
+        }
 
         if (this.cursors.left.isDown || this.isMovingLeft) {
             this.player.setVelocityX(-500);
@@ -312,10 +320,10 @@ class FirstScene extends Phaser.Scene {
 
         // cinghiale
 
-        if (this.boar.x >= 3000) {
+        if (this.boar.x >= this.mapWidth-100) {
             this.boar.setVelocityX(-400);  // Inverti direzione a sinistra
             this.boar.setFlipX(true);  // Rovescia immagine orizzontalmente
-        } else if (this.boar.x <= 0) {
+        } else if (this.boar.x <= 100) {
             this.boar.setVelocityX(400);  // Inverti direzione a destra
             this.boar.setFlipX(false);  // Torna all'orientamento normale
         }
@@ -348,7 +356,7 @@ class FirstScene extends Phaser.Scene {
             player.setVelocityY(-1000);
             if (enemy.texture.key === 'mushroom') { 
                 enemy.setTexture('mushroom_smashed');
-                this.time.delayedCall(200, () => enemy.destroy(), [], this);
+                this.time.delayedCall(100, () => enemy.destroy(), [], this);
             }
         }
         else {
