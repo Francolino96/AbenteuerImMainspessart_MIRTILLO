@@ -17,6 +17,7 @@ class FirstScene extends Phaser.Scene {
         this.sugar;
         this.sugarCollected = 0;
         this.strawberriesCollected = 0;
+        this.blueberriesCollected = 0;
         this.acorns;
         this.platforms;
         this.cursors;
@@ -76,7 +77,7 @@ class FirstScene extends Phaser.Scene {
         
         this.player = this.physics.add.sprite(100, 400, 'player');
         this.cameras.main.startFollow(this.player, true, 0.05, 0.05);
-        this.player.setScale(this.personalScale);
+        this.player.setScale(this.personalScale * 1.2);
         this.player.setBounce(0.1);
         this.player.setCollideWorldBounds(true);
 
@@ -106,34 +107,51 @@ class FirstScene extends Phaser.Scene {
             repeat: -1
         });
 
-        this.strawberries = this.physics.add.group({
-            key: 'strawberry',
-            repeat: 9,
+        this.blueberryNumber = 5;
+        this.blueberries = this.physics.add.group({
+            key: 'blueberry',
+            repeat: (this.blueberryNumber-1),
             setXY: { x: 12, y: 0, stepX: 200 }
         });
         
-        this.strawberries.children.iterate(function (strawberry) {
+        this.blueberries.children.iterate((blueberry) => {
+            blueberry.x = Phaser.Math.Between(100, scene.mapWidth - 100);
+            blueberry.y = Phaser.Math.Between(50, 300);
+            blueberry.setBounceY(Phaser.Math.FloatBetween(0.4, 0.8));
+            blueberry.setScale(this.personalScale*0.95);
+        });
+
+        this.strawberryNumber = 5;
+        this.strawberries = this.physics.add.group({
+            key: 'strawberry',
+            repeat: (this.strawberryNumber-1),
+            setXY: { x: 12, y: 0, stepX: 200 }
+        });
+        
+        this.strawberries.children.iterate((strawberry) => {
             strawberry.x = Phaser.Math.Between(100, scene.mapWidth - 100);
             strawberry.y = Phaser.Math.Between(50, 300);
             strawberry.setBounceY(Phaser.Math.FloatBetween(0.4, 0.8));
+            strawberry.setScale(this.personalScale*0.95);
         });
 
+        this.sugarNumber = 5; 
         this.sugar = this.physics.add.group({
             key: 'sugar',
-            repeat: 4,
+            repeat: (this.sugarNumber-1),
             setXY: { x: 150, y: 0, stepX: 250 }
         });
-        this.sugar.children.iterate(function (sugar) {
+        this.sugar.children.iterate((sugar) => {
             sugar.x = Phaser.Math.Between(100, scene.mapWidth - 100);
             sugar.y = Phaser.Math.Between(50, 300);
             sugar.setBounceY(Phaser.Math.FloatBetween(0.4, 0.8));
+            sugar.setScale(this.personalScale*0.95);
         });
 
         //fungo
         this.mushroom = this.physics.add.sprite(2300, this.mapHeight*0.75, 'mushroom');
         this.mushroom.setScale(this.personalScale);
         this.mushroom.setGravityY(500);
-
 
 
         // cinghiale 
@@ -170,17 +188,25 @@ class FirstScene extends Phaser.Scene {
         console.log(this.personalScale);
         const fontSize = 30 * this.personalScale;
 
-        let strawberryIcon = this.add.image(20, this.screenHeight * 0.1, 'strawberry').setOrigin(0, 0).setScrollFactor(0);
+        let strawberryIcon = this.add.image(this.screenWidth * 0.05, this.screenHeight * 0.05, 'strawberry').setOrigin(0, 0).setScrollFactor(0).setScale(this.personalScale*0.85);
         strawberryIcon.angle = -40;
-        this.strText = this.add.text(20*this.personalScale + 120, this.screenHeight * 0.1 -10, '0/10', { 
+        this.strText = this.add.text(50*this.personalScale + this.screenWidth * 0.12, this.screenHeight * 0.05, '0/' + this.strawberryNumber, { 
             fontFamily: 'PressStart2P', 
             fontSize: fontSize, 
             fill: '#fff' 
         }).setOrigin(0, 0).setScrollFactor(0);
 
-        let sugarIcon = this.add.image(40, this.screenHeight * 0.15, 'sugar').setOrigin(0, 0).setScrollFactor(0);
+        let sugarIcon = this.add.image(this.screenWidth * 0.08, this.screenHeight * 0.11, 'sugar').setOrigin(0, 0).setScrollFactor(0).setScale(this.personalScale*0.85);
         sugarIcon.angle = -10;
-        this.sugText = this.add.text(20*this.personalScale + 120, this.screenHeight * 0.15 -10, '0/10', { 
+        this.sugText = this.add.text(50*this.personalScale + this.screenWidth * 0.12, this.screenHeight * 0.11, '0/' + this.sugarNumber, { 
+            fontFamily: 'PressStart2P', 
+            fontSize: fontSize, 
+            fill: '#fff' 
+        }).setOrigin(0, 0).setScrollFactor(0);
+
+        let blueberryIcon = this.add.image(this.screenWidth * 0.085, this.screenHeight * 0.16, 'blueberry').setOrigin(0, 0).setScrollFactor(0).setScale(this.personalScale*0.85);
+        blueberryIcon.angle = 10;
+        this.bluebText = this.add.text(50*this.personalScale + this.screenWidth * 0.12, this.screenHeight * 0.17, '0/' + this.blueberryNumber, { 
             fontFamily: 'PressStart2P', 
             fontSize: fontSize, 
             fill: '#fff' 
@@ -189,9 +215,11 @@ class FirstScene extends Phaser.Scene {
         this.physics.add.collider(this.player, this.platforms);
         this.physics.add.collider(this.strawberries, this.platforms);
         this.physics.add.collider(this.sugar, this.platforms);
+        this.physics.add.collider(this.blueberries, this.platforms);
         this.physics.add.collider(this.acorns, this.platforms);
         this.physics.add.overlap(this.player, this.strawberries, this.collectStrawberries, null, this);
         this.physics.add.overlap(this.player, this.sugar, this.collectSugar, null, this);
+        this.physics.add.overlap(this.player, this.blueberries, this.collectBlueberries, null, this);
         this.physics.add.overlap(this.player, this.acorns, this.takeDamage, null, this);
         this.physics.add.collider(this.boar, this.platforms);
         this.physics.add.overlap(this.player, this.boar, this.hitBoarOrMushroom, null, this);
@@ -244,9 +272,9 @@ class FirstScene extends Phaser.Scene {
         })
 
         this.hearts = [];
-        let heartX = this.screenWidth - 90;
-        let heartY = this.screenHeight * 0.14;
-        let heartSpacing = 80; // Distanza tra i cuori
+        let heartX = this.screenWidth - this.screenWidth*0.075;
+        let heartY = this.screenHeight * 0.12;
+        let heartSpacing = this.screenWidth * 0.1; // Distanza tra i cuori
 
         // Crea e memorizza le immagini dei cuori
         for (let i = 0; i < 3; i++) {
@@ -269,9 +297,9 @@ class FirstScene extends Phaser.Scene {
             mute: 0.0
         };
 
-        this.volumeButton = this.add.image(this.screenWidth - 30*this.personalScale-80, this.screenHeight * 0.1, this.volumeIcons.mute).setInteractive().setScrollFactor(0);
+        this.volumeButton = this.add.image(this.screenWidth - 0.035*this.screenWidth, this.screenHeight * 0.025, this.volumeIcons.low).setInteractive().setOrigin(1,0).setScrollFactor(0);
 
-        this.sound.setVolume(this.volumeLevels.mute);
+        this.sound.setVolume(this.volumeLevels.low);
 
         this.volumeButton.on('pointerdown', () => {
             this.currentVolumeState = (this.currentVolumeState + 1) % this.volumeStates.length;
@@ -287,6 +315,7 @@ class FirstScene extends Phaser.Scene {
         if (!this.input.activePointer.isDown) {
             this.isMovingLeft = false;
             this.isMovingRight = false;
+            this.isJumping = false;
         }
 
         if (this.cursors.left.isDown || this.isMovingLeft) {
@@ -333,9 +362,9 @@ class FirstScene extends Phaser.Scene {
         this.collectSound.play();
         sugar.disableBody(true, true);
         this.sugarCollected += 1;
-        this.sugText.setText(this.sugarCollected + '/5');
+        this.sugText.setText(this.sugarCollected + '/' + this.sugarNumber);
 
-        if (this.sugarCollected >=5 && this.strawberriesCollected >= 10){
+        if (this.sugarCollected >= this.sugarNumber && this.strawberriesCollected >= this.strawberryNumber && this.blueberriesCollected >= this.blueberryNumber){
             this.win();
         }
     }
@@ -344,12 +373,23 @@ class FirstScene extends Phaser.Scene {
         this.collectSound.play();
         strawberries.disableBody(true, true);
         this.strawberriesCollected += 1;
-        this.strText.setText(this.strawberriesCollected + '/10');
+        this.strText.setText(this.strawberriesCollected + '/' + this.strawberryNumber);
 
-        if (this.strawberriesCollected >=10 && this.sugarCollected >=5){
+        if (this.strawberriesCollected >= this.strawberryNumber && this.sugarCollected >= this.sugarNumber && this.blueberriesCollected >= this.blueberryNumber){
             this.win();
         }
     }  
+
+    collectBlueberries(player, blueberries) {
+        this.collectSound.play();
+        blueberries.disableBody(true, true);
+        this.blueberriesCollected += 1;
+        this.bluebText.setText(this.blueberriesCollected + '/' + this.blueberryNumber);
+
+        if (this.strawberriesCollected >= this.strawberryNumber && this.sugarCollected >= this.sugarNumber && this.blueberriesCollected >= this.blueberryNumber){
+            this.win();
+        }
+    }
 
     hitBoarOrMushroom(player, enemy){
         if (player.body.y + (player.body.height)/2 < enemy.body.y) {
