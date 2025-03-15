@@ -15,7 +15,7 @@ let config = {
     physics: {
         default: 'arcade',
         arcade: {
-            gravity: { y: 1200 },
+            gravity: { y: 1200 * (window.innerHeight/1400)},
             debug: false
         }
     },
@@ -25,10 +25,15 @@ let config = {
         autoCenter: Phaser.Scale.CENTER_BOTH // Centra il gioco
     }
 };
+
+let game;  // Dichiarazione globale
+
 document.fonts.ready.then(() => {
-    let game = new Phaser.Game(config);
+    game = new Phaser.Game(config);  // Assegnazione dentro il blocco
 });
 
 window.addEventListener('resize', () => {
-    game.scale.resize(window.innerWidth, window.innerHeight);
+    if (game) { // Verifica che game sia stato inizializzato
+        game.scale.resize(window.innerWidth, window.innerHeight);
+    }
 });

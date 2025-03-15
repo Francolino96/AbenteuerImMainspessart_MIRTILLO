@@ -10,7 +10,7 @@ class PreloaderScene extends Phaser.Scene {
     preload() {
         // Imposta lo sfondo nero
         this.cameras.main.setBackgroundColor('#000');
-        this.personalScale = (this.scale.height + this.scale.width)/2000;
+        this.personalScale = (this.scale.height + this.scale.width)/2200;
 
         // Centro dello schermo
         let centerX = this.scale.width / 2;
@@ -25,10 +25,10 @@ class PreloaderScene extends Phaser.Scene {
             progressBar.fillStyle(0xff0000, 1);
 
             // Calcola le dimensioni e la posizione della "fill bar"
-            let fillWidth = 2 * 290 * value; // 301 è la larghezza totale del frame
-            let fillHeight = 90;        // Altezza totale
-            let frameX = centerX - 290;
-            let frameY = centerY - 90/2;
+            let fillWidth = 2 * 290 * value * this.personalScale; // 301 è la larghezza totale del frame
+            let fillHeight = 90 * this.personalScale;        // Altezza totale
+            let frameX = centerX - 290*this.personalScale;
+            let frameY = centerY - (90/2)*this.personalScale;
             
             // Disegna il rettangolo rosso all'interno del frame
             progressBar.fillRect(frameX, frameY, fillWidth, fillHeight);
@@ -36,11 +36,11 @@ class PreloaderScene extends Phaser.Scene {
 
         // Mostra il frame della barra di caricamento
         // Assicurati che l'immagine 'chargingBarFrame' sia già stata caricata (es. in una BootScene)
-        this.add.image(centerX, centerY, 'chargingBarFrame').setOrigin(0.5);
+        this.add.image(centerX, centerY, 'chargingBarFrame').setOrigin(0.5).setScale(this.personalScale);
 
         this.loadingText = this.add.text(
             this.scale.width / 2 - (10*30*this.personalScale)/2,
-            this.scale.height / 2 - 150,
+            this.scale.height / 2 - 100*this.personalScale,
             'Loading',
             { 
                 fontFamily: 'PressStart2P', 
@@ -48,7 +48,7 @@ class PreloaderScene extends Phaser.Scene {
                 fill: '#fff',
                 align: 'center'
             }
-        ).setOrigin(0,0);
+        ).setOrigin(0,0.5);
 
         const loadingStates = ['Loading', 'Loading.', 'Loading..', 'Loading...'];
         let currentIndex = 0;
@@ -66,20 +66,25 @@ class PreloaderScene extends Phaser.Scene {
         // Carica qui tutti gli asset necessari per il gioco
         if (this.chosenCharacter === 1){
             this.load.spritesheet('player', 'assets/Sprites_player_m.png', { 
-                frameWidth: 66.7, 
-                frameHeight: 101 
+                frameWidth: 72.5, 
+                frameHeight: 99,
+                margin: 1,
+                spacing: 0,
             });
         }
         else if (this.chosenCharacter === 2){
             this.load.spritesheet('player', 'assets/Sprites_player_f.png', { 
-                frameWidth: 66.7, 
-                frameHeight: 100 
+                frameWidth: 67, 
+                frameHeight: 100,
+                spacing: 0,
             });
         }
         else console.log("Errore nel caricamento del chosenCharacter"); 
         
         this.load.image('sky', 'assets/sky.png');
         this.load.image('ground', 'assets/Sprites_ground.png');
+        this.load.image('flower', 'assets/Sprites_flowers.png');
+        this.load.image('grass', 'assets/Sprites_grass.png');
         this.load.image('deepGround', 'assets/Sprites_deep-ground.png');
         this.load.image('box', 'assets/Sprites_box.png');
         this.load.spritesheet('boar', 'assets/Sprites_boar.png', {
