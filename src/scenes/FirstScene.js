@@ -13,7 +13,7 @@ class FirstScene extends Phaser.Scene {
         if (this.screenHeight > this.screenWidth) {
             this.mapHeight = this.mapHeight * 0.75;
         }
-        this.personalScale = this.mapHeight/1300;
+        this.personalScale = this.mapHeight/1200;
         this.margin = this.personalScale * 70;
         this.physics.world.setBounds(0, 0, this.mapWidth, this.mapHeight); // Espande la larghezza del mondo
         this.cameras.main.setBounds(0, 0, this.mapWidth, this.mapHeight);
@@ -393,7 +393,7 @@ class FirstScene extends Phaser.Scene {
         }
 
         if ((this.cursors.up.isDown || this.spaceKey.isDown || this.isJumping) && this.player.body.touching.down) {
-            this.player.setVelocityY(-1200 * this.personalScale);
+            this.player.setVelocityY(-1000 * this.personalScale);
             this.jumpSound.play();
             this.player.anims.play('jump');
         }
