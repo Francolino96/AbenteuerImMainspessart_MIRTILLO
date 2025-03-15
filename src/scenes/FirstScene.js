@@ -13,7 +13,7 @@ class FirstScene extends Phaser.Scene {
         if (this.screenHeight > this.screenWidth) {
             this.mapHeight = this.mapHeight * 0.75;
         }
-        this.personalScale = this.mapHeight/1100;
+        this.personalScale = this.mapHeight/1500;
         this.scaledWidth = this.mapWidth/6000;
         this.margin = this.personalScale * 70;
         this.physics.world.setBounds(0, 0, this.mapWidth, this.mapHeight); // Espande la larghezza del mondo
@@ -101,7 +101,7 @@ class FirstScene extends Phaser.Scene {
                 .refreshBody();
         }
 
-        for (let i = 0; i < 10; i++) {
+        for (let i = 0; i < 3; i++) {
             this.platforms.create(2200*this.personalScale + boxWidth * i, lev1PlatformHeight, 'box')
                 .setScale(this.personalScale)
                 .refreshBody();
