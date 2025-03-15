@@ -13,8 +13,7 @@ class FirstScene extends Phaser.Scene {
         if (this.screenHeight > this.screenWidth) {
             this.mapHeight = this.mapHeight * 0.75;
         }
-        this.personalScale = this.mapHeight/1500;
-        this.scaledWidth = this.mapWidth/6000;
+        this.personalScale = this.mapHeight/1300;
         this.margin = this.personalScale * 70;
         this.physics.world.setBounds(0, 0, this.mapWidth, this.mapHeight); // Espande la larghezza del mondo
         this.cameras.main.setBounds(0, 0, this.mapWidth, this.mapHeight);
