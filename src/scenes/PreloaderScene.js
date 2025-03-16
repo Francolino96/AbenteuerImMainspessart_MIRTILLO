@@ -96,6 +96,8 @@ class PreloaderScene extends Phaser.Scene {
         this.load.image('sugar', 'assets/Sprites_sugar_cube.png');
         this.load.image('blueberry', 'assets/Sprites_blueberry.png');
         this.load.image('acorn', 'assets/Sprites_acorn.png');
+        this.load.image('acorn_expl_1', 'assets/Sprites_acorn_explosion_1.png');
+        this.load.image('acorn_expl_2', 'assets/Sprites_acorn_explosion_2.png');
         
         // bottoni movimento
         this.load.image('buttonRight', 'assets/Sprites_right-arrow-button.png');

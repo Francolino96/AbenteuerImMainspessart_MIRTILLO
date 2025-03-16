@@ -117,6 +117,16 @@ class FirstScene extends Phaser.Scene {
         this.player.setCollideWorldBounds(true);
 
         this.anims.create({
+            key: 'explode',
+            frames: [
+                { key: 'acorn_expl_1' },
+                { key: 'acorn_expl_2' }
+            ],
+            frameRate: 20,
+            hideOnComplete: true
+        });
+
+        this.anims.create({
             key: 'left',
             frames: this.anims.generateFrameNumbers('player', { start: 0, end: 3 }),
             frameRate: 10,
@@ -185,14 +195,31 @@ class FirstScene extends Phaser.Scene {
 
         this.acorns = this.physics.add.group();
 
-        for (let i = 0; i < 2; i++){
+        for (let i = 0; i < 4; i++){
             var x = Phaser.Math.Between(100, this.mapWidth-100*this.personalScale);
             var acorn = this.acorns.create(x, 16, 'acorn');
             acorn.setBounce(1);
             acorn.setScale(this.personalScale).refreshBody();
             acorn.setCollideWorldBounds(true);
-            acorn.setVelocity(Phaser.Math.Between(-200*this.personalScale, 200*this.personalScale), 20*this.personalScale);
             acorn.allowGravity = false;
+            acorn.setSize(acorn.width * 0.70, acorn.height * 0.7 );
+
+            let velocityX;
+            do {
+                velocityX = Phaser.Math.Between(-200 * this.personalScale, 200 * this.personalScale);
+            } while (Math.abs(velocityX) <= 20); 
+
+            acorn.setVelocity(velocityX, 20 * this.personalScale);
+
+            acorn.setAngularVelocity(velocityX / 10); // Modifica il divisore per regolare la rotazione
+
+            // Eventuale modifica della rotazione in base alla collisione con altri oggetti
+            acorn.body.onWorldBounds = true;
+            acorn.body.world.on('worldbounds', (body) => {
+                if (body.gameObject === acorn) {
+                    acorn.setAngularVelocity(Phaser.Math.Between(-200, 200)); // Imposta una velocità angolare casuale al momento della collisione
+                }
+            });
         }
 
         for (let i = 0; i < 10; i++) {
@@ -364,12 +391,12 @@ class FirstScene extends Phaser.Scene {
 
     update() {
         if (this.gameOver || this.victory) return;
-        /*
+        
         if (!this.input.activePointer.isDown) {
             this.isMovingLeft = false;
             this.isMovingRight = false;
             this.isJumping = false;
-        }*/
+        }
 
         if (this.cursors.left.isDown || this.isMovingLeft) {
             this.player.setVelocityX(-500 * this.personalScale);
@@ -464,6 +491,7 @@ class FirstScene extends Phaser.Scene {
             this.takeDamage(player, enemy);
         }
     }
+
     takeDamage(player, enemy) {
         if (this.lives > 0 && !this.isInvincible) {
             this.lives--;
@@ -471,6 +499,10 @@ class FirstScene extends Phaser.Scene {
             this.player.setTint(0xffff00);
             this.cameras.main.shake(300, 0.005);
             this.isInvincible = true;
+
+            if (enemy.texture.key === 'acorn') { 
+                this.explode(enemy);
+            }
 
             this.time.delayedCall(1500, () => {
                 this.player.clearTint();
@@ -482,7 +514,15 @@ class FirstScene extends Phaser.Scene {
             }
         }
     }
+
+    explode(acorn) {
+        let explosion = this.add.sprite(acorn.x, acorn.y, 'explosion1');
+        explosion.setScale(this.personalScale);
+        explosion.play('explode');
     
+        explosion.rotation = acorn.rotation;
+        acorn.destroy();
+    }
 
     die() { 
         this.gameOver = true;
