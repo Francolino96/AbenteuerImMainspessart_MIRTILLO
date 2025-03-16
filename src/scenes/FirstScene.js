@@ -450,18 +450,13 @@ class FirstScene extends Phaser.Scene {
         }
     
         // Se il movimento è prevalentemente verso l'alto, attiva il salto
-        if (deltaY < -10*this.personalScale && this.player.body.touching.down) {
+        if (deltaY < -30*this.personalScale && this.player.body.touching.down) {
             console.log("deltaY: ", deltaY);
-            let jumpStrength = (Math.min(Math.abs(deltaY) * 20, 1000))*this.personalScale; // Normalizza il salto
-            console.log("jumpStrength: ", jumpStrength);
-            console.log("500*this.personalScale: ", 500*this.personalScale);
-            this.jumpVelocity = -Math.max(jumpStrength, 0*this.personalScale); // Imposta un salto minimo
-            console.log("jumpVelocity: ", this.jumpVelocity);
-            this.player.setVelocityY(this.jumpVelocity);
-            if(deltaY < -40){
-                this.jumpSound.play();
-                this.player.anims.play('jump');
-            }
+            let jumpVelocity = -(Math.min(Math.abs(deltaY) * 20, 1000))*this.personalScale; // Normalizza il salto
+            console.log("jumpVelocity: ", jumpVelocity);
+            this.player.setVelocityY(jumpVelocity);
+            this.jumpSound.play();
+            //this.player.anims.play('jump');
         }
     }    
     
