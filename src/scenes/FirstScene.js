@@ -441,11 +441,11 @@ class FirstScene extends Phaser.Scene {
         let speedFactor = Math.abs(deltaX) / 50; // Normalizza la velocità
         if (speedFactor > 1) speedFactor = 1; // Limita la velocità massima
     
-        if (deltaX < -30*this.personalScale) { // Movimento a sinistra
+        if (deltaX < -10*this.personalScale) { // Movimento a sinistra
             this.isMovingLeft = true;
             this.isMovingRight = false;
         } 
-        else if (deltaX > 30*this.personalScale) { // Movimento a destra
+        else if (deltaX > 10*this.personalScale) { // Movimento a destra
             this.isMovingRight = true;
             this.isMovingLeft = false;
         } 
@@ -455,7 +455,7 @@ class FirstScene extends Phaser.Scene {
         }
     
         // Se il movimento è prevalentemente verso l'alto, attiva il salto
-        if (deltaY < -20*this.personalScale && this.player.body.touching.down) {
+        if (deltaY < -30*this.personalScale && this.player.body.touching.down) {
             console.log("deltaY: ", deltaY);
             let jumpVelocity = -(Math.min(Math.abs(deltaY) * 20, 1000))*this.personalScale; // Normalizza il salto
             console.log("jumpVelocity: ", jumpVelocity);
