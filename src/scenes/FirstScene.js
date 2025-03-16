@@ -45,7 +45,7 @@ class FirstScene extends Phaser.Scene {
         this.jumpOverSound = this.sound.add('jumpOver', { loop: false, volume: 0.3 });
         this.popSound = this.sound.add('pop', {loop: false, volume: 0.5});
         this.boarSound = this.sound.add('boar', {loop: false, volume: 0.5});
-        this.music = this.sound.add('soundtrack', { loop: true, volume: 0.5 });
+        this.music = this.sound.add('soundtrack', { loop: true, volume: 0.1 });
         this.music.play();
         
         //this.add.image(this.mapWidth / 2, this.mapHeight / 2, 'sky').setDisplaySize(this.mapWidth, this.screenHeight);
@@ -386,7 +386,7 @@ class FirstScene extends Phaser.Scene {
             mute: 'volume_mute'
         };
         this.volumeLevels = {
-            high: 0.5,
+            high: 0.4,
             low: 0.1,
             mute: 0.0
         };
@@ -519,7 +519,7 @@ class FirstScene extends Phaser.Scene {
         } while (this.isPositionInGap(x, gapPercentages, this.mapWidth, gapWidth) || this.isPositionInGap(x + 50*this.personalScale, gapPercentages, this.mapWidth, gapWidth) || this.isPositionInGap(x - 50*this.personalScale, gapPercentages, this.mapWidth, gapWidth));
        
         if(this.screenHeight>this.screenWidth){
-            y = Phaser.Math.Between(this.mapHeight + boxWidth, this.screenHeight*0.93);
+            y = Phaser.Math.Between(this.mapHeight + boxWidth, this.screenHeight*0.90);
         }
         else{
             y = Phaser.Math.Between(this.mapHeight + boxWidth, this.screenHeight);
