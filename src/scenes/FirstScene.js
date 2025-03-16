@@ -13,6 +13,9 @@ class FirstScene extends Phaser.Scene {
         if (this.screenHeight > this.screenWidth) {
             this.mapHeight = this.mapHeight * 0.75;
         }
+        else {
+            this.mapHeight = this.mapHeight * 0.85;
+        }
         this.personalScale = this.mapHeight/1200;
         this.margin = this.personalScale * 70;
         this.physics.world.setBounds(0, 0, this.mapWidth, this.mapHeight); // Espande la larghezza del mondo
@@ -183,7 +186,7 @@ class FirstScene extends Phaser.Scene {
         this.acorns = this.physics.add.group();
 
         for (let i = 0; i < 2; i++){
-            var x = Phaser.Math.Between(this.mapWidth/3, this.mapWidth-100*this.personalScale);
+            var x = Phaser.Math.Between(100, this.mapWidth-100*this.personalScale);
             var acorn = this.acorns.create(x, 16, 'acorn');
             acorn.setBounce(1);
             acorn.setScale(this.personalScale).refreshBody();
@@ -280,72 +283,53 @@ class FirstScene extends Phaser.Scene {
         this.spaceKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
         this.cursors = this.input.keyboard.createCursorKeys();
         
-        if (this.screenHeight > this.screenWidth){
-            this.touchStartX = null;
-            this.touchStartY = null;
-            this.isDragging = false;
-
-            this.input.on('pointerdown', (pointer) => {
-                this.touchStartX = pointer.x;
-                this.touchStartY = pointer.y;
-                this.isDragging = true;
-            });
-
-            this.input.on('pointermove', (pointer) => {
-                if (this.isDragging) {
-                    this.handlePlayerMovement(pointer);
-                }
-            });
-
-            this.input.on('pointerup', () => {
-                this.stopPlayer();
-                this.isDragging = false;
-            });
-
-            /*
-            const buttonWidth = 1.3*101*this.personalScale;
-            let buttonSize = 1.3*this.personalScale;
-            let buttonY = this.screenHeight * 0.8;
-            let buttonLeft = this.add.image(this.screenWidth - 2.1*buttonWidth, buttonY, 'buttonLeft').setInteractive().setScrollFactor(0);
-            buttonLeft.setScale(buttonSize);
-
-            let buttonRight = this.add.image(this.screenWidth - buttonWidth, buttonY, 'buttonRight').setInteractive().setScrollFactor(0);
-            buttonRight.setScale(buttonSize);
-
-            let buttonUp = this.add.image(buttonWidth, buttonY, 'buttonUp').setInteractive().setScrollFactor(0);
-            buttonUp.setScale(buttonSize);
-
-            buttonLeft.on('pointerdown', () => {
-                console.log("sono nel bottonLeft.on(pointerdown)")
-                this.isMovingLeft = true;
-            });
-
-            buttonRight.on('pointerdown', () => {
-                console.log("sono nel bottonRight.on(pointerdown)")
-                this.isMovingRight = true;
-            });
-
-            buttonLeft.on('pointerup', () => {
-                console.log("sono nel bottonLeft.on(pointerup)")
-                this.isMovingLeft = false;
-            });
-
-            buttonRight.on('pointerup', () => {
-                console.log("sono nel bottonRight.on(pointerup)")
-                this.isMovingRight = false;
-            });
-
-            buttonUp.on('pointerdown', () => {
-                if (this.player.body.touching.down) {
-                    this.isJumping = true;
-                }
-            });
-
-            buttonUp.on('pointerup', () => {
-                this.isJumping = false;
-            })*/
+        const buttonWidth = 1.3*101*this.personalScale;
+        let buttonSize = 1.3*this.personalScale;
+        let buttonY = 0;
+        if(this.screenHeight > this.screenWidth){
+            buttonY = this.screenHeight * 0.8;
         }
+        else {
+            buttonY = this.screenHeight * 0.85;
+        }
+        let buttonLeft = this.add.image(this.screenWidth - 2.1*buttonWidth, buttonY, 'buttonLeft').setInteractive().setScrollFactor(0);
+        buttonLeft.setScale(buttonSize);
 
+        let buttonRight = this.add.image(this.screenWidth - buttonWidth, buttonY, 'buttonRight').setInteractive().setScrollFactor(0);
+        buttonRight.setScale(buttonSize);
+
+        let buttonUp = this.add.image(buttonWidth, buttonY, 'buttonUp').setInteractive().setScrollFactor(0);
+        buttonUp.setScale(buttonSize);
+
+        buttonLeft.on('pointerdown', () => {
+            console.log("sono nel bottonLeft.on(pointerdown)")
+            this.isMovingLeft = true;
+        });
+
+        buttonRight.on('pointerdown', () => {
+            console.log("sono nel bottonRight.on(pointerdown)")
+            this.isMovingRight = true;
+        });
+
+        buttonLeft.on('pointerup', () => {
+            console.log("sono nel bottonLeft.on(pointerup)")
+            this.isMovingLeft = false;
+        });
+
+        buttonRight.on('pointerup', () => {
+            console.log("sono nel bottonRight.on(pointerup)")
+            this.isMovingRight = false;
+        });
+
+        buttonUp.on('pointerdown', () => {
+            if (this.player.body.touching.down) {
+                this.isJumping = true;
+            }
+        });
+
+        buttonUp.on('pointerup', () => {
+            this.isJumping = false;
+        })
 
         //BOTTONE VOLUME
         this.volumeStates = ['mute', 'low', 'high'];
@@ -387,7 +371,7 @@ class FirstScene extends Phaser.Scene {
     update() {
         if (this.gameOver || this.victory) return;
 
-        if (!this.input.activePointer.isDown && !this.isDragging) {
+        if (!this.input.activePointer.isDown) {
             this.isMovingLeft = false;
             this.isMovingRight = false;
             this.isJumping = false;
@@ -415,8 +399,7 @@ class FirstScene extends Phaser.Scene {
                 this.player.anims.play('jump');
         }
 
-        if ((this.cursors.up.isDown || this.spaceKey.isDown) && this.player.body.touching.down) {
-            console.log("Sono dentro nella funzione")
+        if ((this.cursors.up.isDown || this.spaceKey.isDown || this.isJumping) && this.player.body.touching.down) {
             this.player.setVelocityY(-1000 * this.personalScale);
             this.jumpSound.play();
             this.player.anims.play('jump');
@@ -433,42 +416,6 @@ class FirstScene extends Phaser.Scene {
             this.boar.setFlipX(false);  // Torna all'orientamento normale
         }
     }
-
-    handlePlayerMovement(pointer) {
-        let deltaX = pointer.x - this.touchStartX; // Spostamento orizzontale
-        let deltaY = pointer.y - this.touchStartY; // Spostamento verticale
-    
-        let speedFactor = Math.abs(deltaX) / 50; // Normalizza la velocità
-        if (speedFactor > 1) speedFactor = 1; // Limita la velocità massima
-    
-        if (deltaX < -10*this.personalScale) { // Movimento a sinistra
-            this.isMovingLeft = true;
-            this.isMovingRight = false;
-        } 
-        else if (deltaX > 10*this.personalScale) { // Movimento a destra
-            this.isMovingRight = true;
-            this.isMovingLeft = false;
-        } 
-        else { // Nessun movimento orizzontale
-            this.isMovingLeft = false;
-            this.isMovingRight = false;
-        }
-    
-        // Se il movimento è prevalentemente verso l'alto, attiva il salto
-        if (deltaY < -30*this.personalScale && this.player.body.touching.down) {
-            console.log("deltaY: ", deltaY);
-            let jumpVelocity = -(Math.min(Math.abs(deltaY) * 20, 1000))*this.personalScale; // Normalizza il salto
-            console.log("jumpVelocity: ", jumpVelocity);
-            this.player.setVelocityY(jumpVelocity);
-            this.jumpSound.play();
-            //this.player.anims.play('jump');
-        }
-    }    
-    
-    stopPlayer() {
-        this.player.setVelocityX(0);
-    }
-    
 
     collectSugar(player, sugar) {
         this.collectSound.play();
