@@ -16,7 +16,7 @@ class FirstScene extends Phaser.Scene {
         else {
             this.mapHeight = this.mapHeight * 0.85;
         }
-        this.personalScale = this.mapHeight/1200;
+        this.personalScale = this.mapHeight/1100;
         this.margin = this.personalScale * 70;
         this.physics.world.setBounds(0, 0, this.mapWidth, this.mapHeight); // Espande la larghezza del mondo
         this.cameras.main.setBounds(0, 0, this.mapWidth, this.mapHeight);
@@ -112,7 +112,7 @@ class FirstScene extends Phaser.Scene {
         this.player = this.physics.add.sprite(100, 500, 'player');
         this.cameras.main.startFollow(this.player, true, 0.05, 0.05);
         this.player.setScale(this.personalScale * 1.3).refreshBody();
-        this.player.setSize(this.player.width * 0.75, this.player.height);
+        this.player.setSize(this.player.width * 0.70, this.player.height);
         this.player.setBounce(0.1);
         this.player.setCollideWorldBounds(true);
 
