@@ -183,7 +183,7 @@ class FirstScene extends Phaser.Scene {
         this.acorns = this.physics.add.group();
 
         for (let i = 0; i < 2; i++){
-            var x = Phaser.Math.Between(100, this.mapWidth-100*this.personalScale);
+            var x = Phaser.Math.Between(this.mapWidth/3, this.mapWidth-100*this.personalScale);
             var acorn = this.acorns.create(x, 16, 'acorn');
             acorn.setBounce(1);
             acorn.setScale(this.personalScale).refreshBody();
@@ -281,46 +281,21 @@ class FirstScene extends Phaser.Scene {
         this.cursors = this.input.keyboard.createCursorKeys();
         
         if (this.screenHeight > this.screenWidth){
+            this.touchStartX = null;
+            this.touchStartY = null;
+
             this.input.on('pointerdown', (pointer) => {
-                this.touchStartY = pointer.y; // Memorizziamo il punto iniziale del tocco
-                this.updatePlayerMovement(pointer);
+                this.touchStartX = pointer.x;
+                this.touchStartY = pointer.y;
             });
-            
+
             this.input.on('pointermove', (pointer) => {
-                this.updatePlayerMovement(pointer);
+                this.handlePlayerMovement(pointer);
             });
-            
+
             this.input.on('pointerup', () => {
-                this.isMovingLeft = false;
-                this.isMovingRight = false;
-                this.isJumping = false;
+                this.stopPlayer();
             });
-            
-            // Funzione per aggiornare il movimento del player
-            this.updatePlayerMovement = (pointer) => {
-                let centerX = this.screenWidth / 2; // Centro dello schermo
-            
-                let distanceX = pointer.x - centerX; // Distanza dal centro
-                let speedFactor = Math.abs(distanceX) / (centerX * 0.8); // Fattore di velocità (normalizzato)
-            
-                if (speedFactor > 1) speedFactor = 1; // Limitiamo la velocità massima
-            
-                if (pointer.x < centerX) {
-                    this.isMovingLeft = true;
-                    this.isMovingRight = false;
-                    this.player.setVelocityX(-200 * speedFactor * this.personalScale);
-                } else {
-                    this.isMovingRight = true;
-                    this.isMovingLeft = false;
-                    this.player.setVelocityX(200 * speedFactor * this.personalScale);
-                }
-            
-                // Se il dito si è spostato verso l'alto abbastanza, il personaggio salta
-                if (this.touchStartY - pointer.y > 50 && this.player.body.touching.down) {
-                    this.isJumping = true;
-                    this.player.setVelocityY(-1000 * this.personalScale);
-                }
-            };
 
             /*
             const buttonWidth = 1.3*101*this.personalScale;
@@ -435,7 +410,8 @@ class FirstScene extends Phaser.Scene {
                 this.player.anims.play('jump');
         }
 
-        if ((this.cursors.up.isDown || this.spaceKey.isDown || this.isJumping) && this.player.body.touching.down) {
+        if ((this.cursors.up.isDown || this.spaceKey.isDown) && this.player.body.touching.down) {
+            console.log("Sono dentro nella funzione")
             this.player.setVelocityY(-1000 * this.personalScale);
             this.jumpSound.play();
             this.player.anims.play('jump');
@@ -452,6 +428,47 @@ class FirstScene extends Phaser.Scene {
             this.boar.setFlipX(false);  // Torna all'orientamento normale
         }
     }
+
+    handlePlayerMovement(pointer) {
+        let deltaX = pointer.x - this.touchStartX; // Spostamento orizzontale
+        let deltaY = pointer.y - this.touchStartY; // Spostamento verticale
+    
+        let speedFactor = Math.abs(deltaX) / 50; // Normalizza la velocità
+        if (speedFactor > 1) speedFactor = 1; // Limita la velocità massima
+    
+        if (deltaX < -30*this.personalScale) { // Movimento a sinistra
+            this.isMovingLeft = true;
+            this.isMovingRight = false;
+        } 
+        else if (deltaX > 30*this.personalScale) { // Movimento a destra
+            this.isMovingRight = true;
+            this.isMovingLeft = false;
+        } 
+        else { // Nessun movimento orizzontale
+            this.isMovingLeft = false;
+            this.isMovingRight = false;
+        }
+    
+        // Se il movimento è prevalentemente verso l'alto, attiva il salto
+        if (deltaY < -10*this.personalScale && this.player.body.touching.down) {
+            console.log("deltaY: ", deltaY);
+            let jumpStrength = (Math.min(Math.abs(deltaY) * 20, 1000))*this.personalScale; // Normalizza il salto
+            console.log("jumpStrength: ", jumpStrength);
+            console.log("500*this.personalScale: ", 500*this.personalScale);
+            this.jumpVelocity = -Math.max(jumpStrength, 0*this.personalScale); // Imposta un salto minimo
+            console.log("jumpVelocity: ", this.jumpVelocity);
+            this.player.setVelocityY(this.jumpVelocity);
+            if(deltaY < -40){
+                this.jumpSound.play();
+                this.player.anims.play('jump');
+            }
+        }
+    }    
+    
+    stopPlayer() {
+        this.player.setVelocityX(0);
+    }
+    
 
     collectSugar(player, sugar) {
         this.collectSound.play();
