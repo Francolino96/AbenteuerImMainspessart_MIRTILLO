@@ -269,7 +269,7 @@ class FirstScene extends Phaser.Scene {
         this.mushroom.body.setImmovable(true);
 
         // cinghiale 
-        this.boar = this.physics.add.sprite(500*this.personalScale, this.mapHeight - boxWidth-1, 'boar').setOrigin(0.5,1); // 500 è un'altezza iniziale da regolare
+        this.boar = this.physics.add.sprite(500*this.personalScale, this.mapHeight - boxWidth-3, 'boar').setOrigin(0.5,1); // 500 è un'altezza iniziale da regolare
         this.boar.setScale(this.personalScale * 1.2).refreshBody();
         this.boar.setCollideWorldBounds(false);  // Non vogliamo che si fermi ai limiti del mondo
         this.boar.body.setAllowGravity(false);
