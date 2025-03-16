@@ -14,9 +14,9 @@ class CharacterSelectionScene extends Phaser.Scene {
         this.personalScale = (this.scale.height + this.scale.width)/2200;
         this.selectedCharacter = 1; // Default
 
-        this.selectionBox = this.add.rectangle(this.scale.width / 2 - 100*this.personalScale, this.scale.height / 2, 200*this.personalScale, 250*this.personalScale, 0xffff88).setStrokeStyle(2, 0xffff88).setOrigin(0.5);
-        this.char1 = this.add.image(this.scale.width / 2 - 100*this.personalScale, this.scale.height / 2, 'player1').setInteractive().setScale(1.8*this.personalScale).setOrigin(0.5);
-        this.char2 = this.add.image(this.scale.width / 2 + 100*this.personalScale, this.scale.height / 2, 'player2').setInteractive().setScale(1.8*this.personalScale).setOrigin(0.5);
+        this.selectionBox = this.add.rectangle(this.scale.width / 2 - 150*this.personalScale, this.scale.height / 2, 200*this.personalScale, 250*this.personalScale, 0xffff88).setStrokeStyle(2, 0xffff88).setOrigin(0.5);
+        this.char1 = this.add.image(this.scale.width / 2 - 150*this.personalScale, this.scale.height / 2, 'player1').setInteractive().setScale(1.8*this.personalScale).setOrigin(0.5);
+        this.char2 = this.add.image(this.scale.width / 2 + 150*this.personalScale, this.scale.height / 2, 'player2').setInteractive().setScale(1.8*this.personalScale).setOrigin(0.5);
 
         // Cliccando su un personaggio, lo seleziona
         this.char1.on('pointerdown', () => this.selectCharacter(1, this.scale.width / 2 - 100*this.personalScale));
@@ -53,10 +53,10 @@ class CharacterSelectionScene extends Phaser.Scene {
     changeCharacter(direction) {
         if (direction === -1) {
             // Se si preme sinistra, seleziona il primo personaggio
-            this.selectCharacter(1, this.scale.width / 2 - 100*this.personalScale);
+            this.selectCharacter(1, this.scale.width / 2 - 150*this.personalScale);
         } else if (direction === 1) {
             // Se si preme destra, seleziona il secondo personaggio
-            this.selectCharacter(2, this.scale.width / 2 + 100*this.personalScale);
+            this.selectCharacter(2, this.scale.width / 2 + 150*this.personalScale);
         }
     }
 

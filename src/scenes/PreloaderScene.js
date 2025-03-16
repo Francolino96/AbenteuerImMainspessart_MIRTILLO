@@ -8,15 +8,13 @@ class PreloaderScene extends Phaser.Scene {
     }
 
     preload() {
-        // Imposta lo sfondo nero
+
         this.cameras.main.setBackgroundColor('#000');
         this.personalScale = (this.scale.height + this.scale.width)/2200;
 
-        // Centro dello schermo
         let centerX = this.scale.width / 2;
         let centerY = this.scale.height / 2;
 
-        // Crea un Graphics object che servirà per disegnare il rettangolo rosso (la "fill bar")
         let progressBar = this.add.graphics();
 
         // Registra l'evento "progress" per aggiornare il riempimento della barra
@@ -25,10 +23,10 @@ class PreloaderScene extends Phaser.Scene {
             progressBar.fillStyle(0xff0000, 1);
 
             // Calcola le dimensioni e la posizione della "fill bar"
-            let fillWidth = 2 * 290 * value * this.personalScale; // 301 è la larghezza totale del frame
-            let fillHeight = 90 * this.personalScale;        // Altezza totale
-            let frameX = centerX - 290*this.personalScale;
-            let frameY = centerY - (90/2)*this.personalScale;
+            let fillWidth = 2 * 290 * value * this.personalScale * 0.8; // 301 è la larghezza totale del frame
+            let fillHeight = 90 * this.personalScale * 0.8;        // Altezza totale
+            let frameX = centerX - 290*this.personalScale * 0.8;
+            let frameY = centerY - (90/2)*this.personalScale * 0.8;
             
             // Disegna il rettangolo rosso all'interno del frame
             progressBar.fillRect(frameX, frameY, fillWidth, fillHeight);
@@ -36,7 +34,7 @@ class PreloaderScene extends Phaser.Scene {
 
         // Mostra il frame della barra di caricamento
         // Assicurati che l'immagine 'chargingBarFrame' sia già stata caricata (es. in una BootScene)
-        this.add.image(centerX, centerY, 'chargingBarFrame').setOrigin(0.5).setScale(this.personalScale);
+        this.add.image(centerX, centerY, 'chargingBarFrame').setOrigin(0.5).setScale(this.personalScale * 0.8);
 
         this.loadingText = this.add.text(
             this.scale.width / 2 - (10*30*this.personalScale)/2,

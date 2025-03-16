@@ -6,7 +6,7 @@ class FirstScene extends Phaser.Scene {
 
     create() {
         this.scale.refresh();
-        this.mapWidth = this.scale.width * 3;
+        this.mapWidth = this.scale.width * 5;
         this.mapHeight = this.scale.height;
         this.screenHeight = this.scale.height;
         this.screenWidth = this.scale.width;
@@ -285,13 +285,7 @@ class FirstScene extends Phaser.Scene {
         
         const buttonWidth = 1.3*101*this.personalScale;
         let buttonSize = 1.3*this.personalScale;
-        let buttonY = 0;
-        if(this.screenHeight > this.screenWidth){
-            buttonY = this.screenHeight * 0.8;
-        }
-        else {
-            buttonY = this.screenHeight * 0.85;
-        }
+        let buttonY = this.screenHeight > this.screenWidth ? this.screenHeight * 0.8 : this.screenHeight * 0.85;
         let buttonLeft = this.add.image(this.screenWidth - 2.1*buttonWidth, buttonY, 'buttonLeft').setInteractive().setScrollFactor(0);
         buttonLeft.setScale(buttonSize);
 
@@ -400,6 +394,12 @@ class FirstScene extends Phaser.Scene {
         }
 
         if ((this.cursors.up.isDown || this.spaceKey.isDown || this.isJumping) && this.player.body.touching.down) {
+            if(this.isMovingLeft){
+                this.player.setVelocityX(-500 * this.personalScale);
+            }
+            else if (this.isMovingRight){
+                this.player.setVelocityX(500 * this.personalScale);
+            }
             this.player.setVelocityY(-1000 * this.personalScale);
             this.jumpSound.play();
             this.player.anims.play('jump');

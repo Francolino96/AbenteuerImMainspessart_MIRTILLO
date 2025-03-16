@@ -18,14 +18,14 @@ class TitleScene extends Phaser.Scene {
         this.background.setDisplaySize(this.scale.width, this.scale.height);
         const title = this.add.text(this.scale.width / 2, this.scale.height * 0.4, 'Abenteuer', { 
             fontFamily: 'PressStart2P', 
-            fontSize: 50*this.personalScale, 
+            fontSize: 60*this.personalScale, 
             fill: '#fff',
             align: 'center'
         }).setOrigin(0.5);
         
         this.add.text(this.scale.width / 2, title.y + title.height, 'im Main-Spessart', { 
             fontFamily: 'PressStart2P', 
-            fontSize: 28.3*this.personalScale, 
+            fontSize: 34*this.personalScale, 
             fill: '#fff',
             align: 'center'
         }).setOrigin(0.5);
