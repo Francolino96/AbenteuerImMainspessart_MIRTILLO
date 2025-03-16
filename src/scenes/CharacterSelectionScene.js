@@ -33,7 +33,7 @@ class CharacterSelectionScene extends Phaser.Scene {
         // Pulsante per confermare
         this.startButton = this.add.text(this.scale.width / 2, this.selectionBox.y + this.selectionBox.height/2 + 100*this.personalScale, 'START', { 
             fontFamily: 'PressStart2P',
-            fontSize: 25*this.personalScale, 
+            fontSize: 30*this.personalScale, 
             fill: '#fff', 
             backgroundColor: '#000' 
         }).setOrigin(0.5);
