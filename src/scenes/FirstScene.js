@@ -283,18 +283,23 @@ class FirstScene extends Phaser.Scene {
         if (this.screenHeight > this.screenWidth){
             this.touchStartX = null;
             this.touchStartY = null;
+            this.isDragging = false;
 
             this.input.on('pointerdown', (pointer) => {
                 this.touchStartX = pointer.x;
                 this.touchStartY = pointer.y;
+                this.isDragging = true;
             });
 
             this.input.on('pointermove', (pointer) => {
-                this.handlePlayerMovement(pointer);
+                if (this.isDragging) {
+                    this.handlePlayerMovement(pointer);
+                }
             });
 
             this.input.on('pointerup', () => {
                 this.stopPlayer();
+                this.isDragging = false;
             });
 
             /*
@@ -382,7 +387,7 @@ class FirstScene extends Phaser.Scene {
     update() {
         if (this.gameOver || this.victory) return;
 
-        if (!this.input.activePointer.isDown) {
+        if (!this.input.activePointer.isDown && !this.isDragging) {
             this.isMovingLeft = false;
             this.isMovingRight = false;
             this.isJumping = false;
@@ -450,7 +455,7 @@ class FirstScene extends Phaser.Scene {
         }
     
         // Se il movimento è prevalentemente verso l'alto, attiva il salto
-        if (deltaY < -30*this.personalScale && this.player.body.touching.down) {
+        if (deltaY < -20*this.personalScale && this.player.body.touching.down) {
             console.log("deltaY: ", deltaY);
             let jumpVelocity = -(Math.min(Math.abs(deltaY) * 20, 1000))*this.personalScale; // Normalizza il salto
             console.log("jumpVelocity: ", jumpVelocity);
