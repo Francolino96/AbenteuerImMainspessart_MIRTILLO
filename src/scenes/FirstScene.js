@@ -364,12 +364,12 @@ class FirstScene extends Phaser.Scene {
 
     update() {
         if (this.gameOver || this.victory) return;
-
+        /*
         if (!this.input.activePointer.isDown) {
             this.isMovingLeft = false;
             this.isMovingRight = false;
             this.isJumping = false;
-        }
+        }*/
 
         if (this.cursors.left.isDown || this.isMovingLeft) {
             this.player.setVelocityX(-500 * this.personalScale);
@@ -395,9 +395,11 @@ class FirstScene extends Phaser.Scene {
 
         if ((this.cursors.up.isDown || this.spaceKey.isDown || this.isJumping) && this.player.body.touching.down) {
             if(this.isMovingLeft){
+                console.log("sono qua ");
                 this.player.setVelocityX(-500 * this.personalScale);
             }
             else if (this.isMovingRight){
+                console.log("Sono qui");
                 this.player.setVelocityX(500 * this.personalScale);
             }
             this.player.setVelocityY(-1000 * this.personalScale);
