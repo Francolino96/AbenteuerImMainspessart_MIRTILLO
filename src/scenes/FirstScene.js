@@ -213,6 +213,7 @@ class FirstScene extends Phaser.Scene {
         this.mushroom = this.physics.add.sprite(this.mapWidth*0.8, this.mapHeight - boxWidth, 'mushroom').setOrigin(0.5,1);
         this.mushroom.setScale(this.personalScale * 1.2).refreshBody();
         this.mushroom.body.setAllowGravity(false);
+        this.mushroom.body.setImmovable(true);
 
         // cinghiale 
         this.boar = this.physics.add.sprite(500*this.personalScale, this.mapHeight - boxWidth-1, 'boar').setOrigin(0.5,1); // 500 è un'altezza iniziale da regolare
@@ -280,6 +281,48 @@ class FirstScene extends Phaser.Scene {
         this.cursors = this.input.keyboard.createCursorKeys();
         
         if (this.screenHeight > this.screenWidth){
+            this.input.on('pointerdown', (pointer) => {
+                this.touchStartY = pointer.y; // Memorizziamo il punto iniziale del tocco
+                this.updatePlayerMovement(pointer);
+            });
+            
+            this.input.on('pointermove', (pointer) => {
+                this.updatePlayerMovement(pointer);
+            });
+            
+            this.input.on('pointerup', () => {
+                this.isMovingLeft = false;
+                this.isMovingRight = false;
+                this.isJumping = false;
+            });
+            
+            // Funzione per aggiornare il movimento del player
+            this.updatePlayerMovement = (pointer) => {
+                let centerX = this.screenWidth / 2; // Centro dello schermo
+            
+                let distanceX = pointer.x - centerX; // Distanza dal centro
+                let speedFactor = Math.abs(distanceX) / (centerX * 0.8); // Fattore di velocità (normalizzato)
+            
+                if (speedFactor > 1) speedFactor = 1; // Limitiamo la velocità massima
+            
+                if (pointer.x < centerX) {
+                    this.isMovingLeft = true;
+                    this.isMovingRight = false;
+                    this.player.setVelocityX(-200 * speedFactor * this.personalScale);
+                } else {
+                    this.isMovingRight = true;
+                    this.isMovingLeft = false;
+                    this.player.setVelocityX(200 * speedFactor * this.personalScale);
+                }
+            
+                // Se il dito si è spostato verso l'alto abbastanza, il personaggio salta
+                if (this.touchStartY - pointer.y > 50 && this.player.body.touching.down) {
+                    this.isJumping = true;
+                    this.player.setVelocityY(-1000 * this.personalScale);
+                }
+            };
+
+            /*
             const buttonWidth = 1.3*101*this.personalScale;
             let buttonSize = 1.3*this.personalScale;
             let buttonY = this.screenHeight * 0.8;
@@ -320,7 +363,7 @@ class FirstScene extends Phaser.Scene {
 
             buttonUp.on('pointerup', () => {
                 this.isJumping = false;
-            })
+            })*/
         }
 
 

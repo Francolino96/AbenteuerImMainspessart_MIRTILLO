@@ -74,9 +74,10 @@ class PreloaderScene extends Phaser.Scene {
         }
         else if (this.chosenCharacter === 2){
             this.load.spritesheet('player', 'assets/Sprites_player_f.png', { 
-                frameWidth: 67, 
-                frameHeight: 100,
-                spacing: 0,
+                frameWidth: 59.86, 
+                frameHeight: 92,
+                margin: 1,
+                spacing: 6.71,
             });
         }
         else console.log("Errore nel caricamento del chosenCharacter"); 
