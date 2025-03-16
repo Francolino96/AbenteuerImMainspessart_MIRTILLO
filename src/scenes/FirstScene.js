@@ -280,8 +280,8 @@ class FirstScene extends Phaser.Scene {
         this.cursors = this.input.keyboard.createCursorKeys();
         
         if (this.screenHeight > this.screenWidth){
-            const buttonWidth = 101*this.personalScale;
-            let buttonSize = this.personalScale;
+            const buttonWidth = 1.3*101*this.personalScale;
+            let buttonSize = 1.3*this.personalScale;
             let buttonY = this.screenHeight * 0.8;
             let buttonLeft = this.add.image(this.screenWidth - 2.1*buttonWidth, buttonY, 'buttonLeft').setInteractive().setScrollFactor(0);
             buttonLeft.setScale(buttonSize);

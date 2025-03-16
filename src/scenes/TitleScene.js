@@ -32,7 +32,7 @@ class TitleScene extends Phaser.Scene {
 
         let startButton = this.add.text(this.scale.width / 2, this.scale.height * 0.55, 'START', { 
             fontFamily: 'PressStart2P', 
-            fontSize: 25*this.personalScale, 
+            fontSize: 30*this.personalScale, 
             fill: '#0f0' 
         }).setOrigin(0.5).setInteractive();
 

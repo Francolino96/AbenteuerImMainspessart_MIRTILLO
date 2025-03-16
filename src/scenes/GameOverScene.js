@@ -10,14 +10,14 @@ class GameOverScene extends Phaser.Scene {
 
         this.add.text(this.scale.width / 2, this.scale.height * 0.45, 'Game Over!', { 
             fontFamily: 'PressStart2P', 
-            fontSize: 35*this.personalScale, 
+            fontSize: 50*this.personalScale, 
             fill: '#f00',
             align: 'center'
         }).setOrigin(0.5);
 
         let replayButton = this.add.text(this.scale.width / 2, this.scale.height * 0.55, 'PLAY AGAIN', { 
             fontFamily: 'PressStart2P', 
-            fontSize: 25*this.personalScale, 
+            fontSize: 30*this.personalScale, 
             fill: '#fff' 
         }).setOrigin(0.5).setInteractive();
 
