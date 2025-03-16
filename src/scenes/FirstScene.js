@@ -269,7 +269,7 @@ class FirstScene extends Phaser.Scene {
         this.mushroom.body.setImmovable(true);
 
         // cinghiale 
-        this.boar = this.physics.add.sprite(500*this.personalScale, this.mapHeight - boxWidth-3, 'boar').setOrigin(0.5,1); // 500 è un'altezza iniziale da regolare
+        this.boar = this.physics.add.sprite(500*this.personalScale, this.mapHeight - boxWidth-5, 'boar').setOrigin(0.5,1); // 500 è un'altezza iniziale da regolare
         this.boar.setScale(this.personalScale * 1.2).refreshBody();
         this.boar.setCollideWorldBounds(false);  // Non vogliamo che si fermi ai limiti del mondo
         this.boar.body.setAllowGravity(false);
@@ -517,7 +517,13 @@ class FirstScene extends Phaser.Scene {
         do {
             x = Phaser.Math.Between(0, this.mapWidth);
         } while (this.isPositionInGap(x, gapPercentages, this.mapWidth, gapWidth) || this.isPositionInGap(x + 50*this.personalScale, gapPercentages, this.mapWidth, gapWidth) || this.isPositionInGap(x - 50*this.personalScale, gapPercentages, this.mapWidth, gapWidth));
-        y = Phaser.Math.Between(this.mapHeight + boxWidth, this.screenHeight);
+       
+        if(this.screenHeight>this.screenWidth){
+            y = Phaser.Math.Between(this.mapHeight + boxWidth, this.screenHeight*0.93);
+        }
+        else{
+            y = Phaser.Math.Between(this.mapHeight + boxWidth, this.screenHeight);
+        }
         skull = this.add.image(x, y, texture)
             .setOrigin(0.5, 1)
             .setScale(this.personalScale);
