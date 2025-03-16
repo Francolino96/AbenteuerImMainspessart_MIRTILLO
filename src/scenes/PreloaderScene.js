@@ -86,6 +86,11 @@ class PreloaderScene extends Phaser.Scene {
         this.load.image('grass', 'assets/Sprites_grass.png');
         this.load.image('deepGround', 'assets/Sprites_deep-ground.png');
         this.load.image('box', 'assets/Sprites_box.png');
+        this.load.image('skull_1', 'assets/Sprites_skeleton_1.png');
+        this.load.image('skull_2', 'assets/Sprites_skeleton_2.png');
+        this.load.image('skull_3', 'assets/Sprites_skeleton_3.png');
+        this.load.image('sunflowers', 'assets/Sprites_sunflowers.png');
+        this.load.image('direction_board', 'assets/Sprites_direction_board.png');
         this.load.spritesheet('boar', 'assets/Sprites_boar.png', {
             frameWidth: 133,  // Larghezza di ogni frame
             frameHeight: 101  // Altezza di ogni frame
@@ -108,7 +113,9 @@ class PreloaderScene extends Phaser.Scene {
         this.load.audio('soundtrack', 'sounds/soundtrack.mp3');
         this.load.audio('jump', 'sounds/jump.mp3');
         this.load.audio('collect', 'sounds/coin.mp3');
-        this.load.audio('gameStart', 'sounds/gameStart.mp3');
+        this.load.audio('boar', 'sounds/boar.mp3');
+        this.load.audio('pop', 'sounds/pop.mp3');
+        this.load.audio('jumpOver', 'sounds/jumpOver.mp3');
         this.load.audio('gameOver', 'sounds/gameOver.mp3');
 
         // bottoni volume

@@ -6,7 +6,7 @@ class FirstScene extends Phaser.Scene {
 
     create() {
         this.scale.refresh();
-        this.mapWidth = this.scale.width * 5;
+        this.mapWidth = this.scale.height * 8;
         this.mapHeight = this.scale.height;
         this.screenHeight = this.scale.height;
         this.screenWidth = this.scale.width;
@@ -18,7 +18,7 @@ class FirstScene extends Phaser.Scene {
         }
         this.personalScale = this.mapHeight/1100;
         this.margin = this.personalScale * 70;
-        this.physics.world.setBounds(0, 0, this.mapWidth, this.mapHeight); // Espande la larghezza del mondo
+        this.physics.world.setBounds(0, 0, this.mapWidth, this.screenHeight); // Espande la larghezza del mondo
         this.cameras.main.setBounds(0, 0, this.mapWidth, this.mapHeight);
         this.cameras.main.fadeIn(800, 0, 0, 0); // 1000ms di transizione dal nero alla scena
         this.lives = 3;
@@ -26,8 +26,8 @@ class FirstScene extends Phaser.Scene {
         this.strawberries;
         this.sugar;
         this.sugarCollected = 0;
-        this.strawberriesCollected = 0;
-        this.blueberriesCollected = 0;
+        this.strawberryCollected = 0;
+        this.blueberryCollected = 0;
         this.acorns;
         this.platforms;
         this.cursors;
@@ -42,10 +42,37 @@ class FirstScene extends Phaser.Scene {
         this.collectSound = this.sound.add('collect', { loop: false, volume: 0.08 });
         this.gameOverSound = this.sound.add('gameOver', { loop: false, volume: 0.3 });  
         this.jumpSound = this.sound.add('jump', { loop: false, volume: 0.3 });
+        this.jumpOverSound = this.sound.add('jumpOver', { loop: false, volume: 0.3 });
+        this.popSound = this.sound.add('pop', {loop: false, volume: 0.5});
+        this.boarSound = this.sound.add('boar', {loop: false, volume: 0.5});
         this.music = this.sound.add('soundtrack', { loop: true, volume: 0.5 });
         this.music.play();
         
-        this.add.image(this.mapWidth / 2, this.mapHeight / 2, 'sky').setDisplaySize(this.mapWidth, this.mapHeight);
+        //this.add.image(this.mapWidth / 2, this.mapHeight / 2, 'sky').setDisplaySize(this.mapWidth, this.screenHeight);
+        let bgSource = this.textures.get('sky').getSourceImage();
+        let originalWidth = bgSource.width;
+        let originalHeight = bgSource.height;
+
+        // Imposta l'altezza desiderata (screenHeight + 10)
+        let desiredHeight = this.screenHeight + 10;
+
+        // Calcola il fattore di scala per mantenere le proporzioni
+        let scaleFactor = desiredHeight / originalHeight;
+
+        // La larghezza di una singola tile dopo la scala
+        let tileWidth = originalWidth * scaleFactor;
+
+        // Crea un tileSprite che copre l'intera larghezza della mappa e ha l'altezza desiderata
+        this.sky = this.add.tileSprite(
+            this.mapWidth / 2,       // posizione x: centro della mappa
+            this.screenHeight / 2,   // posizione y: centro dello schermo
+            this.mapWidth,           // larghezza del tileSprite = mapWidth (l'immagine verrà ripetuta orizzontalmente)
+            desiredHeight,           // altezza fissata a screenHeight+10
+            'sky'
+        );
+
+        // Imposta il tileScale in modo che la texture abbia le dimensioni corrette
+        this.sky.setTileScale(scaleFactor, scaleFactor);
 
         console.log('screenWidth: ' + this.screenWidth);
         console.log('screenHeight: ' + this.screenHeight);
@@ -53,17 +80,33 @@ class FirstScene extends Phaser.Scene {
         console.log('mapHeight: ' + this.mapHeight);
 
         this.platforms = this.physics.add.staticGroup();
-        let platformWidth = 99 * this.personalScale;
+        const platformWidth = 99 * this.personalScale;
+        const gapPercentages = [0.2, 0.5, 0.8];
+        const gapWidth = 500*this.personalScale;
         
-        let numPlatforms = Math.ceil(this.mapWidth / platformWidth);
+        const numPlatforms = Math.ceil(this.mapWidth / platformWidth);
         for (let i = 0; i < numPlatforms; i++) {
-            this.platforms.create(i * platformWidth + platformWidth / 2, this.mapHeight - platformWidth/2, 'ground').setScale(this.personalScale).refreshBody();
+            let platformX = i * platformWidth + platformWidth / 2;
+            let isInGap = this.isPositionInGap(platformX, gapPercentages, this.mapWidth, gapWidth);
+            if (!isInGap) {
+                this.platforms.create(platformX, this.mapHeight - platformWidth / 2, 'ground')
+                    .setScale(this.personalScale).refreshBody();
+            }
         }
 
-        let numRows = Math.ceil((this.screenHeight - (this.mapHeight - platformWidth / 2)) / platformWidth);
+        this.deepGrounds = this.physics.add.staticGroup();
+        const numRows = Math.ceil((this.screenHeight - (this.mapHeight - platformWidth / 2)) / platformWidth);
         for (let row = 1; row <= numRows; row++) {
             for (let i = 0; i < numPlatforms; i++) {
-                this.add.image(i * platformWidth + platformWidth / 2, this.mapHeight - platformWidth / 2 + row * platformWidth, 'deepGround').setScale(this.personalScale);
+                let platformX = i * platformWidth + platformWidth / 2;
+                let isInGap = this.isPositionInGap(platformX, gapPercentages, this.mapWidth, gapWidth);
+                if (!isInGap) {
+                    this.deepGrounds.create(
+                        platformX,
+                        this.mapHeight - platformWidth / 2 + row * platformWidth,
+                        'deepGround'
+                    ).setScale(this.personalScale).refreshBody();
+                }
             }
         }
         
@@ -72,7 +115,7 @@ class FirstScene extends Phaser.Scene {
         const lev3PlatformHeight = this.mapHeight - 800 * this.personalScale;
         const lev4PlatformHeight = this.mapHeight - 1000 * this.personalScale;
 
-        let boxWidth = 100*this.personalScale;
+        const boxWidth = 99*this.personalScale;
 
         for (let i = 0; i < 2; i++) {
             this.platforms.create(100*this.personalScale + boxWidth * i, lev3PlatformHeight, 'box')
@@ -108,7 +151,16 @@ class FirstScene extends Phaser.Scene {
                 .setScale(this.personalScale)
                 .refreshBody();
         }
-        
+
+        this.spawnDecor('flower', 0.004 * this.mapWidth, 0, this.mapWidth, gapPercentages, this.mapWidth, gapWidth, boxWidth);
+        this.spawnDecor('grass', 0.015 * this.mapWidth, 0, this.mapWidth, gapPercentages, this.mapWidth, gapWidth, boxWidth);
+        this.spawnDecor('direction_board', 1, this.mapWidth/2, this.mapWidt - 100*this.personalScale, gapPercentages, this.mapWidth, gapWidth, boxWidth);
+        this.spawnDecor('sunflowers', 10*this.personalScale, this.mapWidth*0.6, this.mapWidth*0.7, gapPercentages, this.mapWidth, gapWidth, boxWidth);
+        this.spawnSkull('skull_1', gapPercentages, gapWidth, boxWidth);
+        this.spawnSkull('skull_1', gapPercentages, gapWidth, boxWidth);
+        this.spawnSkull('skull_2', gapPercentages, gapWidth, boxWidth);
+        this.spawnSkull('skull_3', gapPercentages, gapWidth, boxWidth);
+
         this.player = this.physics.add.sprite(100, 500, 'player');
         this.cameras.main.startFollow(this.player, true, 0.05, 0.05);
         this.player.setScale(this.personalScale * 1.3).refreshBody();
@@ -151,50 +203,36 @@ class FirstScene extends Phaser.Scene {
             frameRate: 10,
             repeat: -1
         });
+        
+        this.strawberryNumber = 5;
+        this.strawberries = this.createIngredients(
+            'strawberry',           // key: nome della texture
+            this.strawberryNumber,  // numero totale di fragole
+            { x: 12, y: 0, stepX: 200 },  // setXY di default (può essere usato per posizionamenti iniziali se serve)
+            { min: 100, max: this.mapWidth - 100 },  // Intervallo casuale per x
+            { min: 50,  max: 300 }                     // Intervallo casuale per y
+        );
 
         this.blueberryNumber = 5;
-        this.blueberries = this.physics.add.group({
-            key: 'blueberry',
-            repeat: (this.blueberryNumber-1),
-            setXY: { x: 12, y: 0, stepX: 200 }
-        });
-        
-        this.blueberries.children.iterate((blueberry) => {
-            blueberry.x = Phaser.Math.Between(100, this.mapWidth - 100);
-            blueberry.y = Phaser.Math.Between(50, 300);
-            blueberry.setBounceY(Phaser.Math.FloatBetween(0.4, 0.8));
-            blueberry.setScale(this.personalScale*0.95).refreshBody();
-        });
+        this.blueberries = this.createIngredients(
+            'blueberry',           // key: nome della texture
+            this.blueberryNumber,  // numero totale di fragole
+            { x: 12, y: 0, stepX: 200 },  // setXY di default (può essere usato per posizionamenti iniziali se serve)
+            { min: 100, max: this.mapWidth - 100 },  // Intervallo casuale per x
+            { min: 50,  max: 300 }                     // Intervallo casuale per y
+        );
 
-        this.strawberryNumber = 5;
-        this.strawberries = this.physics.add.group({
-            key: 'strawberry',
-            repeat: (this.strawberryNumber-1),
-            setXY: { x: 12, y: 0, stepX: 200 }
-        });
-        
-        this.strawberries.children.iterate((strawberry) => {
-            strawberry.x = Phaser.Math.Between(100, this.mapWidth - 100);
-            strawberry.y = Phaser.Math.Between(50, 300);
-            strawberry.setBounceY(Phaser.Math.FloatBetween(0.4, 0.8));
-            strawberry.setScale(this.personalScale*0.95).refreshBody();
-        });
+        this.sugarNumber = 5;
+        this.sugar = this.createIngredients(
+            'sugar',           // key: nome della texture
+            this.sugarNumber,  // numero totale di fragole
+            { x: 12, y: 0, stepX: 200 },  // setXY di default (può essere usato per posizionamenti iniziali se serve)
+            { min: 100, max: this.mapWidth - 100 },  // Intervallo casuale per x
+            { min: 50,  max: 300 }               // Intervallo casuale per y
+        );
 
-        this.sugarNumber = 5; 
-        this.sugar = this.physics.add.group({
-            key: 'sugar',
-            repeat: (this.sugarNumber-1),
-            setXY: { x: 150, y: 0, stepX: 250 }
-        });
-        this.sugar.children.iterate((sugar) => {
-            sugar.x = Phaser.Math.Between(100*this.personalScale, this.mapWidth - 100*this.personalScale);
-            sugar.y = Phaser.Math.Between(50*this.personalScale, 300*this.personalScale);
-            sugar.setBounceY(Phaser.Math.FloatBetween(0.4, 0.8));
-            sugar.setScale(this.personalScale*0.95).refreshBody();
-        });
 
         this.acorns = this.physics.add.group();
-
         for (let i = 0; i < 4; i++){
             var x = Phaser.Math.Between(100, this.mapWidth-100*this.personalScale);
             var acorn = this.acorns.create(x, 16, 'acorn');
@@ -221,26 +259,11 @@ class FirstScene extends Phaser.Scene {
                 }
             });
         }
-
-        for (let i = 0; i < 10; i++) {
-            const x = Phaser.Math.Between(0, this.mapWidth); // Posizione X casuale
-            let flower = this.add.image(x, this.mapHeight - boxWidth, 'flower').setOrigin(0.5, 1).setScale(this.personalScale);
-            if (Phaser.Math.Between(0, 1) === 0) {
-                flower.setScale(-Math.abs(this.personalScale), this.personalScale); // Specchiala orizzontalmente
-            }
-        }
         
-        // Aggiungi 20 erbe in posizioni casuali
-        for (let i = 0; i < 40; i++) {
-            const x = Phaser.Math.Between(0, this.mapWidth); // Posizione X casuale
-            let grass = this.add.image(x, this.mapHeight - boxWidth, 'grass').setOrigin(0.5, 1).setScale(this.personalScale); 
-            if (Phaser.Math.Between(0, 1) === 0) {
-                grass.setScale(-Math.abs(this.personalScale), this.personalScale); // Specchiala orizzontalmente
-            }
-        }
-
+        this.spawnDecor('grass', 0.006 * this.mapWidth, 0, this.mapWidth, gapPercentages, this.mapWidth, gapWidth, boxWidth);
+        this.spawnDecor('sunflowers', 2*this.personalScale, this.mapWidth*0.6, this.mapWidth*0.7, gapPercentages, this.mapWidth, gapWidth, boxWidth);
         //fungo
-        this.mushroom = this.physics.add.sprite(this.mapWidth*0.8, this.mapHeight - boxWidth, 'mushroom').setOrigin(0.5,1);
+        this.mushroom = this.physics.add.sprite(this.mapWidth*0.85, this.mapHeight - boxWidth, 'mushroom').setOrigin(0.5,1);
         this.mushroom.setScale(this.personalScale * 1.2).refreshBody();
         this.mushroom.body.setAllowGravity(false);
         this.mushroom.body.setImmovable(true);
@@ -268,14 +291,16 @@ class FirstScene extends Phaser.Scene {
         this.physics.add.collider(this.sugar, this.platforms);
         this.physics.add.collider(this.blueberries, this.platforms);
         this.physics.add.collider(this.acorns, this.platforms);
-        this.physics.add.overlap(this.player, this.strawberries, this.collectStrawberries, null, this);
-        this.physics.add.overlap(this.player, this.sugar, this.collectSugar, null, this);
-        this.physics.add.overlap(this.player, this.blueberries, this.collectBlueberries, null, this);
-        this.physics.add.overlap(this.player, this.acorns, this.takeDamage, null, this);
+        this.physics.add.collider(this.acorns, this.deepGrounds);
+        this.physics.add.collider(this.player, this.deepGrounds);
+        this.physics.add.overlap(this.player, this.strawberries, (player, item) => {this.collectIngredient(player, item, 'strawberry');}, null, this);
+        this.physics.add.overlap(this.player, this.sugar, (player, item) => {this.collectIngredient(player, item, 'sugar');}, null, this);
+        this.physics.add.overlap(this.player, this.blueberries, (player, item) => {this.collectIngredient(player, item, 'blueberry');}, null, this);
+        this.physics.add.overlap(this.player, this.acorns, this.hitEnemy, null, this);
         this.physics.add.collider(this.boar, this.platforms);
-        this.physics.add.overlap(this.player, this.boar, this.hitBoarOrMushroom, null, this);
+        this.physics.add.overlap(this.player, this.boar, this.hitEnemy, null, this);
         this.physics.add.collider(this.mushroom, this.platforms);
-        this.physics.add.collider(this.player, this.mushroom, this.hitBoarOrMushroom, null, this);
+        this.physics.add.collider(this.player, this.mushroom, this.hitEnemy, null, this);
 
         console.log("personalScale: ", this.personalScale);
         console.log("player.displayHeight: ", this.player.displayHeight);
@@ -283,28 +308,28 @@ class FirstScene extends Phaser.Scene {
         const fontSize = 40 * this.personalScale;
         console.log("fontsize: " , fontSize);
 
-        this.strText = this.add.text(50*this.personalScale + 1.5*this.margin, this.margin + fontSize/2, '0/' + this.strawberryNumber, { 
+        this.strawberryText = this.add.text(50*this.personalScale + 1.5*this.margin, this.margin + fontSize/2, '0/' + this.strawberryNumber, { 
             fontFamily: 'PressStart2P', 
             fontSize: fontSize, 
             fill: '#fff' 
         }).setOrigin(0, 0.5).setScrollFactor(0);
-        let strawberryIcon = this.add.image(this.margin, this.strText.y + 5*this.personalScale, 'strawberry').setOrigin(0, 0.5).setScrollFactor(0).setScale(this.personalScale*0.85);
+        let strawberryIcon = this.add.image(this.margin, this.strawberryText.y + 5*this.personalScale, 'strawberry').setOrigin(0, 0.5).setScrollFactor(0).setScale(this.personalScale*0.85);
         strawberryIcon.angle = -40;
 
-        this.sugText = this.add.text(50*this.personalScale + 1.5*this.margin, this.margin*1.5 + fontSize*1.5, '0/' + this.sugarNumber, { 
+        this.sugarText = this.add.text(50*this.personalScale + 1.5*this.margin, this.margin*1.5 + fontSize*1.5, '0/' + this.sugarNumber, { 
             fontFamily: 'PressStart2P', 
             fontSize: fontSize, 
             fill: '#fff' 
         }).setOrigin(0, 0.5).setScrollFactor(0);
-        let sugarIcon = this.add.image(this.margin, this.sugText.y, 'sugar').setOrigin(0, 0.5).setScrollFactor(0).setScale(this.personalScale*0.85);
+        let sugarIcon = this.add.image(this.margin, this.sugarText.y, 'sugar').setOrigin(0, 0.5).setScrollFactor(0).setScale(this.personalScale*0.85);
         sugarIcon.angle = -10;
 
-        this.bluebText = this.add.text(50*this.personalScale + 1.5*this.margin, this.margin*2 + fontSize*2.5, '0/' + this.blueberryNumber, { 
+        this.blueberryText = this.add.text(50*this.personalScale + 1.5*this.margin, this.margin*2 + fontSize*2.5, '0/' + this.blueberryNumber, { 
             fontFamily: 'PressStart2P', 
             fontSize: fontSize, 
             fill: '#fff' 
         }).setOrigin(0, 0.5).setScrollFactor(0);
-        let blueberryIcon = this.add.image(this.margin, this.bluebText.y - 5*this.personalScale, 'blueberry').setOrigin(0, 0.5).setScrollFactor(0).setScale(this.personalScale*0.85);
+        let blueberryIcon = this.add.image(this.margin, this.blueberryText.y - 5*this.personalScale, 'blueberry').setOrigin(0, 0.5).setScrollFactor(0).setScale(this.personalScale*0.85);
         blueberryIcon.angle = 10;
         
         this.spaceKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
@@ -421,22 +446,41 @@ class FirstScene extends Phaser.Scene {
         }
 
         if ((this.cursors.up.isDown || this.spaceKey.isDown || this.isJumping) && this.player.body.touching.down) {
-            if(this.isMovingLeft){
-                console.log("sono qua ");
-                this.player.setVelocityX(-500 * this.personalScale);
-            }
-            else if (this.isMovingRight){
-                console.log("Sono qui");
-                this.player.setVelocityX(500 * this.personalScale);
-            }
-            this.player.setVelocityY(-1000 * this.personalScale);
+            this.player.setVelocityY(-1100 * this.personalScale);
             this.jumpSound.play();
             this.player.anims.play('jump');
         }
 
+        //burroni 
+        if (this.player.y > this.screenHeight - this.player.displayHeight) { // Se il giocatore cade sotto il livello della mappa
+            this.die();
+        }
+
+        this.acorns.children.iterate((acorn) => {
+            // Se l'acorn ha superato il bordo inferiore (considerando anche la sua dimensione visibile)
+            if (acorn.y + acorn.displayHeight/2 >= this.screenHeight-5) {
+                // Riposiziona l'acorn appena sopra lo schermo
+                acorn.y = -acorn.displayHeight;
+                // Scegli una nuova posizione x casuale (puoi adattare i limiti se necessario)
+                acorn.x = Phaser.Math.Between(100, this.mapWidth - 100 * this.personalScale);
+
+                let newVelocityX;
+                do {
+                    newVelocityX = Phaser.Math.Between(-200 * this.personalScale, 200 * this.personalScale);
+                } while (Math.abs(newVelocityX) <= 20);
+
+                // Imposta la nuova velocità: orizzontale e verticale costante
+                acorn.setVelocity(newVelocityX, 20 * this.personalScale);
+                // Imposta la velocità angolare in base alla nuova velocità orizzontale
+                acorn.setAngularVelocity(newVelocityX / 10);
+            }
+        });
+
+        this.updateIngredients(this.strawberries, { min: 100 * this.personalScale, max: this.mapWidth - 100 * this.personalScale });
+        this.updateIngredients(this.sugar, { min: 100 * this.personalScale, max: this.mapWidth - 100 * this.personalScale });
+        this.updateIngredients(this.blueberries, { min: 100 * this.personalScale, max: this.mapWidth - 100 * this.personalScale });
 
         // cinghiale
-        
         if (this.boar.x >= this.mapWidth-100) {
             this.boar.setVelocityX(-400 * this.personalScale);  // Inverti direzione a sinistra
             this.boar.setFlipX(true);  // Rovescia immagine orizzontalmente
@@ -446,48 +490,110 @@ class FirstScene extends Phaser.Scene {
         }
     }
 
-    collectSugar(player, sugar) {
-        this.collectSound.play();
-        sugar.disableBody(true, true);
-        this.sugarCollected += 1;
-        this.sugText.setText(this.sugarCollected + '/' + this.sugarNumber);
-
-        if (this.sugarCollected >= this.sugarNumber && this.strawberriesCollected >= this.strawberryNumber && this.blueberriesCollected >= this.blueberryNumber){
-            this.win();
+    spawnDecor(texture, count, startingPoint, endingPoint, gapPercentages, mapWidth, gapWidth, boxWidth) {
+        console.log("texture: ", texture);
+        for (let i = 0; i < count; i++) {
+            let x;
+            do {
+                x = Phaser.Math.Between(startingPoint, endingPoint);
+            } while (this.isPositionInGap(x, gapPercentages, mapWidth, gapWidth) || this.isPositionInGap(x + 34*this.personalScale, gapPercentages, mapWidth, gapWidth) || this.isPositionInGap(x - 34*this.personalScale, gapPercentages, mapWidth, gapWidth));
+            
+            if(texture === "sunflowers"){
+                console.log("x: ", x);
+            }
+            let decor = this.add.image(x, this.mapHeight - boxWidth, texture)
+                .setOrigin(0.5, 1)
+                .setScale(this.personalScale);
+    
+            if (Phaser.Math.Between(0, 1) === 0) {
+                decor.setScale(-Math.abs(this.personalScale), this.personalScale); // Specchia orizzontalmente
+            }
         }
     }
 
-    collectStrawberries(player, strawberries) {
-        this.collectSound.play();
-        strawberries.disableBody(true, true);
-        this.strawberriesCollected += 1;
-        this.strText.setText(this.strawberriesCollected + '/' + this.strawberryNumber);
-
-        if (this.strawberriesCollected >= this.strawberryNumber && this.sugarCollected >= this.sugarNumber && this.blueberriesCollected >= this.blueberryNumber){
-            this.win();
-        }
-    }  
-
-    collectBlueberries(player, blueberries) {
-        this.collectSound.play();
-        blueberries.disableBody(true, true);
-        this.blueberriesCollected += 1;
-        this.bluebText.setText(this.blueberriesCollected + '/' + this.blueberryNumber);
-
-        if (this.strawberriesCollected >= this.strawberryNumber && this.sugarCollected >= this.sugarNumber && this.blueberriesCollected >= this.blueberryNumber){
-            this.win();
+    spawnSkull(texture, gapPercentages, gapWidth, boxWidth) {
+        let x, y;
+        let skull; // dichiarazione dell'immagine
+        do {
+            x = Phaser.Math.Between(0, this.mapWidth);
+        } while (this.isPositionInGap(x, gapPercentages, this.mapWidth, gapWidth) || this.isPositionInGap(x + 50*this.personalScale, gapPercentages, this.mapWidth, gapWidth) || this.isPositionInGap(x - 50*this.personalScale, gapPercentages, this.mapWidth, gapWidth));
+        y = Phaser.Math.Between(this.mapHeight + boxWidth, this.screenHeight);
+        skull = this.add.image(x, y, texture)
+            .setOrigin(0.5, 1)
+            .setScale(this.personalScale);
+        if (Phaser.Math.Between(0, 1) === 0) {
+            skull.setScale(-Math.abs(this.personalScale), this.personalScale);
         }
     }
 
-    hitBoarOrMushroom(player, enemy){
-        if (player.body.y + (player.body.height)/2 < enemy.body.y) {
-            player.setVelocityY(-1000 * this.personalScale);
+    isPositionInGap(x, gapPercentages, mapWidth, gapWidth) {
+        return gapPercentages.some(gap => {
+            let gapStart = mapWidth * gap - gapWidth / 2 - 20*this.personalScale;
+            let gapEnd = mapWidth * gap + gapWidth / 2 + 20*this.personalScale;
+            return x > gapStart && x < gapEnd;
+        });
+    }
+
+    createIngredients(key, count, setXYConfig, xRange, yRange, scaleMultiplier = 0.95, bounceRange = { min: 0.4, max: 0.8 }) {
+        let group = this.physics.add.group({
+            key: key,
+            repeat: count - 1,
+            setXY: setXYConfig
+        });
+        
+        group.children.iterate((item) => {
+            item.x = Phaser.Math.Between(xRange.min, xRange.max);
+            item.y = Phaser.Math.Between(yRange.min, yRange.max);
+            item.setBounceY(Phaser.Math.FloatBetween(bounceRange.min, bounceRange.max));
+            item.setScale(this.personalScale * scaleMultiplier).refreshBody();
+        });
+        
+        return group;
+    }
+
+    updateIngredients(group, xRange) {
+        group.children.iterate((item) => {
+            // Se l'ingrediente ha superato il bordo inferiore dello schermo...
+            if (item.y - item.displayHeight/2 > this.screenHeight) {
+                // Riposiziona l'ingrediente appena sopra lo schermo...
+                item.y = -item.displayHeight;
+                // ... e scegli una nuova posizione x casuale nell'intervallo specificato
+                item.x = Phaser.Math.Between(xRange.min, xRange.max);
+            }
+        });
+    }
+
+    collectIngredient(player, ingredient, type) {
+        this.collectSound.play();
+        ingredient.disableBody(true, true);
+
+        this[type + "Collected"]++;  // Incrementa il contatore, ad es. this["sugarCollected"]++
+        this[type + "Text"].setText(this[type + "Collected"] + '/' + this[type + "Number"]);
+
+        if (this.sugarCollected >= this.sugarNumber && 
+            this.strawberryCollected >= this.strawberryNumber && 
+            this.blueberryCollected >= this.blueberryNumber) {
+            this.win();
+        }
+    }
+    
+    hitEnemy(player, enemy){
+        if (enemy.texture.key === 'acorn') { 
+            this.popSound.play();
+            this.explode(enemy);
+        }
+        if (enemy.texture.key != 'acorn' && player.body.y + 10*this.personalScale + (player.body.height)/2 < enemy.body.y) {
+            player.setVelocityY(-800 * this.personalScale);
+            this.jumpOverSound.play();
             if (enemy.texture.key === 'mushroom') { 
                 enemy.setTexture('mushroom_smashed');
                 this.time.delayedCall(100, () => enemy.destroy(), [], this);
             }
         }
         else {
+            if (enemy.texture.key === 'boar'){
+                this.boarSound.play();
+            }
             this.takeDamage(player, enemy);
         }
     }
@@ -499,10 +605,6 @@ class FirstScene extends Phaser.Scene {
             this.player.setTint(0xffff00);
             this.cameras.main.shake(300, 0.005);
             this.isInvincible = true;
-
-            if (enemy.texture.key === 'acorn') { 
-                this.explode(enemy);
-            }
 
             this.time.delayedCall(1500, () => {
                 this.player.clearTint();

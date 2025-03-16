@@ -19,8 +19,8 @@ class CharacterSelectionScene extends Phaser.Scene {
         this.char2 = this.add.image(this.scale.width / 2 + 150*this.personalScale, this.scale.height / 2, 'player2').setInteractive().setScale(1.8*this.personalScale).setOrigin(0.5);
 
         // Cliccando su un personaggio, lo seleziona
-        this.char1.on('pointerdown', () => this.selectCharacter(1, this.scale.width / 2 - 100*this.personalScale));
-        this.char2.on('pointerdown', () => this.selectCharacter(2, this.scale.width / 2 + 100*this.personalScale));
+        this.char1.on('pointerdown', () => this.selectCharacter(1, this.scale.width / 2 - 150*this.personalScale));
+        this.char2.on('pointerdown', () => this.selectCharacter(2, this.scale.width / 2 + 150*this.personalScale));
         this.input.keyboard.on('keydown-LEFT', () => this.changeCharacter(-1));
         this.input.keyboard.on('keydown-RIGHT', () => this.changeCharacter(1));
 
