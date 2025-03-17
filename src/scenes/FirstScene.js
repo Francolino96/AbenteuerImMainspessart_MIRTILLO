@@ -45,8 +45,9 @@ class FirstScene extends Phaser.Scene {
         this.jumpOverSound = this.sound.add('jumpOver', { loop: false, volume: 0.3 });
         this.popSound = this.sound.add('pop', {loop: false, volume: 0.5});
         this.boarSound = this.sound.add('boar', {loop: false, volume: 0.5});
-        this.music = this.sound.add('soundtrack', { loop: true, volume: 0.1 });
+        this.music = this.sound.add('soundtrack', { loop: true, volume: 0.5 });
         this.music.play();
+        this.sound.setVolume(0.1);
         
         //this.add.image(this.mapWidth / 2, this.mapHeight / 2, 'sky').setDisplaySize(this.mapWidth, this.screenHeight);
         let bgSource = this.textures.get('sky').getSourceImage();
