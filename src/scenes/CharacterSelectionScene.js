@@ -24,7 +24,7 @@ class CharacterSelectionScene extends Phaser.Scene {
         this.input.keyboard.on('keydown-LEFT', () => this.changeCharacter(-1));
         this.input.keyboard.on('keydown-RIGHT', () => this.changeCharacter(1));
 
-        this.add.text(this.scale.width / 2, this.selectionBox.y - this.selectionBox.height/2 - 100*this.personalScale, 'Select the player', { 
+        this.add.text(this.scale.width / 2, this.selectionBox.y - this.selectionBox.height/2 - 100*this.personalScale, 'Wähle einen Spieler', { 
             fontFamily: 'PressStart2P', 
             fontSize: 35*this.personalScale,
             fill: '#fff' 

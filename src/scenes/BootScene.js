@@ -8,13 +8,12 @@ class BootScene extends Phaser.Scene {
     }
 
     preload() {
-        // Carica il frame della barra di caricamento
         this.load.image('chargingBarFrame', 'assets/Sprites_charging_bar.png');
     }
 
     create() {
-        // Una volta caricata l'immagine, passa alla scena PreloaderScene
-        this.scene.start('PreloaderScene', { chosenCharacter: this.chosenCharacter });
+        console.log("Sono nella BootScene");
+        this.scene.start('PreloaderScene', { chosenCharacter: this.chosenCharacter});
     }
 }
 

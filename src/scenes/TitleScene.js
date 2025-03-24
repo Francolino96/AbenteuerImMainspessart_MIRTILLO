@@ -4,18 +4,26 @@ class TitleScene extends Phaser.Scene {
     }
 
     preload () {
-        this.load.image('background_image', 'assets/sky.png');
+        this.load.image('forest_background', 'assets/forest_background.jpg');
         let newFont = new FontFace('PressStart2P', 'url(PressStart2P-Regular.ttf)');
         newFont.load().then(function(loadedFont) {
             document.fonts.add(loadedFont);
         });
-
     }
 
     create(){
         this.personalScale = (this.scale.height + this.scale.width)/2200;
-        this.background = this.add.sprite(this.scale.width / 2, this.scale.height / 2, 'background_image');
-        this.background.setDisplaySize(this.scale.width, this.scale.height);
+        this.background = this.add.sprite(this.scale.width / 2, this.scale.height / 2, 'forest_background');
+        const aspectRatio = this.background.width / this.background.height;
+        let newBackgroundWidth, newBackgroundHeight;
+        if (this.scale.width / this.scale.height > aspectRatio) {
+            newBackgroundWidth = this.scale.width;
+            newBackgroundHeight = newBackgroundWidth / aspectRatio;
+        } else {
+            newBackgroundHeight = this.scale.height;
+            newBackgroundWidth = newBackgroundHeight * aspectRatio;
+        }
+        this.background.setDisplaySize(newBackgroundWidth, newBackgroundHeight);
         const title = this.add.text(this.scale.width / 2, this.scale.height * 0.4, 'Abenteuer', { 
             fontFamily: 'PressStart2P', 
             fontSize: 60*this.personalScale, 
