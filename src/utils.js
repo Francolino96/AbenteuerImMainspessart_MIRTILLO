@@ -112,7 +112,7 @@ export function createScores(scene) {
     blueberryIcon.angle = 10;
 }
 
-export function spawnDecor(scene, scale, texture, count, startingPoint, endingPoint, gapPercentages, mapWidth, gapWidth, boxWidth) {
+export function spawnDecor(scene, scale, flip, texture, count, startingPoint, endingPoint, gapPercentages, mapWidth, gapWidth, boxWidth) {
     console.log("texture: ", texture);
     for (let i = 0; i < count; i++) {
         let x;
@@ -123,7 +123,7 @@ export function spawnDecor(scene, scale, texture, count, startingPoint, endingPo
             .setOrigin(0.5, 1)
             .setScale(scale * scene.personalScale);
 
-        if (Phaser.Math.Between(0, 1) === 0) {
+        if (flip && Phaser.Math.Between(0, 1) === 0) {
             decor.setScale(-Math.abs(scale * scene.personalScale), scale * scene.personalScale);
         }
     }
@@ -269,7 +269,7 @@ export function createMushroom(scene, xPosition) {
 
 export function createBoar(scene, boxWidth, xPosition) {
     scene.boarSound = scene.sound.add('boar', { loop: false, volume: 0.5 });
-    scene.boar = scene.physics.add.sprite(xPosition, scene.mapHeight - boxWidth - 5, 'boar').setOrigin(0.5, 1);
+    scene.boar = scene.physics.add.sprite(xPosition, scene.mapHeight - boxWidth, 'boar').setOrigin(0.5, 1);
     scene.boar.setScale(scene.personalScale * 1.2).refreshBody();
     scene.boar.setCollideWorldBounds(false);
     scene.boar.body.setAllowGravity(false);
@@ -286,7 +286,7 @@ export function createBoar(scene, boxWidth, xPosition) {
     scene.boar.setFlipX(false);
     scene.boarDirection = 1;
 
-    scene.physics.add.collider(scene.boar, scene.platforms);
+    //scene.physics.add.collider(scene.boar, scene.platforms);
     scene.physics.add.overlap(scene.player, scene.boar, (player, enemy) => hitEnemy(scene, player, enemy, 'FirstScene'), null, scene);
 }
 
@@ -361,15 +361,21 @@ export function die(scene, sceneName) {
         scene.music.stop();
     }
     scene.gameOverSound.play();
+    let reason = "died";
+    if (scene.sugarCollected < scene.sugarNumber &&
+        scene.strawberryCollected < scene.strawberryNumber &&
+        scene.blueberryCollected < scene.blueberryNumber){
+        reason = "failed";
+    }        
     scene.time.delayedCall(1000, () => {
         scene.cameras.main.fadeOut(800, 0, 0, 0);
         scene.time.delayedCall(800, () => {
-            scene.scene.start('GameOverScene', { callingScene: sceneName });
+            scene.scene.start('GameOverScene', { callingScene: sceneName, reason: reason });
         });
     });
 }
 
-function win(scene, sceneName) {
+export function win(scene, sceneName) {
     scene.victory = true;
     scene.isInvincible = true;
     scene.input.keyboard.removeAllKeys(true);

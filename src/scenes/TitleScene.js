@@ -31,14 +31,14 @@ class TitleScene extends Phaser.Scene {
             align: 'center'
         }).setOrigin(0.5);
         
-        this.add.text(this.scale.width / 2, title.y + title.height, 'im Main-Spessart', { 
+        const subtitle = this.add.text(this.scale.width / 2, title.y + title.height, 'im Main-Spessart', { 
             fontFamily: 'PressStart2P', 
             fontSize: 34*this.personalScale, 
             fill: '#fff',
             align: 'center'
         }).setOrigin(0.5);
 
-        let startButton = this.add.text(this.scale.width / 2, this.scale.height * 0.55, 'START', { 
+        let startButton = this.add.text(this.scale.width / 2, subtitle.y + subtitle.height + 50 * this.personalScale, 'START', { 
             fontFamily: 'PressStart2P', 
             fontSize: 30*this.personalScale, 
             fill: '#0f0' 

@@ -11,6 +11,7 @@ import {
     updateBoar,
     updateIngredients,
     die,
+    win,
     createScores,
     createMovementButtons,
     createVolumeButton,
@@ -131,10 +132,10 @@ class FirstScene extends Phaser.Scene {
             }
         }
 
-        spawnDecor(this, 1.8, 'tree_1', 0.001 * this.mapWidth, 0, this.mapWidth, gapPercentages, this.mapWidth, gapWidth, this.boxWidth);
-        spawnDecor(this, 1.8, 'tree_2', 0.001 * this.mapWidth, 0, this.mapWidth, gapPercentages, this.mapWidth, gapWidth, this.boxWidth);
-        spawnDecor(this, 1.8, 'tree_3', 0.001 * this.mapWidth, 0, this.mapWidth, gapPercentages, this.mapWidth, gapWidth, this.boxWidth);
-        spawnDecor(this, 1.8, 'tree_4', 0.001 * this.mapWidth, 0, this.mapWidth, gapPercentages, this.mapWidth, gapWidth, this.boxWidth);
+        spawnDecor(this, 1.8, true, 'tree_1', 0.001 * this.mapWidth, this.mapWidth * 0.2, this.mapWidth - 500 * this.personalScale, gapPercentages, this.mapWidth, gapWidth, this.boxWidth);
+        spawnDecor(this, 1.8, true, 'tree_2', 0.001 * this.mapWidth, this.mapWidth * 0.2, this.mapWidth - 500 * this.personalScale, gapPercentages, this.mapWidth, gapWidth, this.boxWidth);
+        spawnDecor(this, 1.8, true, 'tree_3', 0.001 * this.mapWidth, this.mapWidth * 0.2, this.mapWidth - 500 * this.personalScale, gapPercentages, this.mapWidth, gapWidth, this.boxWidth);
+        spawnDecor(this, 1.8, true, 'tree_4', 0.001 * this.mapWidth, this.mapWidth * 0.2, this.mapWidth - 500 * this.personalScale, gapPercentages, this.mapWidth, gapWidth, this.boxWidth);
 
 
         const lev1PlatformHeight = this.mapHeight - 400 * this.personalScale;
@@ -175,10 +176,11 @@ class FirstScene extends Phaser.Scene {
                 .refreshBody();
         }
 
-        spawnDecor(this, 1, 'flower', 0.004 * this.mapWidth, 0, this.mapWidth, gapPercentages, this.mapWidth, gapWidth, this.boxWidth);
-        spawnDecor(this, 1, 'grass', 0.015 * this.mapWidth, 0, this.mapWidth, gapPercentages, this.mapWidth, gapWidth, this.boxWidth);
-        spawnDecor(this, 1, 'direction_board', 1, this.mapWidth / 2, this.mapWidth - 100 * this.personalScale, gapPercentages, this.mapWidth, gapWidth, this.boxWidth);
-        spawnDecor(this, 1, 'sunflowers', 10 * this.personalScale, this.mapWidth * 0.6, this.mapWidth * 0.7, gapPercentages, this.mapWidth, gapWidth, this.boxWidth);
+        spawnDecor(this, 1, true, 'flower', 0.004 * this.mapWidth, 0, this.mapWidth, gapPercentages, this.mapWidth, gapWidth, this.boxWidth);
+        spawnDecor(this, 1, true, 'grass', 0.015 * this.mapWidth, 0, this.mapWidth, gapPercentages, this.mapWidth, gapWidth, this.boxWidth);
+        spawnDecor(this, 1, true, 'sunflowers', 10 * this.personalScale, this.mapWidth * 0.6, this.mapWidth * 0.7, gapPercentages, this.mapWidth, gapWidth, this.boxWidth);
+        spawnDecor(this, 1, false, 'direction_board', 1, this.mapWidth * 0.35, this.mapWidth * 0.65, gapPercentages, this.mapWidth, gapWidth, this.boxWidth);
+        spawnDecor(this, 1, false, 'end_board', 1, this.mapWidth - 300*this.personalScale, this.mapWidth - 300*this.personalScale, gapPercentages, this.mapWidth, gapWidth, this.boxWidth);
         spawnSkull(this, 'skull_1', gapPercentages, gapWidth, this.boxWidth);
         spawnSkull(this, 'skull_1', gapPercentages, gapWidth, this.boxWidth);
         spawnSkull(this, 'skull_2', gapPercentages, gapWidth, this.boxWidth);
@@ -223,7 +225,7 @@ class FirstScene extends Phaser.Scene {
             'strawberry',
             this.strawberryNumber,
             { x: 12, y: 0, stepX: 200 },
-            { min: 100, max: this.mapWidth - 100 },
+            { min: 100, max: this.mapWidth - 350 * this.personalScale },
             { min: 50, max: 300 }
         );
 
@@ -233,7 +235,7 @@ class FirstScene extends Phaser.Scene {
             'blueberry',
             this.blueberryNumber,
             { x: 12, y: 0, stepX: 200 },
-            { min: 100, max: this.mapWidth - 100 },
+            { min: 100, max: this.mapWidth - 350 * this.personalScale },
             { min: 50, max: 300 }
         );
 
@@ -243,12 +245,12 @@ class FirstScene extends Phaser.Scene {
             'sugar',
             this.sugarNumber,
             { x: 12, y: 0, stepX: 200 },
-            { min: 100, max: this.mapWidth - 100 },
+            { min: 100, max: this.mapWidth - 350 * this.personalScale },
             { min: 50, max: 300 }
         );
 
-        spawnDecor(this, 1, 'grass', 0.006 * this.mapWidth, 0, this.mapWidth, gapPercentages, this.mapWidth, gapWidth, this.boxWidth);
-        spawnDecor(this, 1, 'sunflowers', 2 * this.personalScale, this.mapWidth * 0.6, this.mapWidth * 0.7, gapPercentages, this.mapWidth, gapWidth, this.boxWidth);
+        spawnDecor(this, 1, true, 'grass', 0.006 * this.mapWidth, 0, this.mapWidth, gapPercentages, this.mapWidth, gapWidth, this.boxWidth);
+        spawnDecor(this, 1, true, 'sunflowers', 2 * this.personalScale, this.mapWidth * 0.6, this.mapWidth * 0.7, gapPercentages, this.mapWidth, gapWidth, this.boxWidth);
         
         createAcorns(this, 4, 'FirstScene');
         createMushroom(this, this.mapWidth * 0.85);
@@ -313,11 +315,36 @@ class FirstScene extends Phaser.Scene {
         }
 
         //burroni 
-        if (this.player.y > this.screenHeight - this.player.displayHeight) { // Se il giocatore cade sotto il livello della mappa
+        if (this.player.y > this.screenHeight - this.player.displayHeight) {
             die(this, 'FirstScene');
             this.hearts.forEach((heart) => {
                 heart.setTexture('emptyHeart');
             }); 
+        }
+
+        if (this.player.x > this.mapWidth - 300 * this.personalScale){
+            this.gameOver = true;
+            this.isInvincible = true;
+            this.input.keyboard.removeAllKeys(true);
+            this.player.setVelocityX(0);
+            this.player.anims.play('turn');
+            this.player.anims.stop();
+            if (this.music && this.music.isPlaying) {
+                this.music.stop();
+            }
+            if (this.sugarCollected < this.sugarNumber ||
+                this.strawberryCollected < this.strawberryNumber ||
+                this.blueberryCollected < this.blueberryNumber){
+                this.time.delayedCall(1000, () => {
+                    this.cameras.main.fadeOut(800, 0, 0, 0);
+                    this.time.delayedCall(800, () => {
+                        this.scene.start('GameOverScene', { callingScene: "FirstScene", reason: "failed" });
+                    });
+                });
+            }
+            else {
+                win(this, "FirstScene");
+            }
         }
 
         updateAcorns(this);

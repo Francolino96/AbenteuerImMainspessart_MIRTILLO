@@ -8,31 +8,33 @@ class PreloaderScene extends Phaser.Scene {
     }
 
     preload() {
-
+        this.cameras.main.fadeIn(800, 0, 0, 0);
         this.cameras.main.setBackgroundColor('#000');
         this.personalScale = (this.scale.height + this.scale.width) / 2200;
-
-        let centerX = this.scale.width / 2;
-        let centerY = this.scale.height / 2;
-
-        let progressBar = this.add.graphics();
-
+        const progressBar = this.add.graphics();
+        const chargingBar = this.add.image(this.scale.width / 2, this.scale.height / 2 + 90 * this.personalScale * 0.8 + 40*this.personalScale, 'chargingBarFrame').setOrigin(0.5).setScale(this.personalScale * 0.8);
         this.load.on('progress', function (value) {
             progressBar.clear();
             progressBar.fillStyle(0xff0000, 1);
 
             let fillWidth = 2 * 290 * value * this.personalScale * 0.8;
             let fillHeight = 90 * this.personalScale * 0.8;
-            let frameX = centerX - 290 * this.personalScale * 0.8;
-            let frameY = centerY - (90 / 2) * this.personalScale * 0.8;
+            let frameX = this.scale.width / 2 - 290 * this.personalScale * 0.8;
+            let frameY = this.scale.height / 2 + (90 / 2) * this.personalScale * 0.8 + 40*this.personalScale;
 
             progressBar.fillRect(frameX, frameY, fillWidth, fillHeight);
         }, this);
-        this.add.image(centerX, centerY, 'chargingBarFrame').setOrigin(0.5).setScale(this.personalScale * 0.8);
+
+        this.add.text(this.scale.width / 2, chargingBar.y - 250 * this.personalScale, 'Hilf uns, die Zutaten\nfür das Eis zu sammeln,\num die Antwort auf\ndas Quiz zu erhalten.', { 
+            fontFamily: 'PressStart2P', 
+            fontSize: 28*this.personalScale, 
+            fill: '#fff',
+            align: 'center'
+        }).setOrigin(0.5);
 
         this.loadingText = this.add.text(
             this.scale.width / 2 - (6 * 30 * this.personalScale) / 2,
-            this.scale.height / 2 - 100 * this.personalScale,
+            this.scale.height / 2 + 20 * this.personalScale,
             'Lädt',
             {
                 fontFamily: 'PressStart2P',
@@ -88,6 +90,7 @@ class PreloaderScene extends Phaser.Scene {
         this.load.image('skull_3', 'assets/Sprites_skeleton_3.png');
         this.load.image('sunflowers', 'assets/Sprites_sunflowers.png');
         this.load.image('direction_board', 'assets/Sprites_direction_board.png');
+        this.load.image('end_board', 'assets/Sprites_end_board.png');
         this.load.spritesheet('boar', 'assets/Sprites_boar.png', {
             frameWidth: 133,
             frameHeight: 101
@@ -127,8 +130,7 @@ class PreloaderScene extends Phaser.Scene {
 
     create() {
         console.log("Sono nella PreloaderScene");
-        this.cameras.main.fadeIn(800, 0, 0, 0);
-        this.cameras.main.fadeOut(800, 0, 0, 0); // 1000ms (1s) di transizione verso il nero
+        this.cameras.main.fadeOut(800, 0, 0, 0);
         this.time.delayedCall(800, () => {
             this.load.on('complete', function () {
                 progressBar.destroy();
