@@ -1,3 +1,250 @@
+export function initializeScene(scene, sceneName, backgroundType) {
+    scene.scale.refresh();
+    scene.mapWidth = scene.scale.height * 8;
+    scene.mapHeight = scene.scale.height;
+    scene.screenHeight = scene.scale.height;
+    scene.screenWidth = scene.scale.width;
+    scene.isVertical = scene.screenHeight > scene.screenWidth;
+
+    scene.mapHeight *= scene.isVertical ? 0.75 : 0.85;
+    
+    scene.personalScale = scene.mapHeight / 1200;
+    scene.boxWidth = 99 * scene.personalScale;
+    scene.margin = scene.personalScale * 70;
+    
+    scene.physics.world.setBounds(0, 0, scene.mapWidth, scene.screenHeight);
+    scene.cameras.main.setBounds(0, 0, scene.mapWidth, scene.mapHeight);
+    scene.cameras.main.fadeIn(800, 0, 0, 0);
+
+    scene.lives = 3;
+    scene.player = null;
+    scene.platforms = null;
+    scene.cursors = null;
+    scene.isInvincible = false;
+    scene.gameOver = false;
+    scene.victory = false;
+    scene.scoreText = null;
+    scene.isMovingLeft = false;
+    scene.isMovingRight = false;
+    scene.isJumping = false;
+    scene.sceneName = sceneName;
+
+    scene.hazelnutCollected = 0;
+    scene.appleCollected = 0;
+    scene.strawberryCollected = 0;
+    scene.sugarCollected = 0;
+    scene.blueberryCollected = 0;
+    
+    createSounds(scene);
+
+    const bgSource = scene.textures.get(backgroundType).getSourceImage();
+    const desiredHeight = scene.screenHeight + 10;
+    const scaleFactor = desiredHeight / bgSource.height;
+    
+    scene.background = scene.add.tileSprite(
+        scene.mapWidth / 2,
+        scene.mapHeight,
+        scene.mapWidth,
+        desiredHeight,
+        backgroundType
+    ).setOrigin(0.5, 1).setScrollFactor(0.2);
+    
+    scene.background.setTileScale(scaleFactor, scaleFactor);
+    
+    scene.platforms = scene.physics.add.staticGroup();
+    scene.platformWidth = 99 * scene.personalScale;
+    scene.lev1PlatformHeight = scene.mapHeight - 400 * scene.personalScale;
+    scene.lev2PlatformHeight = scene.mapHeight - 600 * scene.personalScale;
+    scene.lev3PlatformHeight = scene.mapHeight - 800 * scene.personalScale;
+
+    console.log('screenWidth:', scene.screenWidth);
+    console.log('screenHeight:', scene.screenHeight);
+    console.log('mapWidth:', scene.mapWidth);
+    console.log('mapHeight:', scene.mapHeight);
+    console.log("personalScale: ", scene.personalScale);
+}
+
+export function initializeSceneInputs(scene, ingredient1, ingredient2){
+    createScores(scene, ingredient1, ingredient2);
+    scene.spaceKey = scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
+    scene.cursors = scene.input.keyboard.createCursorKeys();
+
+    createMovementButtons(scene);
+    const volumeButton = createVolumeButton(scene);
+    createLives(scene, volumeButton.height);
+}
+
+export function createPlatforms(scene, numIterations, platformHeight, startX) {
+    for (let i = 0; i < numIterations; i++) {
+        scene.platforms.create(startX * scene.personalScale + scene.boxWidth * i, platformHeight, 'box')
+            .setScale(scene.personalScale)
+            .refreshBody();
+    }
+}
+
+export function createSounds(scene) {
+    scene.boarSound = scene.sound.add('boar', { loop: false, volume: 0.5 });
+    scene.collectSound = scene.sound.add('collect', { loop: false, volume: 0.08 });
+    scene.gameOverSound = scene.sound.add('gameOver', { loop: false, volume: 0.3 });
+    scene.jumpSound = scene.sound.add('jump', { loop: false, volume: 0.3 });
+    scene.jumpOverSound = scene.sound.add('jumpOver', { loop: false, volume: 0.3 });
+    scene.popSound = scene.sound.add('pop', { loop: false, volume: 0.5 });
+    scene.music = scene.sound.add('soundtrack', { loop: true, volume: 0.5 });
+    scene.music.play();
+    scene.sound.setVolume(0.1);
+}
+
+export function createGround(scene, gapPercentages, gapWidth) {
+    const numPlatforms = Math.ceil(scene.mapWidth / scene.platformWidth);
+
+    for (let i = 0; i < numPlatforms; i++) {
+        let platformX = i * scene.platformWidth + scene.platformWidth / 2;
+        const isInGap = isPositionInGap(platformX, gapPercentages, scene.mapWidth, gapWidth);
+        if (!isInGap) {
+            let ground = scene.platforms.create(platformX, scene.mapHeight - scene.platformWidth / 2, 'ground')
+                .setScale(scene.personalScale)
+                .refreshBody();
+            if (Math.random() < 0.5) {
+                ground.setFlipX(true);
+            }
+        }
+    }
+
+    scene.deepGrounds = scene.physics.add.staticGroup();
+    const numRows = Math.ceil((scene.screenHeight - (scene.mapHeight - scene.platformWidth / 2)) / scene.platformWidth);
+    
+    for (let row = 1; row <= numRows; row++) {
+        for (let i = 0; i < numPlatforms; i++) {
+            let platformX = i * scene.platformWidth + scene.platformWidth / 2;
+            let isInGap = isPositionInGap(platformX, gapPercentages, scene.mapWidth, gapWidth);
+            if (!isInGap) {
+                let deepGround = scene.deepGrounds.create(
+                    platformX,
+                    scene.mapHeight - scene.platformWidth / 2 + row * scene.platformWidth,
+                    'deepGround'
+                ).setScale(scene.personalScale).refreshBody();
+                
+                if (Math.random() < 0.5) {
+                    deepGround.setFlipX(true);
+                }
+                if (Math.random() < 0.5) {
+                    deepGround.setFlipY(true);
+                }
+            }
+        }
+    }
+}
+
+export function createPlayer(scene) {
+    scene.player = scene.physics.add.sprite(100, 500, 'player');
+    scene.cameras.main.startFollow(scene.player, true, 0.08, 0.08);
+    scene.player.setScale(scene.personalScale * 1.3).refreshBody();
+    scene.player.setSize(scene.player.width * 0.70, scene.player.height);
+    scene.player.setBounce(0.1);
+    scene.player.setCollideWorldBounds(true);
+
+    scene.anims.create({
+        key: 'left',
+        frames: scene.anims.generateFrameNumbers('player', { start: 0, end: 3 }),
+        frameRate: 10,
+        repeat: -1
+    });
+
+    scene.anims.create({
+        key: 'turn',
+        frames: [{ key: 'player', frame: 4 }],
+        frameRate: 20
+    });
+
+    scene.anims.create({
+        key: 'jump',
+        frames: [{ key: 'player', frame: 5 }],
+        frameRate: 20
+    });
+
+    scene.anims.create({
+        key: 'right',
+        frames: scene.anims.generateFrameNumbers('player', { start: 6, end: 9 }),
+        frameRate: 10,
+        repeat: -1
+    });
+
+    scene.physics.add.collider(scene.player, scene.deepGrounds);
+    scene.physics.add.collider(scene.player, scene.platforms);
+}
+
+export function updatePlayer(scene) {
+    if (!scene.input.activePointer.isDown) {
+        scene.isMovingLeft = false;
+        scene.isMovingRight = false;
+        scene.isJumping = false;
+    }
+
+    if (scene.cursors.left.isDown || scene.isMovingLeft) {
+        scene.player.setVelocityX(-500 * scene.personalScale);
+        if (scene.player.body.touching.down)
+            scene.player.anims.play('left', true);
+        else
+            scene.player.anims.play('jump');
+    } 
+    else if (scene.cursors.right.isDown || scene.isMovingRight) {
+        scene.player.setVelocityX(500 * scene.personalScale);
+        if (scene.player.body.touching.down)
+            scene.player.anims.play('right', true);
+        else
+            scene.player.anims.play('jump');
+    } 
+    else {
+        scene.player.setVelocityX(0);
+        if (scene.player.body.touching.down)
+            scene.player.anims.play('turn');
+        else
+            scene.player.anims.play('jump');
+    }
+
+    if ((scene.cursors.up.isDown || scene.spaceKey.isDown || scene.isJumping) && scene.player.body.touching.down) {
+        scene.player.setVelocityY(-1100 * scene.personalScale);
+        scene.jumpSound.play();
+        scene.player.anims.play('jump');
+    }
+
+    // Controllo caduta nel vuoto
+    if (scene.player.y > scene.screenHeight - scene.player.displayHeight) {
+        die(scene, scene.sceneName);
+        scene.hearts.forEach((heart) => {
+            heart.setTexture('emptyHeart');
+        }); 
+    }
+
+    // Controllo fine livello
+    if (scene.player.x > scene.mapWidth - 300 * scene.personalScale) {
+        scene.gameOver = true;
+        scene.isInvincible = true;
+        scene.input.keyboard.removeAllKeys(true);
+        scene.player.setVelocityX(0);
+        scene.player.anims.play('turn');
+        scene.player.anims.stop();
+
+        if (scene.music && scene.music.isPlaying) {
+            scene.music.stop();
+        }
+
+        if (scene.sugarCollected < scene.sugarNumber ||
+            scene.strawberryCollected < scene.strawberryNumber ||
+            scene.blueberryCollected < scene.blueberryNumber ||
+            scene.appleCollected < scene.appleNumber ) {
+            scene.time.delayedCall(1000, () => {
+                scene.cameras.main.fadeOut(800, 0, 0, 0);
+                scene.time.delayedCall(800, () => {
+                    scene.scene.start('GameOverScene', { callingScene: scene.sceneName, reason: "failed" });
+                });
+            });
+        } else {
+            win(scene, scene.sceneName);
+        }
+    }
+}
+
 export function createMovementButtons(scene) {
     const buttonWidth = 1.3 * 101 * scene.personalScale;
     let buttonSize = 1.3 * scene.personalScale;
@@ -85,31 +332,71 @@ export function createLives(scene, volumeButtonHeight) {
     }
 }
 
-export function createScores(scene) {
+function getIconAngle(ingredient) {
+    switch (ingredient) {
+        case 'strawberry': 
+            return -40;
+        case 'sugar': 
+            return -10;
+        case 'blueberry': 
+            return 10;
+        default:
+            return 0;
+    }
+}
+
+function getIconOffsetY(ingredient, scene) {
+    switch (ingredient) {
+        case 'strawberry': 
+            return 5 * scene.personalScale;
+        case 'sugar': 
+            return 0;
+        case 'blueberry': 
+            return -5 * scene.personalScale;
+        default:
+            return 0;
+    }
+}
+
+function createScores(scene, ingredient1, ingredient2) {
     const fontSize = 40 * scene.personalScale;
-    scene.strawberryText = scene.add.text(50 * scene.personalScale + 1.5 * scene.margin, scene.margin + fontSize / 2, '0/' + scene.strawberryNumber, {
-        fontFamily: 'PressStart2P',
-        fontSize: fontSize,
-        fill: '#fff'
-    }).setOrigin(0, 0.5).setScrollFactor(0);
-    let strawberryIcon = scene.add.image(scene.margin, scene.strawberryText.y + 5 * scene.personalScale, 'strawberry').setOrigin(0, 0.5).setScrollFactor(0).setScale(scene.personalScale * 0.85);
-    strawberryIcon.angle = -40;
-
-    scene.sugarText = scene.add.text(50 * scene.personalScale + 1.5 * scene.margin, scene.margin * 1.5 + fontSize * 1.5, '0/' + scene.sugarNumber, {
-        fontFamily: 'PressStart2P',
-        fontSize: fontSize,
-        fill: '#fff'
-    }).setOrigin(0, 0.5).setScrollFactor(0);
-    let sugarIcon = scene.add.image(scene.margin, scene.sugarText.y, 'sugar').setOrigin(0, 0.5).setScrollFactor(0).setScale(scene.personalScale * 0.85);
-    sugarIcon.angle = -10;
-
-    scene.blueberryText = scene.add.text(50 * scene.personalScale + 1.5 * scene.margin, scene.margin * 2 + fontSize * 2.5, '0/' + scene.blueberryNumber, {
-        fontFamily: 'PressStart2P',
-        fontSize: fontSize,
-        fill: '#fff' 
-    }).setOrigin(0, 0.5).setScrollFactor(0);
-    let blueberryIcon = scene.add.image(scene.margin, scene.blueberryText.y - 5 * scene.personalScale, 'blueberry').setOrigin(0, 0.5).setScrollFactor(0).setScale(scene.personalScale * 0.85);
-    blueberryIcon.angle = 10;
+    const firstY = scene.margin + fontSize / 2;
+    scene[ingredient1 + "Text"] = scene.add.text(
+        50 * scene.personalScale + 1.5 * scene.margin,
+        firstY,
+        '0/' + scene[ingredient1 + "Number"],
+        { 
+            fontFamily: 'PressStart2P', 
+            fontSize: fontSize, 
+            fill: '#fff' 
+        }
+    ).setOrigin(0, 0.5).setScrollFactor(0);
+    
+    scene[ingredient1 + "Icon"] = scene.add.image(
+        scene.margin,
+        scene[ingredient1 + "Text"].y + getIconOffsetY(ingredient1, scene),
+        ingredient1
+    ).setOrigin(0, 0.5).setScrollFactor(0).setScale(scene.personalScale * 0.85);
+    scene[ingredient1 + "Icon"].angle = getIconAngle(ingredient1);
+    
+    const secondY = scene.margin * 1.5 + fontSize * 1.5;
+    scene[ingredient2 + "Text"] = scene.add.text(
+        50 * scene.personalScale + 1.5 * scene.margin,
+        secondY,
+        '0/' + scene[ingredient2 + "Number"],
+        { 
+            fontFamily: 'PressStart2P', 
+            fontSize: fontSize, 
+            fill: '#fff' 
+        }
+    ).setOrigin(0, 0.5).setScrollFactor(0);
+    
+    scene[ingredient2 + "Icon"] = scene.add.image(
+        scene.margin,
+        scene[ingredient2 + "Text"].y + getIconOffsetY(ingredient2, scene),
+        ingredient2
+    ).setOrigin(0, 0.5).setScrollFactor(0).setScale(scene.personalScale * 0.85);
+    scene[ingredient2 + "Icon"].angle = getIconAngle(ingredient2);
 }
 
 export function spawnDecor(scene, scale, flip, texture, count, startingPoint, endingPoint, gapPercentages, mapWidth, gapWidth, boxWidth) {
@@ -118,7 +405,7 @@ export function spawnDecor(scene, scale, flip, texture, count, startingPoint, en
         let x;
         do {
             x = Phaser.Math.Between(startingPoint, endingPoint);
-        } while (isPositionInGap(scene.personalScale, x + 50 * scene.personalScale, gapPercentages, mapWidth, gapWidth) || isPositionInGap(scene.personalScale, x - 50 * scene.personalScale, gapPercentages, mapWidth, gapWidth));
+        } while (isPositionInGap(x + 50 * scene.personalScale, gapPercentages, mapWidth, gapWidth) || isPositionInGap(x - 50 * scene.personalScale, gapPercentages, mapWidth, gapWidth));
         const decor = scene.add.image(x, scene.mapHeight - boxWidth + 1, texture)
             .setOrigin(0.5, 1)
             .setScale(scale * scene.personalScale);
@@ -134,7 +421,7 @@ export function spawnSkull(scene, texture, gapPercentages, gapWidth, boxWidth) {
     let skull;
     do {
         x = Phaser.Math.Between(0, scene.mapWidth);
-    } while (isPositionInGap(scene.personalScale, x + 100 * scene.personalScale, gapPercentages, scene.mapWidth, gapWidth) || isPositionInGap(scene.personalScale, x - 100 * scene.personalScale, gapPercentages, scene.mapWidth, gapWidth));
+    } while (isPositionInGap(x + 100 * scene.personalScale, gapPercentages, scene.mapWidth, gapWidth) || isPositionInGap(x - 100 * scene.personalScale, gapPercentages, scene.mapWidth, gapWidth));
 
     if (scene.isVertical) {
         y = Phaser.Math.Between(scene.mapHeight + boxWidth, scene.screenHeight * 0.90);
@@ -150,7 +437,7 @@ export function spawnSkull(scene, texture, gapPercentages, gapWidth, boxWidth) {
     }
 }
 
-export function isPositionInGap(personalScale, x, gapPercentages, mapWidth, gapWidth) {
+export function isPositionInGap(x, gapPercentages, mapWidth, gapWidth) {
     return gapPercentages.some(gap => {
         let gapStart = mapWidth * gap - gapWidth / 2;
         let gapEnd = mapWidth * gap + gapWidth / 2;
@@ -158,10 +445,10 @@ export function isPositionInGap(personalScale, x, gapPercentages, mapWidth, gapW
     });
 }
 
-export function createIngredients(scene, key, count, setXYConfig, xRange, yRange, scaleMultiplier = 0.95, bounceRange = { min: 0.4, max: 0.8 }) {
+export function createIngredients(scene, key, setXYConfig, xRange, yRange, scaleMultiplier = 0.95, bounceRange = { min: 0.4, max: 0.8 }) {
     let group = scene.physics.add.group({
         key: key,
-        repeat: count - 1,
+        repeat: scene[key + "Number"] - 1,
         setXY: setXYConfig
     });
 
@@ -172,10 +459,13 @@ export function createIngredients(scene, key, count, setXYConfig, xRange, yRange
         item.setScale(scene.personalScale * scaleMultiplier).refreshBody();
         item.setSize(item.width * 0.70, item.height * 0.90);
     });
+    scene.physics.add.collider(group, scene.platforms);
+    scene.physics.add.overlap(scene.player, group, (player, item) => { collectIngredient(scene, player, item, key, scene.sceneName); }, null, scene);
     return group;
 }
 
 export function updateIngredients(scene, group, xRange, gravityResetSpeed = 200) {
+    if (!group) return;
     group.children.iterate((item) => {
         if (item.y - item.displayHeight / 2 > scene.screenHeight) {
             item.y = -item.displayHeight;
@@ -194,7 +484,8 @@ export function collectIngredient(scene, player, ingredient, type, sceneName) {
 
     if (scene.sugarCollected >= scene.sugarNumber &&
         scene.strawberryCollected >= scene.strawberryNumber &&
-        scene.blueberryCollected >= scene.blueberryNumber) {
+        scene.blueberryCollected >= scene.blueberryNumber &&
+        scene.appleCollected >= scene.appleNumber ) {
         win(scene, sceneName);
     }
 }
@@ -264,39 +555,38 @@ export function createMushroom(scene, xPosition) {
     scene.mushroom.body.setAllowGravity(false);
     scene.mushroom.body.setImmovable(true);
     scene.physics.add.collider(scene.mushroom, scene.platforms);
-    scene.physics.add.collider(scene.player, scene.mushroom, (player, enemy) => hitEnemy(scene, player, enemy, 'FirstScene'), null, scene);
+    scene.physics.add.collider(scene.player, scene.mushroom, (player, enemy) => hitEnemy(scene, player, enemy, scene.sceneName), null, scene);
 }
 
-export function createBoar(scene, boxWidth, xPosition) {
-    scene.boarSound = scene.sound.add('boar', { loop: false, volume: 0.5 });
-    scene.boar = scene.physics.add.sprite(xPosition, scene.mapHeight - boxWidth, 'boar').setOrigin(0.5, 1);
-    scene.boar.setScale(scene.personalScale * 1.2).refreshBody();
-    scene.boar.setCollideWorldBounds(false);
-    scene.boar.body.setAllowGravity(false);
+export function createEnemy(scene, xPosition, enemy, velocity, numberOfSprites) {
+    scene.enemy = scene.physics.add.sprite(xPosition, scene.mapHeight - scene.boxWidth, enemy).setOrigin(0.5, 1);
+    scene.enemy.setScale(scene.personalScale * 1.2).refreshBody();
+    scene.enemy.setCollideWorldBounds(false);
+    scene.enemy.body.setAllowGravity(false);
 
     scene.anims.create({
-        key: 'boarRun',
-        frames: scene.anims.generateFrameNumbers('boar', { start: 0, end: 2 }),
+        key: enemy + 'Run',
+        frames: scene.anims.generateFrameNumbers(enemy, { start: 0, end: numberOfSprites-1 }),
         frameRate: 10,
         repeat: -1
     });
 
-    scene.boar.play('boarRun');
-    scene.boar.setVelocityX(300 * scene.personalScale);
-    scene.boar.setFlipX(false);
-    scene.boarDirection = 1;
+    scene.enemy.play(enemy + 'Run');
+    scene.enemy.setVelocityX(velocity * scene.personalScale);
+    scene.enemy.setFlipX(false);
+    scene.enemyDirection = 1;
 
-    //scene.physics.add.collider(scene.boar, scene.platforms);
-    scene.physics.add.overlap(scene.player, scene.boar, (player, enemy) => hitEnemy(scene, player, enemy, 'FirstScene'), null, scene);
+    //scene.physics.add.collider(scene.enemy, scene.platforms);
+    scene.physics.add.overlap(scene.player, scene.enemy, (player, enemy) => hitEnemy(scene, player, enemy, scene.sceneName), null, scene);
 }
 
-export function updateBoar(scene, lBound, rBound) {
-    if (scene.boar.x >= rBound) {
-        scene.boar.setVelocityX(-300 * scene.personalScale);
-        scene.boar.setFlipX(true);
-    } else if (scene.boar.x <= lBound) {
-        scene.boar.setVelocityX(300 * scene.personalScale);
-        scene.boar.setFlipX(false);
+export function updateEnemy(scene, lBound, rBound) {
+    if (scene.enemy.x >= rBound) {
+        scene.enemy.setVelocityX(-300 * scene.personalScale);
+        scene.enemy.setFlipX(true);
+    } else if (scene.enemy.x <= lBound) {
+        scene.enemy.setVelocityX(300 * scene.personalScale);
+        scene.enemy.setFlipX(false);
     }
 }
 
@@ -362,9 +652,10 @@ export function die(scene, sceneName) {
     }
     scene.gameOverSound.play();
     let reason = "died";
-    if (scene.sugarCollected < scene.sugarNumber &&
-        scene.strawberryCollected < scene.strawberryNumber &&
-        scene.blueberryCollected < scene.blueberryNumber){
+    if (scene.sugarCollected >= scene.sugarNumber &&
+        scene.strawberryCollected >= scene.strawberryNumber &&
+        scene.blueberryCollected >= scene.blueberryNumber &&
+        scene.appleCollected >= scene.appleNumber ){
         reason = "failed";
     }        
     scene.time.delayedCall(1000, () => {

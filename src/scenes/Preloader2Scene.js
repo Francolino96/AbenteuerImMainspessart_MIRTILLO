@@ -69,6 +69,28 @@ class Preloader2Scene extends Phaser.Scene {
         }
         else if (this.selectedScene == "OrchardScene") {
             this.load.image('orchard_background', 'assets/orchard_background.jpg');
+            this.load.spritesheet('snake', 'assets/Sprites_snake.png', {
+                frameWidth: 400,
+                frameHeight: 60
+            });
+            this.load.spritesheet('fish', 'assets/Sprites_fish.png', {
+                frameWidth: 200,
+                frameHeight: 74
+            });
+            this.load.spritesheet('spider', 'assets/Sprites_spider.png', {
+                frameWidth: 295/2,
+                frameHeight: 75
+            });
+            this.load.spritesheet('fly', 'assets/Sprites_fly.png', {
+                frameWidth: 147/2,
+                frameHeight: 75
+            });
+            this.load.image('hazelnut', 'assets/Sprites_hazelnut.png');
+            this.load.image('apple', 'assets/Sprites_apple.png');
+            this.load.image('fence', 'assets/Sprites_fence.png');
+            this.load.image('appleTree1', 'assets/Sprites_apple_tree_1.png');
+            this.load.image('appleTree2', 'assets/Sprites_apple_tree_2.png');
+            this.load.image('appleTree3', 'assets/Sprites_apple_tree_3.png');
         }
     }
 
