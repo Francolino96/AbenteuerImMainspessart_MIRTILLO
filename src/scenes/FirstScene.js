@@ -85,7 +85,7 @@ class FirstScene extends Phaser.Scene {
         updateAcorns(this);
         updateIngredients(this, this.sugar, { min: 100 * this.personalScale, max: this.mapWidth - 100 * this.personalScale });
         updateIngredients(this, this.blueberries, { min: 100 * this.personalScale, max: this.mapWidth - 100 * this.personalScale });
-        updateEnemy(this, 100 * this.personalScale, this.mapWidth - 100 * this.personalScale);
+        updateEnemy(this, 100 * this.personalScale, this.mapWidth - 100 * this.personalScale, 300);
     }
 }
 

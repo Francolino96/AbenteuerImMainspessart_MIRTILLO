@@ -70,16 +70,20 @@ class Preloader2Scene extends Phaser.Scene {
         else if (this.selectedScene == "OrchardScene") {
             this.load.image('orchard_background', 'assets/orchard_background.jpg');
             this.load.spritesheet('snake', 'assets/Sprites_snake.png', {
-                frameWidth: 400,
-                frameHeight: 60
+                frameWidth: 1200/3,
+                frameHeight: 60,
+                margin: 0,
+                spacing: 6.71
             });
             this.load.spritesheet('fish', 'assets/Sprites_fish.png', {
                 frameWidth: 200,
                 frameHeight: 74
             });
             this.load.spritesheet('spider', 'assets/Sprites_spider.png', {
-                frameWidth: 295/2,
-                frameHeight: 75
+                frameWidth: 594.8/4,
+                frameHeight: 75,
+                margin: 0,
+                spacing: 6.71
             });
             this.load.spritesheet('fly', 'assets/Sprites_fly.png', {
                 frameWidth: 147/2,

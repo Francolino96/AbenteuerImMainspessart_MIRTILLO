@@ -72,7 +72,7 @@ class OrchardScene extends Phaser.Scene {
 
         spawnDecor(this, 1, true, 'grass', 0.006 * this.mapWidth, 0, this.mapWidth, gapPercentages, gapWidth);       
         createAcorns(this, 4, 'OrchardScene');
-        createEnemy(this, 500 * this.personalScale, 'spider', 300, 2);
+        createEnemy(this, 500 * this.personalScale, 'snake', 800, 3);
         initializeSceneInputs(this, 'apple', 'sugar');
     }
 
@@ -82,7 +82,7 @@ class OrchardScene extends Phaser.Scene {
         updateAcorns(this);
         updateIngredients(this, this.sugar, { min: 100 * this.personalScale, max: this.mapWidth - 100 * this.personalScale });
         updateIngredients(this, this.blueberries, { min: 100 * this.personalScale, max: this.mapWidth - 100 * this.personalScale });
-        updateEnemy(this, 100 * this.personalScale, this.mapWidth - 100 * this.personalScale);
+        updateEnemy(this, 100 * this.personalScale, this.mapWidth - 100 * this.personalScale, 800);
     }
 }
 

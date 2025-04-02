@@ -580,12 +580,12 @@ export function createEnemy(scene, xPosition, enemy, velocity, numberOfSprites) 
     scene.physics.add.overlap(scene.player, scene.enemy, (player, enemy) => hitEnemy(scene, player, enemy, scene.sceneName), null, scene);
 }
 
-export function updateEnemy(scene, lBound, rBound) {
+export function updateEnemy(scene, lBound, rBound, velocity) {
     if (scene.enemy.x >= rBound) {
-        scene.enemy.setVelocityX(-300 * scene.personalScale);
+        scene.enemy.setVelocityX(-velocity * scene.personalScale);
         scene.enemy.setFlipX(true);
     } else if (scene.enemy.x <= lBound) {
-        scene.enemy.setVelocityX(300 * scene.personalScale);
+        scene.enemy.setVelocityX(velocity * scene.personalScale);
         scene.enemy.setFlipX(false);
     }
 }
