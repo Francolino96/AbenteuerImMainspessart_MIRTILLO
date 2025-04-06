@@ -9,7 +9,6 @@ class Preloader2Scene extends Phaser.Scene {
     }
 
     preload() {
-
         this.cameras.main.setBackgroundColor('#000');
         this.personalScale = (this.scale.height + this.scale.width) / 2200;
 
@@ -60,29 +59,35 @@ class Preloader2Scene extends Phaser.Scene {
         }
         else if (this.selectedScene == "WaterScene") {
             this.load.image('water_background', 'assets/water_background.jpg');
-        }
-        else if (this.selectedScene == "ForestScene") {
-            this.load.image('forest_background', 'assets/forest_background.jpg');
-        }
-        else if (this.selectedScene == "FieldsScene") {
-            this.load.image('fields_background', 'assets/fields_background.jpg');
-        }
-        else if (this.selectedScene == "OrchardScene") {
-            this.load.image('orchard_background', 'assets/orchard_background.jpg');
+            this.load.image('water', 'assets/Sprites_water.png');
+            this.load.spritesheet('fish', 'assets/Sprites_fish.png', {
+                frameWidth: 200,
+                frameHeight: 74
+            });
             this.load.spritesheet('snake', 'assets/Sprites_snake.png', {
                 frameWidth: 1200/3,
                 frameHeight: 60,
                 margin: 0,
                 spacing: 6.71
             });
-            this.load.spritesheet('fish', 'assets/Sprites_fish.png', {
-                frameWidth: 200,
-                frameHeight: 74
-            });
+            this.load.image('fence', 'assets/Sprites_fence.png');
+            this.load.image('appleTree2', 'assets/Sprites_apple_tree_2.png');
+            this.load.image('hazelnut', 'assets/Sprites_hazelnut.png');
+            this.load.image('milk', 'assets/Sprites_milk.png');
+        }
+        else if (this.selectedScene == "ForestScene") {
+            this.load.image('forest_background', 'assets/forest_background.jpg');
+        }
+        else if (this.selectedScene == "FieldsScene") {
+            this.load.image('sunflowers', 'assets/Sprites_sunflowers.png');
+            this.load.image('fields_background', 'assets/fields_background.jpg');
+        }
+        else if (this.selectedScene == "OrchardScene") {
+            this.load.image('orchard_background', 'assets/orchard_background.jpg');
             this.load.spritesheet('spider', 'assets/Sprites_spider.png', {
-                frameWidth: 594.8/4,
-                frameHeight: 75,
-                margin: 0,
+                frameWidth: 611.87/4,
+                frameHeight: 73,
+                margin: 2,
                 spacing: 6.71
             });
             this.load.spritesheet('fly', 'assets/Sprites_fly.png', {

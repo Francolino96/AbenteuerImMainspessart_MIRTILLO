@@ -1,4 +1,5 @@
 export function initializeScene(scene, sceneName, backgroundType) {
+    scene.finishPoint = 300;
     scene.scale.refresh();
     scene.mapWidth = scene.scale.height * 8;
     scene.mapHeight = scene.scale.height;
@@ -30,6 +31,7 @@ export function initializeScene(scene, sceneName, backgroundType) {
     scene.sceneName = sceneName;
 
     scene.hazelnutCollected = 0;
+    scene.milkCollected = 0;
     scene.appleCollected = 0;
     scene.strawberryCollected = 0;
     scene.sugarCollected = 0;
@@ -94,30 +96,47 @@ export function createSounds(scene) {
     scene.sound.setVolume(0.1);
 }
 
-export function createGround(scene, gapPercentages, gapWidth) {
+export function createGround(scene, gapPercentages, gapWidth, fillGaps) {
+    if (fillGaps) {
+        scene.waterGroup = scene.add.group();
+    }
     const numPlatforms = Math.ceil(scene.mapWidth / scene.platformWidth);
 
+    // Creazione delle piattaforme "normali"
     for (let i = 0; i < numPlatforms; i++) {
         let platformX = i * scene.platformWidth + scene.platformWidth / 2;
-        const isInGap = isPositionInGap(platformX, gapPercentages, scene.mapWidth, gapWidth);
-        if (!isInGap) {
+        const inGap = isPositionInGap(platformX, gapPercentages, scene.mapWidth, gapWidth);
+        if (!inGap) {
             let ground = scene.platforms.create(platformX, scene.mapHeight - scene.platformWidth / 2, 'ground')
                 .setScale(scene.personalScale)
                 .refreshBody();
             if (Math.random() < 0.5) {
                 ground.setFlipX(true);
             }
+        } else if (fillGaps) {
+            // Se siamo nei gap e fillGaps è true, crea una piattaforma water
+            let water = scene.add.image(platformX, scene.mapHeight - scene.platformWidth / 2 + 40 * scene.personalScale, 'water')
+                .setOrigin(0.5)
+                .setScale(scene.personalScale);
+            if (Math.random() < 0.5) {
+                water.setFlipX(true);
+            }
+            if (Math.random() < 0.5) {
+                water.setFlipY(true);
+            }
+            scene.waterGroup.add(water);
         }
     }
 
+    // Creazione delle piattaforme "deepGrounds"
     scene.deepGrounds = scene.physics.add.staticGroup();
     const numRows = Math.ceil((scene.screenHeight - (scene.mapHeight - scene.platformWidth / 2)) / scene.platformWidth);
     
     for (let row = 1; row <= numRows; row++) {
         for (let i = 0; i < numPlatforms; i++) {
             let platformX = i * scene.platformWidth + scene.platformWidth / 2;
-            let isInGap = isPositionInGap(platformX, gapPercentages, scene.mapWidth, gapWidth);
-            if (!isInGap) {
+            const inGap = isPositionInGap(platformX, gapPercentages, scene.mapWidth, gapWidth);
+            if (!inGap) {
                 let deepGround = scene.deepGrounds.create(
                     platformX,
                     scene.mapHeight - scene.platformWidth / 2 + row * scene.platformWidth,
@@ -130,8 +149,35 @@ export function createGround(scene, gapPercentages, gapWidth) {
                 if (Math.random() < 0.5) {
                     deepGround.setFlipY(true);
                 }
+            } else if (fillGaps) {
+                // Riempie anche i gap nelle deepGrounds se fillGaps è true
+                let water = scene.add.image(platformX, scene.mapHeight - scene.platformWidth / 2 + row * scene.platformWidth, 'water')
+                    .setOrigin(0.5)
+                    .setScale(scene.personalScale);
+                if (Math.random() < 0.5) {
+                    water.setFlipX(true);
+                }
+                if (Math.random() < 0.5) {
+                    water.setFlipY(true);
+                }
+                scene.waterGroup.add(water);
             }
         }
+    }
+}
+
+export function updateWater(scene){
+    if (scene.waterGroup) {
+        scene.time.addEvent({
+            delay: 500,
+            loop: true,
+            callback: () => {
+                scene.waterGroup.children.iterate((waterBlock) => {
+                    waterBlock.setFlipX(Math.random() < 0.5);
+                    waterBlock.setFlipY(Math.random() < 0.5);
+                });
+            }
+        });
     }
 }
 
@@ -217,7 +263,7 @@ export function updatePlayer(scene) {
     }
 
     // Controllo fine livello
-    if (scene.player.x > scene.mapWidth - 300 * scene.personalScale) {
+    if (scene.player.x > scene.mapWidth - scene.finishPoint * scene.personalScale) {
         scene.gameOver = true;
         scene.isInvincible = true;
         scene.input.keyboard.removeAllKeys(true);
@@ -399,14 +445,14 @@ function createScores(scene, ingredient1, ingredient2) {
     scene[ingredient2 + "Icon"].angle = getIconAngle(ingredient2);
 }
 
-export function spawnDecor(scene, scale, flip, texture, count, startingPoint, endingPoint, gapPercentages, mapWidth, gapWidth, boxWidth) {
+export function spawnDecor(scene, scale, flip, texture, count, startingPoint, endingPoint, gapPercentages, gapWidth, boxWidth) {
     console.log("texture: ", texture);
     for (let i = 0; i < count; i++) {
         let x;
         do {
             x = Phaser.Math.Between(startingPoint, endingPoint);
-        } while (isPositionInGap(x + 50 * scene.personalScale, gapPercentages, mapWidth, gapWidth) || isPositionInGap(x - 50 * scene.personalScale, gapPercentages, mapWidth, gapWidth));
-        const decor = scene.add.image(x, scene.mapHeight - boxWidth + 1, texture)
+        } while (isPositionInGap(x + 70 * scene.personalScale, gapPercentages, scene.mapWidth, gapWidth) || isPositionInGap(x - 70 * scene.personalScale, gapPercentages, scene.mapWidth, gapWidth));
+        const decor = scene.add.image(x, scene.mapHeight - boxWidth + 2, texture)
             .setOrigin(0.5, 1)
             .setScale(scale * scene.personalScale);
 
@@ -485,7 +531,9 @@ export function collectIngredient(scene, player, ingredient, type, sceneName) {
     if (scene.sugarCollected >= scene.sugarNumber &&
         scene.strawberryCollected >= scene.strawberryNumber &&
         scene.blueberryCollected >= scene.blueberryNumber &&
-        scene.appleCollected >= scene.appleNumber ) {
+        scene.appleCollected >= scene.appleNumber &&
+        scene.hazelnutCollected >= scene.hazelnutNumber &&
+        scene.milkCollected >= scene.milkNumber ) {
         win(scene, sceneName);
     }
 }
@@ -556,6 +604,49 @@ export function createMushroom(scene, xPosition) {
     scene.mushroom.body.setImmovable(true);
     scene.physics.add.collider(scene.mushroom, scene.platforms);
     scene.physics.add.collider(scene.player, scene.mushroom, (player, enemy) => hitEnemy(scene, player, enemy, scene.sceneName), null, scene);
+}
+
+export function createFish(scene, gapPercentages, gapWidth) {
+    // Crea animazione una sola volta
+    if (!scene.anims.exists('fishSwim')) {
+        scene.anims.create({
+            key: 'fishSwim',
+            frames: scene.anims.generateFrameNumbers('fish', { start: 0, end: 1 }),
+            frameRate: 6,
+            repeat: -1
+        });
+    }
+
+    gapPercentages.forEach(gap => {
+        const gapStart = scene.mapWidth * gap - gapWidth / 2 + 140 * scene.personalScale;
+        const gapEnd = scene.mapWidth * gap + gapWidth / 2 - 140 * scene.personalScale;
+
+        // Random y tra 60 e 120 (relativa alla mappa)
+        const yPos = Phaser.Math.Between(
+            scene.mapHeight + 60 * scene.personalScale,
+            scene.mapHeight + 120 * scene.personalScale
+        );
+
+        // Random scale tra 0.7 e 1.1 (moltiplicata per personalScale)
+        const scale = Phaser.Math.FloatBetween(0.7, 1.1) * scene.personalScale;
+
+        const fish = scene.add.sprite(gapStart, yPos, 'fish')
+            .setOrigin(0.5, 1)
+            .setScale(scale);
+
+        fish.play('fishSwim');
+
+        scene.tweens.add({
+            targets: fish,
+            x: gapEnd,
+            ease: 'Linear',
+            duration: 6000,
+            yoyo: true,
+            repeat: -1,
+            onYoyo: (tween, target) => target.setFlipX(!target.flipX),
+            onRepeat: (tween, target) => target.setFlipX(!target.flipX)
+        });
+    });
 }
 
 export function createEnemy(scene, xPosition, enemy, velocity, numberOfSprites) {
@@ -655,7 +746,9 @@ export function die(scene, sceneName) {
     if (scene.sugarCollected >= scene.sugarNumber &&
         scene.strawberryCollected >= scene.strawberryNumber &&
         scene.blueberryCollected >= scene.blueberryNumber &&
-        scene.appleCollected >= scene.appleNumber ){
+        scene.appleCollected >= scene.appleNumber &&
+        scene.hazelnutCollected >= scene.hazelnutNumber &&
+        scene.milkCollected >= scene.milkNumber){
         reason = "failed";
     }        
     scene.time.delayedCall(1000, () => {

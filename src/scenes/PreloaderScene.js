@@ -88,7 +88,6 @@ class PreloaderScene extends Phaser.Scene {
         this.load.image('skull_1', 'assets/Sprites_skeleton_1.png');
         this.load.image('skull_2', 'assets/Sprites_skeleton_2.png');
         this.load.image('skull_3', 'assets/Sprites_skeleton_3.png');
-        this.load.image('sunflowers', 'assets/Sprites_sunflowers.png');
         this.load.image('direction_board', 'assets/Sprites_direction_board.png');
         this.load.image('end_board', 'assets/Sprites_end_board.png');
         this.load.spritesheet('boar', 'assets/Sprites_boar.png', {

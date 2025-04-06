@@ -13,7 +13,7 @@ class GameOverScene extends Phaser.Scene {
         this.personalScale = (this.scale.height + this.scale.width)/2200;
         this.cameras.main.setBackgroundColor('#444');
 
-        this.add.text(this.scale.width / 2, this.scale.height * 0.35, 'Mission\ngescheitert', { 
+        const firstText = this.add.text(this.scale.width / 2, this.scale.height * 0.35, 'Mission\ngescheitert', { 
             fontFamily: 'PressStart2P', 
             fontSize: 60*this.personalScale, 
             fill: '#f00',
@@ -21,14 +21,14 @@ class GameOverScene extends Phaser.Scene {
         }).setOrigin(0.5);
         console.log("reason: ", this.reason)
 
-        this.add.text(this.scale.width / 2, this.scale.height * 0.45, 'Wir haben nicht\nalle Zutaten gesammelt', { 
+        this.add.text(this.scale.width / 2, firstText.y + 120 * this.personalScale, 'Wir haben nicht\nalle Zutaten gesammelt', { 
             fontFamily: 'PressStart2P', 
             fontSize: 30*this.personalScale, 
             fill: '#f99',
             align: 'center'
         }).setOrigin(0.5);
 
-        let replayButton = this.add.text(this.scale.width / 2, this.scale.height * 0.58, 'NOCHMAL SPIELEN', { 
+        let replayButton = this.add.text(this.scale.width / 2, firstText.y + 250 * this.personalScale, 'NOCHMAL SPIELEN', { 
             fontFamily: 'PressStart2P', 
             fontSize: 30*this.personalScale, 
             fill: '#fff' 
