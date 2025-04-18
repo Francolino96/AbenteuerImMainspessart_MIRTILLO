@@ -75,6 +75,7 @@ class PreloaderScene extends Phaser.Scene {
             });
         }
         else console.log("Errore nel caricamento del chosenCharacter");
+        this.load.image('ground_background', 'assets/underground_background.jpg');
 
         this.load.image('ground', 'assets/Sprites_ground.png');
         this.load.image('flower', 'assets/Sprites_flowers.png');
@@ -128,6 +129,7 @@ class PreloaderScene extends Phaser.Scene {
     }
 
     create() {
+        this.scale.refresh();
         console.log("Sono nella PreloaderScene");
         this.cameras.main.fadeOut(800, 0, 0, 0);
         this.time.delayedCall(800, () => {

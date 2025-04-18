@@ -5,6 +5,7 @@ import {
     createAcorns,
     updateAcorns,
     createEnemy,
+    createFlies,
     updateEnemy,
     updateIngredients,
     updatePlayer,
@@ -69,15 +70,16 @@ class OrchardScene extends Phaser.Scene {
             { min: 50, max: 300 }
         );
         spawnDecor(this, 1, true, 'grass', 0.006 * this.mapWidth, 0, this.mapWidth, gapPercentages, gapWidth, this.boxWidth);       
-        createAcorns(this, 4, 'OrchardScene');
+        //createAcorns(this, 4, 'OrchardScene');
         createEnemy(this, 500 * this.personalScale, 'spider', 250, 4);
+        createFlies(this, 5, 'fly', 2, 250);
         initializeSceneInputs(this, 'apple', 'sugar');
     }
 
     update() {
         if (this.gameOver || this.victory) return;
         updatePlayer(this);
-        updateAcorns(this);
+        //updateAcorns(this);
         updateIngredients(this, this.sugar, { min: 100 * this.personalScale, max: this.mapWidth - 100 * this.personalScale });
         updateIngredients(this, this.apples, { min: 100 * this.personalScale, max: this.mapWidth - 100 * this.personalScale });
         updateEnemy(this, 100 * this.personalScale, this.mapWidth - 100 * this.personalScale, 250);

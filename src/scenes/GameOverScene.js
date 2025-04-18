@@ -9,6 +9,7 @@ class GameOverScene extends Phaser.Scene {
     }
     
     create(){
+        this.scale.refresh();
         this.cameras.main.fadeIn(800, 0, 0, 0);
         this.personalScale = (this.scale.height + this.scale.width)/2200;
         this.cameras.main.setBackgroundColor('#444');

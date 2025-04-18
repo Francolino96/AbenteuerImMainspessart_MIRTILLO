@@ -49,6 +49,7 @@ class WaterScene extends Phaser.Scene {
         spawnSkull(this, 'skull_2', gapPercentages, gapWidth, this.boxWidth);
         spawnSkull(this, 'skull_3', gapPercentages, gapWidth, this.boxWidth);
 
+        createFish(this, gapPercentages, gapWidth);
         createPlayer(this);
 
         this.hazelnutNumber = 5;
@@ -71,7 +72,6 @@ class WaterScene extends Phaser.Scene {
         updateWater(this);
         spawnDecor(this, 1, true, 'grass', 0.006 * this.mapWidth, 0, this.mapWidth, gapPercentages, gapWidth, this.boxWidth);       
         createAcorns(this, 4, 'WaterScene');
-        createFish(this, gapPercentages, gapWidth);
         createEnemy(this, 500 * this.personalScale, 'snake', 350, 3);
         initializeSceneInputs(this, 'hazelnut', 'milk');
     }

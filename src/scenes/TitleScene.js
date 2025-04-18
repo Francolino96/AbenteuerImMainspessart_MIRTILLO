@@ -4,7 +4,7 @@ class TitleScene extends Phaser.Scene {
     }
 
     preload () {
-        this.load.image('forest_background', 'assets/forest_background.jpg');
+        this.load.image('forest_background', 'assets/forest_background.png');
         let newFont = new FontFace('PressStart2P', 'url(PressStart2P-Regular.ttf)');
         newFont.load().then(function(loadedFont) {
             document.fonts.add(loadedFont);
@@ -12,6 +12,7 @@ class TitleScene extends Phaser.Scene {
     }
 
     create(){
+        this.scale.refresh();
         this.personalScale = (this.scale.height + this.scale.width)/2200;
         this.background = this.add.sprite(this.scale.width / 2, this.scale.height / 2, 'forest_background');
         const aspectRatio = this.background.width / this.background.height;

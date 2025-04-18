@@ -39,13 +39,28 @@ export function initializeScene(scene, sceneName, backgroundType) {
     
     createSounds(scene);
 
+    const groundHeight = scene.screenHeight - scene.mapHeight;
+    if (groundHeight > 0) {
+        const groundSource = scene.textures.get('ground_background').getSourceImage();
+        const groundScaleFactor = groundHeight / groundSource.height;
+
+        scene.groundBackground = scene.add.tileSprite(
+            scene.mapWidth / 2,
+            scene.screenHeight,
+            scene.mapWidth+5,
+            groundHeight,
+            'ground_background'
+        ).setOrigin(0.5, 1).setScrollFactor(0.2).setScale(1.57);
+        scene.groundBackground.setTileScale(groundScaleFactor, groundScaleFactor);
+    }
+
     const bgSource = scene.textures.get(backgroundType).getSourceImage();
     const desiredHeight = scene.screenHeight + 10;
     const scaleFactor = desiredHeight / bgSource.height;
-    
+
     scene.background = scene.add.tileSprite(
         scene.mapWidth / 2,
-        scene.mapHeight,
+        scene.mapHeight-10,
         scene.mapWidth,
         desiredHeight,
         backgroundType
@@ -182,7 +197,7 @@ export function updateWater(scene){
 }
 
 export function createPlayer(scene) {
-    scene.player = scene.physics.add.sprite(100, 500, 'player');
+    scene.player = scene.physics.add.sprite(100 * scene.personalScale, 400 * scene.personalScale, 'player');
     scene.cameras.main.startFollow(scene.player, true, 0.08, 0.08);
     scene.player.setScale(scene.personalScale * 1.3).refreshBody();
     scene.player.setSize(scene.player.width * 0.70, scene.player.height);
@@ -669,6 +684,79 @@ export function createEnemy(scene, xPosition, enemy, velocity, numberOfSprites) 
 
     //scene.physics.add.collider(scene.enemy, scene.platforms);
     scene.physics.add.overlap(scene.player, scene.enemy, (player, enemy) => hitEnemy(scene, player, enemy, scene.sceneName), null, scene);
+}
+
+export function createFlies(scene, n, enemyKey, numberOfSprites, speed = 250) {
+    const flies = [];
+
+    for (let i = 0; i < n; i++) {
+        const xStart = Phaser.Math.Between(scene.mapWidth / 2, scene.mapWidth);
+        const yStart = Phaser.Math.Between(scene.mapHeight - 400 * scene.personalScale, scene.mapHeight - 200 * scene.personalScale);
+        const direction = Phaser.Math.Between(0, 1) === 0 ? -1 : 1;
+
+        const fly = scene.physics.add.sprite(xStart, yStart, enemyKey)
+            .setOrigin(0.5, 1)
+            .setScale(scene.personalScale)
+            .setCollideWorldBounds(false);
+
+        fly.setVelocityX(direction * speed * scene.personalScale);
+        fly.setFlipX(direction < 0);
+        fly.body.setAllowGravity(false);
+        fly.body.bounce.set(1); // Rimbalzo su oggetti solidi
+
+        // Animazione volo
+        if (!scene.anims.exists(enemyKey + 'Fly')) {
+            scene.anims.create({
+                key: enemyKey + 'Fly',
+                frames: scene.anims.generateFrameNumbers(enemyKey, { start: 0, end: numberOfSprites - 1 }),
+                frameRate: 8,
+                repeat: -1
+            });
+        }
+
+        fly.play(enemyKey + 'Fly');
+
+        // Movimento verticale irregolare (sinusoide + random)
+        scene.time.addEvent({
+            delay: 500,
+            loop: true,
+            callback: () => {
+                const newVelocityY = Phaser.Math.Between(-100, 100);
+                fly.setVelocityY(newVelocityY);
+            }
+        });
+
+        // Rimbalzo contro piattaforme
+        scene.physics.add.collider(fly, scene.platforms);
+
+        // Collisione con il player
+        scene.physics.add.overlap(scene.player, fly, (player, enemy) =>
+            hitEnemy(scene, player, enemy, scene.sceneName), null, scene);
+
+        flies.push(fly);
+    }
+
+    // Wrapping laterale e verticale
+    scene.events.on('update', () => {
+        flies.forEach(fly => {
+            if (fly.x > scene.mapWidth + 50) {
+                fly.x = -50;
+                fly.y = Phaser.Math.Between(scene.mapHeight - 400 * scene.personalScale, scene.mapHeight - 200 * scene.personalScale);
+            }
+
+            if (fly.x < -50) {
+                fly.x = scene.mapWidth + 50;
+                fly.y = Phaser.Math.Between(scene.mapHeight - 400 * scene.personalScale, scene.mapHeight - 200 * scene.personalScale);
+            }
+
+            if (fly.y < -50) {
+                fly.y = scene.mapHeight - 250 * scene.personalScale;
+                fly.x = Phaser.Math.Between(0, 1) === 0 ? -50 : scene.mapWidth + 50;
+            }
+        });
+    });
+
+    return flies;
 }
 
 export function updateEnemy(scene, lBound, rBound, velocity) {

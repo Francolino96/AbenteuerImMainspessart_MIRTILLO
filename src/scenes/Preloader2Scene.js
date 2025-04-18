@@ -104,6 +104,7 @@ class Preloader2Scene extends Phaser.Scene {
     }
 
     create() {
+        this.scale.refresh();
         console.log("Sono nella Preloader2Scene");
         this.cameras.main.fadeIn(800, 0, 0, 0);
         this.cameras.main.fadeOut(800, 0, 0, 0);
