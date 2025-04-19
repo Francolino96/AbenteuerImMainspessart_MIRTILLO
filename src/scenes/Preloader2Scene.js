@@ -71,16 +71,38 @@ class Preloader2Scene extends Phaser.Scene {
                 spacing: 6.71
             });
             this.load.image('fence', 'assets/Sprites_fence.png');
-            this.load.image('appleTree2', 'assets/Sprites_apple_tree_2.png');
+            this.load.image('raft', 'assets/Sprites_raft.png');
+            this.load.image('stiancia', 'assets/Sprites_stiancia.png');
             this.load.image('hazelnut', 'assets/Sprites_hazelnut.png');
             this.load.image('milk', 'assets/Sprites_milk.png');
         }
         else if (this.selectedScene == "ForestScene") {
             this.load.image('forest_background', 'assets/forest_background.jpg');
+            this.load.image('tree_1', 'assets/Sprites_tree_1.png');
+            this.load.image('tree_2', 'assets/Sprites_tree_2.png');
+            this.load.image('tree_3', 'assets/Sprites_tree_3.png');
+            this.load.image('tree_4', 'assets/Sprites_tree_4.png');
         }
         else if (this.selectedScene == "FieldsScene") {
             this.load.image('sunflowers', 'assets/Sprites_sunflowers.png');
             this.load.image('fields_background', 'assets/fields_background.jpg');
+            this.load.image('orchard_background', 'assets/orchard_background.jpg');
+            this.load.spritesheet('spider', 'assets/Sprites_spider.png', {
+                frameWidth: 611.87/4,
+                frameHeight: 73,
+                margin: 2,
+                spacing: 6.71
+            });
+            this.load.spritesheet('fly', 'assets/Sprites_fly.png', {
+                frameWidth: 147/2,
+                frameHeight: 75
+            });
+            this.load.image('strawberry', 'assets/Sprites_strawberry.png');
+            this.load.image('sugar', 'assets/Sprites_sugar.png');
+            this.load.image('fence', 'assets/Sprites_fence.png');
+            this.load.image('appleTree1', 'assets/Sprites_apple_tree_1.png');
+            this.load.image('appleTree2', 'assets/Sprites_apple_tree_2.png');
+            this.load.image('appleTree3', 'assets/Sprites_apple_tree_3.png');
         }
         else if (this.selectedScene == "OrchardScene") {
             this.load.image('orchard_background', 'assets/orchard_background.jpg');

@@ -1,4 +1,8 @@
 export function initializeScene(scene, sceneName, backgroundType) {
+    const cm = scene.physics.world.colliders;
+    cm.getActive().slice().forEach(collider => {
+      cm.remove(collider);
+    });
     scene.finishPoint = 300;
     scene.scale.refresh();
     scene.mapWidth = scene.scale.height * 8;
@@ -235,6 +239,8 @@ export function createPlayer(scene) {
 }
 
 export function updatePlayer(scene) {
+    //scene.player.currentRaft = null;
+
     if (!scene.input.activePointer.isDown) {
         scene.isMovingLeft = false;
         scene.isMovingRight = false;
@@ -256,7 +262,14 @@ export function updatePlayer(scene) {
             scene.player.anims.play('jump');
     } 
     else {
-        scene.player.setVelocityX(0);
+        const raft = scene.player.currentRaft;
+        console.log("currentRaft: " + scene.player.currentRaft);
+        if (raft) {
+            console.log("Sono dentro nell'if(raft)");
+            scene.player.setVelocityX( raft.body.velocity.x );
+        } else {
+            scene.player.setVelocityX(0);
+        }
         if (scene.player.body.touching.down)
             scene.player.anims.play('turn');
         else
@@ -297,6 +310,7 @@ export function updatePlayer(scene) {
             scene.time.delayedCall(1000, () => {
                 scene.cameras.main.fadeOut(800, 0, 0, 0);
                 scene.time.delayedCall(800, () => {
+
                     scene.scene.start('GameOverScene', { callingScene: scene.sceneName, reason: "failed" });
                 });
             });
@@ -543,6 +557,20 @@ export function collectIngredient(scene, player, ingredient, type, sceneName) {
     scene[type + "Collected"]++;
     scene[type + "Text"].setText(scene[type + "Collected"] + '/' + scene[type + "Number"]);
 
+    // ➕ Aggiungi effetto di "pop" all'icona
+    const icon = scene[type + "Icon"];
+    const originalScale = scene.personalScale * 0.85;
+    scene.tweens.add({
+        targets: icon,
+        scale: originalScale * 1.3,  // Ingrandisce leggermente
+        duration: 150,
+        yoyo: true,                  // Torna alla scala originale
+        ease: 'Power1',
+        onComplete: () => {
+            icon.setScale(originalScale); // Assicura ritorno preciso alla scala originale
+        }
+    });
+
     if (scene.sugarCollected >= scene.sugarNumber &&
         scene.strawberryCollected >= scene.strawberryNumber &&
         scene.blueberryCollected >= scene.blueberryNumber &&
@@ -664,6 +692,64 @@ export function createFish(scene, gapPercentages, gapWidth) {
     });
 }
 
+export function createRafts(scene, gapPercentages, gapWidth, opts = {}) {
+    const yOffset = opts.yOffset || 0;
+    const speed   = 200; // px/s
+    const scale   = scene.personalScale * 1.3;
+    const mapW    = scene.mapWidth;
+    const baseY   = scene.mapHeight - scene.platformWidth / 2 + yOffset;
+
+    const rafts = scene.physics.add.group({
+        allowGravity: false,
+        immovable:    true
+    });
+
+    rafts.raftsData = [];
+
+    gapPercentages.forEach(gap => {
+        const textureWidth = scene.textures.get('raft').getSourceImage().width;
+        const raftWidth = textureWidth * scale;
+
+        const gapCenter = mapW * gap;
+        const padding = 20 * scale;
+        const gapStart = gapCenter - gapWidth / 2 + raftWidth / 2 + padding;
+        const gapEnd   = gapCenter + gapWidth / 2 - raftWidth / 2 - padding;
+
+        const raft = rafts.create(gapStart, baseY, 'raft').setOrigin(0.5, 1).setScale(scale);
+        raft.body.setAllowGravity(false);
+        raft.body.setImmovable(true);
+        raft.body.setVelocityX(speed * scale);
+        raft._gapStart = gapStart;
+        raft._gapEnd   = gapEnd;
+
+        rafts.raftsData.push(raft);
+    });
+
+    scene.physics.add.collider(scene.player, rafts, (player, raft) => {
+        if (player.body.touching.down && raft.body.touching.up) {
+            player.currentRaft = raft;
+        }
+    });
+
+    if (scene.acorns) {
+        scene.physics.add.collider(scene.acorns, rafts);
+    }
+
+    return { rafts, speed, scale };
+}
+
+export function updateRafts(rafts, speed, scale) {
+    rafts.raftsData.forEach(raft => {
+        if (raft.x >= raft._gapEnd && raft.body.velocity.x > 0) {
+            raft.body.setVelocityX(-speed * scale);
+            raft.setFlipX(true);
+        } else if (raft.x <= raft._gapStart && raft.body.velocity.x < 0) {
+            raft.body.setVelocityX(speed * scale);
+            raft.setFlipX(false);
+        }
+    });
+}
+
 export function createEnemy(scene, xPosition, enemy, velocity, numberOfSprites) {
     scene.enemy = scene.physics.add.sprite(xPosition, scene.mapHeight - scene.boxWidth, enemy).setOrigin(0.5, 1);
     scene.enemy.setScale(scene.personalScale * 1.2).refreshBody();
@@ -673,7 +759,7 @@ export function createEnemy(scene, xPosition, enemy, velocity, numberOfSprites) 
     scene.anims.create({
         key: enemy + 'Run',
         frames: scene.anims.generateFrameNumbers(enemy, { start: 0, end: numberOfSprites-1 }),
-        frameRate: 10,
+        frameRate: 8,
         repeat: -1
     });
 

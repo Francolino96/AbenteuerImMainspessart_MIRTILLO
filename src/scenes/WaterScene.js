@@ -14,22 +14,25 @@ import {
     updateWater,
     createPlatforms,
     initializeScene,
-    initializeSceneInputs
+    initializeSceneInputs,
+    createRafts
 } from '../utils.js';
 
 class WaterScene extends Phaser.Scene {
 
     constructor() {
+        console.log("Sono nel constructor del waterScene");
         super({ key: 'WaterScene' });
     }
 
-    create() {     
+    create() {
+        console.log("Sono nella waterscene"); 
         initializeScene(this, 'WaterScene', 'water_background');
         const gapPercentages = [0.2, 0.5, 0.8];
-        const gapWidth = 800 * this.personalScale;
+        const gapWidth = 1200 * this.personalScale;
         createGround(this, gapPercentages, gapWidth, true);
 
-        spawnDecor(this, 1.6, true, 'appleTree2', 0.0005 * this.mapWidth, this.mapWidth * 0.2, this.mapWidth - 500 * this.personalScale, gapPercentages, gapWidth, this.boxWidth);
+        spawnDecor(this, 1.3, true, 'stiancia', 0.005 * this.mapWidth, this.mapWidth * 0.2, this.mapWidth - 500 * this.personalScale, gapPercentages, gapWidth, this.boxWidth);
         
         createPlatforms(this, 2, this.lev3PlatformHeight, 100);
         createPlatforms(this, 3, this.lev1PlatformHeight, 300);
@@ -42,15 +45,24 @@ class WaterScene extends Phaser.Scene {
         spawnDecor(this, 1, true, 'flower', 0.004 * this.mapWidth, 0, this.mapWidth, gapPercentages, gapWidth, this.boxWidth);
         spawnDecor(this, 1, true, 'grass', 0.015 * this.mapWidth, 0, this.mapWidth, gapPercentages, gapWidth, this.boxWidth);
         spawnDecor(this, 1, false, 'direction_board', 1, this.mapWidth * 0.35, this.mapWidth * 0.65, gapPercentages, gapWidth, this.boxWidth);
-        spawnDecor(this, 1, false, 'end_board', 1, this.mapWidth - this.finishPoint *this.personalScale, this.mapWidth - this.finishPoint * this.personalScale, gapPercentages, gapWidth, this.boxWidth);
         spawnDecor(this, 1.3, true, 'fence', 6 * this.personalScale, 0, this.mapWidth - this.finishPoint *this.personalScale - 50 * this.personalScale, gapPercentages, gapWidth, this.boxWidth);
+        spawnDecor(this, 1, false, 'end_board', 1, this.mapWidth - this.finishPoint *this.personalScale, this.mapWidth - this.finishPoint * this.personalScale, gapPercentages, gapWidth, this.boxWidth);
         spawnSkull(this, 'skull_1', gapPercentages, gapWidth, this.boxWidth);
         spawnSkull(this, 'skull_1', gapPercentages, gapWidth, this.boxWidth);
         spawnSkull(this, 'skull_2', gapPercentages, gapWidth, this.boxWidth);
         spawnSkull(this, 'skull_3', gapPercentages, gapWidth, this.boxWidth);
 
+        console.log("Ciao Mondo 1");
         createFish(this, gapPercentages, gapWidth);
         createPlayer(this);
+        createRafts(this, gapPercentages, gapWidth, {
+            yOffset: 10 * this.personalScale,  // sposta leggermente in alto rispetto al bordo del gap
+            duration: 2000                     // 5s andata/ritorno
+        });
+        this.events.on('preupdate', () => {
+            this.player.currentRaft = null;
+        });
+        console.log("Ciao Mondo 2");
 
         this.hazelnutNumber = 5;
         this.hazelnuts = createIngredients(

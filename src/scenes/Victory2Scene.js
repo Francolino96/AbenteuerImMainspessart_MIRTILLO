@@ -47,7 +47,7 @@ class Victory2Scene extends Phaser.Scene {
         });
 
         newMissionsButton.on("pointerdown", () => {
-            replayButton.disableInteractive();
+            newMissionsButton.disableInteractive();
             this.goToNextScene("MenuScene");
         });
 

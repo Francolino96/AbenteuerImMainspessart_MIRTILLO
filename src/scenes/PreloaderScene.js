@@ -8,6 +8,7 @@ class PreloaderScene extends Phaser.Scene {
     }
 
     preload() {
+        this.loadStartTime = this.time.now;
         this.cameras.main.fadeIn(800, 0, 0, 0);
         this.cameras.main.setBackgroundColor('#000');
         this.personalScale = (this.scale.height + this.scale.width) / 2200;
@@ -131,12 +132,17 @@ class PreloaderScene extends Phaser.Scene {
     create() {
         this.scale.refresh();
         console.log("Sono nella PreloaderScene");
-        this.cameras.main.fadeOut(800, 0, 0, 0);
-        this.time.delayedCall(800, () => {
-            this.load.on('complete', function () {
-                progressBar.destroy();
+        const elapsed = this.time.now - this.loadStartTime;
+        console.log("elapsed: " + elapsed);
+        const remaining = Math.max(0, 14000 - elapsed);
+        console.log("remaining: " + remaining);
+        if (this.progressBar) this.progressBar.destroy();
+
+        this.time.delayedCall(remaining, () => {
+            this.cameras.main.fadeOut(800, 0, 0, 0);
+            this.time.delayedCall(800, () => {
+              this.scene.start('FirstScene');
             });
-            this.scene.start('FirstScene');
         });
     }
 }

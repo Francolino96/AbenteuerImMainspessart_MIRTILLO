@@ -43,8 +43,8 @@ class OrchardScene extends Phaser.Scene {
         spawnDecor(this, 1, true, 'flower', 0.004 * this.mapWidth, 0, this.mapWidth, gapPercentages, gapWidth, this.boxWidth);
         spawnDecor(this, 1, true, 'grass', 0.015 * this.mapWidth, 0, this.mapWidth, gapPercentages, gapWidth, this.boxWidth);
         spawnDecor(this, 1, false, 'direction_board', 1, this.mapWidth * 0.35, this.mapWidth * 0.65, gapPercentages, gapWidth, this.boxWidth);
-        spawnDecor(this, 1, false, 'end_board', 1, this.mapWidth - this.finishPoint *this.personalScale, this.mapWidth - this.finishPoint * this.personalScale, gapPercentages, gapWidth, this.boxWidth);
         spawnDecor(this, 1.3, true, 'fence', 6 * this.personalScale, 0, this.mapWidth - this.finishPoint *this.personalScale - 50 * this.personalScale, gapPercentages, gapWidth, this.boxWidth);
+        spawnDecor(this, 1, false, 'end_board', 1, this.mapWidth - this.finishPoint *this.personalScale, this.mapWidth - this.finishPoint * this.personalScale, gapPercentages, gapWidth, this.boxWidth);
         spawnSkull(this, 'skull_1', gapPercentages, gapWidth, this.boxWidth);
         spawnSkull(this, 'skull_1', gapPercentages, gapWidth, this.boxWidth);
         spawnSkull(this, 'skull_2', gapPercentages, gapWidth, this.boxWidth);
