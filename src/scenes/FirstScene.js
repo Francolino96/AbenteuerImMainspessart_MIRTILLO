@@ -28,10 +28,10 @@ class FirstScene extends Phaser.Scene {
         const gapWidth = 500 * this.personalScale;
         createGround(this, gapPercentages, gapWidth, false);
 
-        spawnDecor(this, 1.7, true, 'tree_1', 0.001 * this.mapWidth, this.mapWidth * 0.2, this.mapWidth - 500 * this.personalScale, gapPercentages, gapWidth, this.boxWidth);
-        spawnDecor(this, 1.7, true, 'tree_2', 0.001 * this.mapWidth, this.mapWidth * 0.2, this.mapWidth - 500 * this.personalScale, gapPercentages, gapWidth, this.boxWidth);
-        spawnDecor(this, 1.7, true, 'tree_3', 0.001 * this.mapWidth, this.mapWidth * 0.2, this.mapWidth - 500 * this.personalScale, gapPercentages, gapWidth, this.boxWidth);
-        spawnDecor(this, 1.7, true, 'tree_4', 0.001 * this.mapWidth, this.mapWidth * 0.2, this.mapWidth - 500 * this.personalScale, gapPercentages, gapWidth, this.boxWidth);
+        spawnDecor(this, 1.8, true, 'tree_1', 0.001 * this.mapWidth, this.mapWidth * 0.2, this.mapWidth - 500 * this.personalScale, gapPercentages, gapWidth, this.boxWidth);
+        spawnDecor(this, 1.8, true, 'tree_2', 0.001 * this.mapWidth, this.mapWidth * 0.2, this.mapWidth - 500 * this.personalScale, gapPercentages, gapWidth, this.boxWidth);
+        spawnDecor(this, 1.8, true, 'tree_3', 0.001 * this.mapWidth, this.mapWidth * 0.2, this.mapWidth - 500 * this.personalScale, gapPercentages, gapWidth, this.boxWidth);
+        spawnDecor(this, 1.8, true, 'tree_4', 0.001 * this.mapWidth, this.mapWidth * 0.2, this.mapWidth - 500 * this.personalScale, gapPercentages, gapWidth, this.boxWidth);
 
         createPlatforms(this, 2, this.lev3PlatformHeight, 100);
         createPlatforms(this, 3, this.lev1PlatformHeight, 300);
@@ -81,8 +81,8 @@ class FirstScene extends Phaser.Scene {
         if (this.gameOver || this.victory) return;
         updatePlayer(this);
         updateAcorns(this);
-        updateIngredients(this, this.sugar, { min: 100 * this.personalScale, max: this.mapWidth - 100 * this.personalScale });
-        updateIngredients(this, this.blueberries, { min: 100 * this.personalScale, max: this.mapWidth - 100 * this.personalScale });
+        updateIngredients(this, this.sugar, { min: 100 * this.personalScale, max: this.mapWidth - 100 * this.personalScale - this.finishPoint *this.personalScale });
+        updateIngredients(this, this.blueberries, { min: 100 * this.personalScale, max: this.mapWidth - 100 * this.personalScale - this.finishPoint *this.personalScale });
         updateEnemy(this, 100 * this.personalScale, this.mapWidth - 100 * this.personalScale, 300);
     }
 }

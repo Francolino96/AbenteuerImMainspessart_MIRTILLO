@@ -10,13 +10,27 @@ class PreloaderScene extends Phaser.Scene {
     preload() {
         this.loadStartTime = this.time.now;
         this.cameras.main.fadeIn(800, 0, 0, 0);
-        this.cameras.main.setBackgroundColor('#000');
         this.personalScale = (this.scale.height + this.scale.width) / 2200;
+        
+        this.background = this.add.sprite(0, 0, 'forest_background').setOrigin(0.5, 1);
+        const aspectRatio = this.background.width / this.background.height;
+        let newW, newH;
+        if (this.scale.width / this.scale.height > aspectRatio) {
+            newW = this.scale.width;
+            newH = newW / aspectRatio;
+        } else {
+            newH = this.scale.height;
+            newW = newH * aspectRatio;
+        }
+        newH *= 1.1;
+        newW = newH * aspectRatio;
+        this.background.setDisplaySize(newW, newH).setPosition(this.scale.width / 2, this.scale.height);
+
         const progressBar = this.add.graphics();
         const chargingBar = this.add.image(this.scale.width / 2, this.scale.height / 2 + 90 * this.personalScale * 0.8 + 40*this.personalScale, 'chargingBarFrame').setOrigin(0.5).setScale(this.personalScale * 0.8);
         this.load.on('progress', function (value) {
             progressBar.clear();
-            progressBar.fillStyle(0xff0000, 1);
+            progressBar.fillStyle(0x5a67b0, 1);
 
             let fillWidth = 2 * 290 * value * this.personalScale * 0.8;
             let fillHeight = 90 * this.personalScale * 0.8;
@@ -26,10 +40,21 @@ class PreloaderScene extends Phaser.Scene {
             progressBar.fillRect(frameX, frameY, fillWidth, fillHeight);
         }, this);
 
-        this.add.text(this.scale.width / 2, chargingBar.y - 250 * this.personalScale, 'Hilf uns, die Zutaten\nfür das Eis zu sammeln,\num die Antwort auf\ndas Quiz zu erhalten.', { 
+
+        let fontSize;
+        let text;
+        if (this.scale.height > this.scale.width){
+            fontSize = 35 * this.personalScale;
+            text = 'Hilf uns, die\nZutaten für das Eis\nzu sammeln, um die\nAntwort auf das\nQuiz zu erhalten.'
+        }
+        else {
+            fontSize = 28 * this.personalScale;
+            text = 'Hilf uns, die Zutaten\nfür das Eis zu sammeln,\num die Antwort auf\ndas Quiz zu erhalten.'
+        }
+        this.add.text(this.scale.width / 2, chargingBar.y - 250 * this.personalScale, text, { 
             fontFamily: 'PressStart2P', 
-            fontSize: 28*this.personalScale, 
-            fill: '#fff',
+            fontSize: fontSize, 
+            fill: '#1f1f1f',
             align: 'center'
         }).setOrigin(0.5);
 
@@ -39,8 +64,8 @@ class PreloaderScene extends Phaser.Scene {
             'Lädt',
             {
                 fontFamily: 'PressStart2P',
-                fontSize: 30 * this.personalScale,
-                fill: '#fff',
+                fontSize: 35 * this.personalScale,
+                fill: '#1f1f1f',
                 align: 'center'
             }
         ).setOrigin(0, 0.5);
@@ -98,9 +123,16 @@ class PreloaderScene extends Phaser.Scene {
         });
         this.load.image('mushroom', 'assets/Sprites_mushroom.png');
         this.load.image('mushroom_smashed', 'assets/Sprites_mushroom_2.png');
-        this.load.image('strawberry', 'assets/Sprites_strawberry.png');
-        this.load.image('sugar', 'assets/Sprites_sugar_cube.png');
-        this.load.image('blueberry', 'assets/Sprites_blueberry.png');
+        this.load.image('blueberry_icon', 'assets/Sprites_blueberry_icon.png');
+        this.load.image('sugar_icon', 'assets/Sprites_sugar_cube_icon.png');
+        this.load.spritesheet('sugar', 'assets/Sprites_sugar_cube.png', {
+            frameWidth: 91,
+            frameHeight: 91
+        });
+        this.load.spritesheet('blueberry', 'assets/Sprites_blueberry.png', {
+            frameWidth: 91,
+            frameHeight: 91
+        });
         this.load.image('acorn', 'assets/Sprites_acorn.png');
         this.load.image('acorn_expl_1', 'assets/Sprites_acorn_explosion_1.png');
         this.load.image('acorn_expl_2', 'assets/Sprites_acorn_explosion_2.png');

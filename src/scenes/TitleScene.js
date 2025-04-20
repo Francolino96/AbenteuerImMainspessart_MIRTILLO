@@ -4,7 +4,11 @@ class TitleScene extends Phaser.Scene {
     }
 
     preload () {
-        this.load.image('forest_background', 'assets/forest_background.png');
+        this.load.image('forest_background', 'assets/forest_background.jpg');
+        this.load.image('water_background', 'assets/water_background.jpg');
+        this.load.image('orchard_background', 'assets/orchard_background.jpg');
+        this.load.image('fields_background', 'assets/fields_background.jpg');
+
         let newFont = new FontFace('PressStart2P', 'url(PressStart2P-Regular.ttf)');
         newFont.load().then(function(loadedFont) {
             document.fonts.add(loadedFont);
@@ -14,35 +18,39 @@ class TitleScene extends Phaser.Scene {
     create(){
         this.scale.refresh();
         this.personalScale = (this.scale.height + this.scale.width)/2200;
-        this.background = this.add.sprite(this.scale.width / 2, this.scale.height / 2, 'forest_background');
+
+        this.background = this.add.sprite(0, 0, 'forest_background').setOrigin(0.5, 1);
         const aspectRatio = this.background.width / this.background.height;
-        let newBackgroundWidth, newBackgroundHeight;
+        let newW, newH;
         if (this.scale.width / this.scale.height > aspectRatio) {
-            newBackgroundWidth = this.scale.width;
-            newBackgroundHeight = newBackgroundWidth / aspectRatio;
+            newW = this.scale.width;
+            newH = newW / aspectRatio;
         } else {
-            newBackgroundHeight = this.scale.height;
-            newBackgroundWidth = newBackgroundHeight * aspectRatio;
+            newH = this.scale.height;
+            newW = newH * aspectRatio;
         }
-        this.background.setDisplaySize(newBackgroundWidth, newBackgroundHeight);
+        newH *= 1.1;
+        newW = newH * aspectRatio;
+        this.background.setDisplaySize(newW, newH).setPosition(this.scale.width / 2, this.scale.height);
+
         const title = this.add.text(this.scale.width / 2, this.scale.height * 0.4, 'Abenteuer', { 
             fontFamily: 'PressStart2P', 
             fontSize: 60*this.personalScale, 
-            fill: '#fff',
+            fill: '#1f1f1f',
             align: 'center'
         }).setOrigin(0.5);
         
         const subtitle = this.add.text(this.scale.width / 2, title.y + title.height, 'im Main-Spessart', { 
             fontFamily: 'PressStart2P', 
             fontSize: 34*this.personalScale, 
-            fill: '#fff',
+            fill: '#1f1f1f',
             align: 'center'
         }).setOrigin(0.5);
 
-        let startButton = this.add.text(this.scale.width / 2, subtitle.y + subtitle.height + 50 * this.personalScale, 'START', { 
+        let startButton = this.add.text(this.scale.width / 2, subtitle.y + subtitle.height + 100 * this.personalScale, 'START', { 
             fontFamily: 'PressStart2P', 
-            fontSize: 30*this.personalScale, 
-            fill: '#0f0' 
+            fontSize: 35*this.personalScale, 
+            fill: '#5a67b0' 
         }).setOrigin(0.5).setInteractive();
 
         startButton.on('pointerdown', () => {

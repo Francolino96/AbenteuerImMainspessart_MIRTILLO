@@ -9,8 +9,34 @@ class Preloader2Scene extends Phaser.Scene {
     }
 
     preload() {
-        this.cameras.main.setBackgroundColor('#000');
         this.personalScale = (this.scale.height + this.scale.width) / 2200;
+
+        let backgroundImage;
+        if (this.selectedScene == 'OrchardScene'){
+            backgroundImage = 'orchard_background';
+        }
+        else if (this.selectedScene == 'FieldsScene'){
+            backgroundImage = 'fields_background';
+        }
+        else if (this.selectedScene == 'ForestScene'){
+            backgroundImage = 'forest_background';
+        }
+        else if (this.selectedScene == 'WaterScene'){
+            backgroundImage = 'water_background';
+        }
+        this.background = this.add.sprite(0, 0, backgroundImage).setOrigin(0.5, 1);
+        const aspectRatio = this.background.width / this.background.height;
+        let newW, newH;
+        if (this.scale.width / this.scale.height > aspectRatio) {
+            newW = this.scale.width;
+            newH = newW / aspectRatio;
+        } else {
+            newH = this.scale.height;
+            newW = newH * aspectRatio;
+        }
+        newH *= 1.1;
+        newW = newH * aspectRatio;
+        this.background.setDisplaySize(newW, newH).setPosition(this.scale.width / 2, this.scale.height);
 
         let centerX = this.scale.width / 2;
         let centerY = this.scale.height / 2;
@@ -19,7 +45,7 @@ class Preloader2Scene extends Phaser.Scene {
 
         this.load.on('progress', (value) => {
             this.progressBar.clear();
-            this.progressBar.fillStyle(0xff0000, 1);
+            this.progressBar.fillStyle(0x5a67b0, 1);
 
             let fillWidth = 2 * 290 * value * this.personalScale * 0.8;
             let fillHeight = 90 * this.personalScale * 0.8;
@@ -36,8 +62,8 @@ class Preloader2Scene extends Phaser.Scene {
             'Lädt',
             {
                 fontFamily: 'PressStart2P',
-                fontSize: 30 * this.personalScale,
-                fill: '#fff',
+                fontSize: 35 * this.personalScale,
+                fill: '#1f1f1f',
                 align: 'center'
             }
         ).setOrigin(0, 0.5);
@@ -54,16 +80,13 @@ class Preloader2Scene extends Phaser.Scene {
             }
         });
 
-        if (this.selectedScene == "FirstScene") {
-            this.load.image('fields_background', 'assets/fields_background.jpg');
-        }
-        else if (this.selectedScene == "WaterScene") {
-            this.load.image('water_background', 'assets/water_background.jpg');
+        if (this.selectedScene == "WaterScene") {
             this.load.image('water', 'assets/Sprites_water.png');
             this.load.spritesheet('fish', 'assets/Sprites_fish.png', {
                 frameWidth: 200,
                 frameHeight: 74
             });
+            this.load.audio('snake', 'sounds/snake.mp3');
             this.load.spritesheet('snake', 'assets/Sprites_snake.png', {
                 frameWidth: 1200/3,
                 frameHeight: 60,
@@ -73,51 +96,88 @@ class Preloader2Scene extends Phaser.Scene {
             this.load.image('fence', 'assets/Sprites_fence.png');
             this.load.image('raft', 'assets/Sprites_raft.png');
             this.load.image('stiancia', 'assets/Sprites_stiancia.png');
-            this.load.image('hazelnut', 'assets/Sprites_hazelnut.png');
-            this.load.image('milk', 'assets/Sprites_milk.png');
+            this.load.image('hazelnut_icon', 'assets/Sprites_hazelnut_icon.png');
+            this.load.spritesheet('hazelnut', 'assets/Sprites_hazelnut.png', {
+                frameWidth: 91,
+                frameHeight: 91
+            });
+            this.load.image('milk_icon', 'assets/Sprites_milk_icon.png');
+            this.load.spritesheet('milk', 'assets/Sprites_milk.png', {
+                frameWidth: 91,
+                frameHeight: 91
+            });
         }
+
         else if (this.selectedScene == "ForestScene") {
-            this.load.image('forest_background', 'assets/forest_background.jpg');
+            this.load.image('sugar_icon', 'assets/Sprites_sugar_cube_icon.png');
+            this.load.spritesheet('sugar', 'assets/Sprites_sugar_cube.png', {
+                frameWidth: 91,
+                frameHeight: 91
+            });
+            this.load.image('blueberry_icon', 'assets/Sprites_blueberry_icon.png');
+            this.load.spritesheet('blueberry', 'assets/Sprites_blueberry.png', {
+                frameWidth: 91,
+                frameHeight: 91
+            });
             this.load.image('tree_1', 'assets/Sprites_tree_1.png');
             this.load.image('tree_2', 'assets/Sprites_tree_2.png');
             this.load.image('tree_3', 'assets/Sprites_tree_3.png');
             this.load.image('tree_4', 'assets/Sprites_tree_4.png');
         }
+
         else if (this.selectedScene == "FieldsScene") {
             this.load.image('sunflowers', 'assets/Sprites_sunflowers.png');
-            this.load.image('fields_background', 'assets/fields_background.jpg');
-            this.load.image('orchard_background', 'assets/orchard_background.jpg');
+            this.load.audio('spider', 'sounds/spider.mp3');
             this.load.spritesheet('spider', 'assets/Sprites_spider.png', {
                 frameWidth: 611.87/4,
                 frameHeight: 73,
                 margin: 2,
                 spacing: 6.71
             });
+            this.load.audio('fly', 'sounds/fly.mp3');
             this.load.spritesheet('fly', 'assets/Sprites_fly.png', {
                 frameWidth: 147/2,
                 frameHeight: 75
             });
-            this.load.image('strawberry', 'assets/Sprites_strawberry.png');
-            this.load.image('sugar', 'assets/Sprites_sugar.png');
+            this.load.image('strawberry_icon', 'assets/Sprites_strawberry_icon.png');
+            this.load.spritesheet('strawberry', 'assets/Sprites_strawberry.png', {
+                frameWidth: 91,
+                frameHeight: 91
+            });
+            this.load.image('sugar_icon', 'assets/Sprites_sugar_cube_icon.png');
+            this.load.spritesheet('sugar', 'assets/Sprites_sugar_cube.png', {
+                frameWidth: 91,
+                frameHeight: 91
+            });
             this.load.image('fence', 'assets/Sprites_fence.png');
             this.load.image('appleTree1', 'assets/Sprites_apple_tree_1.png');
             this.load.image('appleTree2', 'assets/Sprites_apple_tree_2.png');
             this.load.image('appleTree3', 'assets/Sprites_apple_tree_3.png');
         }
+
         else if (this.selectedScene == "OrchardScene") {
-            this.load.image('orchard_background', 'assets/orchard_background.jpg');
+            this.load.audio('spider', 'sounds/spider.mp3');
             this.load.spritesheet('spider', 'assets/Sprites_spider.png', {
                 frameWidth: 611.87/4,
                 frameHeight: 73,
                 margin: 2,
                 spacing: 6.71
             });
+            this.load.audio('fly', 'sounds/fly.mp3');
             this.load.spritesheet('fly', 'assets/Sprites_fly.png', {
                 frameWidth: 147/2,
                 frameHeight: 75
             });
-            this.load.image('hazelnut', 'assets/Sprites_hazelnut.png');
-            this.load.image('apple', 'assets/Sprites_apple.png');
+            this.load.image('sugar_icon', 'assets/Sprites_sugar_cube_icon.png');
+            this.load.spritesheet('sugar', 'assets/Sprites_sugar_cube.png', {
+                frameWidth: 91,
+                frameHeight: 91
+            });
+            this.load.image('apple_icon', 'assets/Sprites_apple_icon.png');
+            this.load.spritesheet('apple', 'assets/Sprites_apple.png', {
+                frameWidth: 91,
+                frameHeight: 91
+            });
             this.load.image('fence', 'assets/Sprites_fence.png');
             this.load.image('appleTree1', 'assets/Sprites_apple_tree_1.png');
             this.load.image('appleTree2', 'assets/Sprites_apple_tree_2.png');

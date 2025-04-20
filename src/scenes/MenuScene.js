@@ -7,22 +7,47 @@ class MenuScene extends Phaser.Scene {
         this.scale.refresh();
         this.cameras.main.fadeIn(800, 0, 0, 0);
         this.personalScale = (this.scale.height + this.scale.width) / 2200;
+
+        this.background = this.add.sprite(0, 0, 'forest_background').setOrigin(0.5, 1);
+        const aspectRatio = this.background.width / this.background.height;
+        let newW, newH;
+        if (this.scale.width / this.scale.height > aspectRatio) {
+            newW = this.scale.width;
+            newH = newW / aspectRatio;
+        } else {
+            newH = this.scale.height;
+            newW = newH * aspectRatio;
+        }
+        newH *= 1.1;
+        newW = newH * aspectRatio;
+        this.background.setDisplaySize(newW, newH).setPosition(this.scale.width / 2, this.scale.height);
+
         this.missions = ['Der Zauberwald', 'Die magischen\nGewässer', 'Die goldenen\nFelder', 'Der verzauberte\nObstgarten'];
         this.selectedMission = 0;
 
-        this.title = this.add.text(this.scale.width / 2, this.scale.height * 0.25, 'Wähle eine Mission', { 
+        this.title = this.add.text(this.scale.width / 2, this.scale.height * 0.20, 'Wähle eine\nMission', { 
             fontFamily: 'PressStart2P',
-            fontSize: 35 * this.personalScale, 
-            fill: '#fff',
+            fontSize: 50 * this.personalScale, 
+            fill: '#000',
             align: 'center'
         }).setOrigin(0.5);
 
         this.menuItems = [];
+        let fontSize;
+        let spacing;
+        if (this.scale.height > this.scale.width){
+            fontSize = 35 * this.personalScale;
+            spacing = 1.2 * this.personalScale;
+        }
+        else {
+            fontSize = 25 * this.personalScale;
+            spacing = this.personalScale;
+        }
         for (let i = 0; i < this.missions.length; i++) {
-            let text = this.add.text(this.scale.width / 2, this.scale.height * 0.25 + 30 * this.personalScale + (i+1) * 80 *this.personalScale, this.missions[i], { 
+            let text = this.add.text(this.scale.width / 2, this.scale.height * 0.25 + 10 * this.personalScale + (i+1) * spacing * 80 *this.personalScale, this.missions[i], { 
                 fontFamily: 'PressStart2P',
-                fontSize: 25 * this.personalScale, 
-                fill: '#fff',
+                fontSize: fontSize, 
+                fill: '#000',
                 align: 'center',
                 padding: { left: 10, right: 10, top: 5, bottom: 5 }
             })
@@ -36,10 +61,10 @@ class MenuScene extends Phaser.Scene {
             this.menuItems.push(text);
         }
 
-        this.startButton = this.add.text(this.scale.width / 2, this.scale.height * 0.25 + 6 * 80 *this.personalScale, 'START', { 
+        this.startButton = this.add.text(this.scale.width / 2, this.scale.height * 0.25 + 6 * spacing * 75 *this.personalScale, 'START', { 
             fontFamily: 'PressStart2P',
-            fontSize: 30 * this.personalScale, 
-            fill: '#fff'
+            fontSize: 35 * this.personalScale, 
+            fill: '#5a67b0'
         }).setOrigin(0.5)
         .setInteractive()
         .on('pointerdown', () => this.startMission());
@@ -67,9 +92,9 @@ class MenuScene extends Phaser.Scene {
     updateSelection() {
         this.menuItems.forEach((item, index) => {
             if (index === this.selectedMission) {
-                item.setStyle({ fill: '#000', backgroundColor: '#ff0' });
+                item.setStyle({ fill: '#fff', backgroundColor: '#a9b6f5' });
             } else {
-                item.setStyle({ fill: '#fff', backgroundColor: 'transparent' });
+                item.setStyle({ fill: '#000', backgroundColor: 'transparent' });
             }
         });
     }

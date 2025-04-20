@@ -15,7 +15,8 @@ import {
     createPlatforms,
     initializeScene,
     initializeSceneInputs,
-    createRafts
+    createRafts,
+    updateRafts
 } from '../utils.js';
 
 class WaterScene extends Phaser.Scene {
@@ -28,11 +29,11 @@ class WaterScene extends Phaser.Scene {
     create() {
         console.log("Sono nella waterscene"); 
         initializeScene(this, 'WaterScene', 'water_background');
-        const gapPercentages = [0.2, 0.5, 0.8];
+        const gapPercentages = [0.2, 0.5, 0.65, 0.8];
         const gapWidth = 1200 * this.personalScale;
         createGround(this, gapPercentages, gapWidth, true);
 
-        spawnDecor(this, 1.3, true, 'stiancia', 0.005 * this.mapWidth, this.mapWidth * 0.2, this.mapWidth - 500 * this.personalScale, gapPercentages, gapWidth, this.boxWidth);
+        spawnDecor(this, 1.3, true, 'stiancia', 0.002 * this.mapWidth, this.mapWidth * 0.2, this.mapWidth - 500 * this.personalScale, gapPercentages, gapWidth, this.boxWidth);
         
         createPlatforms(this, 2, this.lev3PlatformHeight, 100);
         createPlatforms(this, 3, this.lev1PlatformHeight, 300);
@@ -55,14 +56,9 @@ class WaterScene extends Phaser.Scene {
         console.log("Ciao Mondo 1");
         createFish(this, gapPercentages, gapWidth);
         createPlayer(this);
-        createRafts(this, gapPercentages, gapWidth, {
-            yOffset: 10 * this.personalScale,  // sposta leggermente in alto rispetto al bordo del gap
-            duration: 2000                     // 5s andata/ritorno
-        });
         this.events.on('preupdate', () => {
             this.player.currentRaft = null;
         });
-        console.log("Ciao Mondo 2");
 
         this.hazelnutNumber = 5;
         this.hazelnuts = createIngredients(
@@ -85,6 +81,7 @@ class WaterScene extends Phaser.Scene {
         spawnDecor(this, 1, true, 'grass', 0.006 * this.mapWidth, 0, this.mapWidth, gapPercentages, gapWidth, this.boxWidth);       
         createAcorns(this, 4, 'WaterScene');
         createEnemy(this, 500 * this.personalScale, 'snake', 350, 3);
+        createRafts(this, gapPercentages, gapWidth, 300);
         initializeSceneInputs(this, 'hazelnut', 'milk');
     }
 
@@ -92,9 +89,11 @@ class WaterScene extends Phaser.Scene {
         if (this.gameOver || this.victory) return;
         updatePlayer(this);
         updateAcorns(this);
-        updateIngredients(this, this.milk, { min: 100 * this.personalScale, max: this.mapWidth - 100 * this.personalScale });
-        updateIngredients(this, this.hazelnuts, { min: 100 * this.personalScale, max: this.mapWidth - 100 * this.personalScale });
+        updateIngredients(this, this.milk, { min: 100 * this.personalScale, max: this.mapWidth - 100 * this.personalScale - this.finishPoint *this.personalScale });
+        updateIngredients(this, this.hazelnuts, { min: 100 * this.personalScale, max: this.mapWidth - 100 * this.personalScale - this.finishPoint *this.personalScale });
         updateEnemy(this, 100 * this.personalScale, this.mapWidth - 100 * this.personalScale, 350);
+        updateRafts(this, 300);
+
     }
 }
 

@@ -104,6 +104,17 @@ export function createPlatforms(scene, numIterations, platformHeight, startX) {
 }
 
 export function createSounds(scene) {
+    if (scene.sceneName == 'FieldsScene'){
+        scene.flySound = scene.sound.add('fly', { loop: false, volume: 1 });
+        scene.spiderSound = scene.sound.add('spider', { loop: false, volume: 0.8 });
+    }
+    else if (scene.sceneName == 'WaterScene'){
+        scene.snakeSound = scene.sound.add('snake', { loop: false, volume: 1 });
+    }
+    else if (scene.sceneName == 'OrchardScene'){
+        scene.flySound = scene.sound.add('fly', { loop: false, volume: 1 });
+        scene.spiderSound = scene.sound.add('spider', { loop: false, volume: 0.8 });
+    }
     scene.boarSound = scene.sound.add('boar', { loop: false, volume: 0.5 });
     scene.collectSound = scene.sound.add('collect', { loop: false, volume: 0.08 });
     scene.gameOverSound = scene.sound.add('gameOver', { loop: false, volume: 0.3 });
@@ -113,6 +124,12 @@ export function createSounds(scene) {
     scene.music = scene.sound.add('soundtrack', { loop: true, volume: 0.5 });
     scene.music.play();
     scene.sound.setVolume(0.1);
+    scene.boarSound.play(); scene.boarSound.stop();
+    scene.input.once('pointerdown', () => {
+        if (scene.sound.context.state === 'suspended') {
+            scene.sound.context.resume();
+        }
+      });
 }
 
 export function createGround(scene, gapPercentages, gapWidth, fillGaps) {
@@ -239,8 +256,6 @@ export function createPlayer(scene) {
 }
 
 export function updatePlayer(scene) {
-    //scene.player.currentRaft = null;
-
     if (!scene.input.activePointer.isDown) {
         scene.isMovingLeft = false;
         scene.isMovingRight = false;
@@ -262,14 +277,7 @@ export function updatePlayer(scene) {
             scene.player.anims.play('jump');
     } 
     else {
-        const raft = scene.player.currentRaft;
-        console.log("currentRaft: " + scene.player.currentRaft);
-        if (raft) {
-            console.log("Sono dentro nell'if(raft)");
-            scene.player.setVelocityX( raft.body.velocity.x );
-        } else {
-            scene.player.setVelocityX(0);
-        }
+        scene.player.setVelocityX(0);
         if (scene.player.body.touching.down)
             scene.player.anims.play('turn');
         else
@@ -284,6 +292,10 @@ export function updatePlayer(scene) {
 
     // Controllo caduta nel vuoto
     if (scene.player.y > scene.screenHeight - scene.player.displayHeight) {
+        console.log("scene.player.y: " + scene.player.y);
+        console.log("scene.screenHeight: " + scene.screenHeight);
+        console.log("scene.player.displayHeight: " + scene.player.displayHeight);
+        console.log("Sono nell'if dell'updateplayer")
         die(scene, scene.sceneName);
         scene.hearts.forEach((heart) => {
             heart.setTexture('emptyHeart');
@@ -292,6 +304,7 @@ export function updatePlayer(scene) {
 
     // Controllo fine livello
     if (scene.player.x > scene.mapWidth - scene.finishPoint * scene.personalScale) {
+        console.log("Sono nel controllo");
         scene.gameOver = true;
         scene.isInvincible = true;
         scene.input.keyboard.removeAllKeys(true);
@@ -450,7 +463,7 @@ function createScores(scene, ingredient1, ingredient2) {
     scene[ingredient1 + "Icon"] = scene.add.image(
         scene.margin,
         scene[ingredient1 + "Text"].y + getIconOffsetY(ingredient1, scene),
-        ingredient1
+        ingredient1 + "_icon"
     ).setOrigin(0, 0.5).setScrollFactor(0).setScale(scene.personalScale * 0.85);
     scene[ingredient1 + "Icon"].angle = getIconAngle(ingredient1);
     
@@ -469,7 +482,7 @@ function createScores(scene, ingredient1, ingredient2) {
     scene[ingredient2 + "Icon"] = scene.add.image(
         scene.margin,
         scene[ingredient2 + "Text"].y + getIconOffsetY(ingredient2, scene),
-        ingredient2
+        ingredient2 + "_icon"
     ).setOrigin(0, 0.5).setScrollFactor(0).setScale(scene.personalScale * 0.85);
     scene[ingredient2 + "Icon"].angle = getIconAngle(ingredient2);
 }
@@ -480,7 +493,7 @@ export function spawnDecor(scene, scale, flip, texture, count, startingPoint, en
         let x;
         do {
             x = Phaser.Math.Between(startingPoint, endingPoint);
-        } while (isPositionInGap(x + 70 * scene.personalScale, gapPercentages, scene.mapWidth, gapWidth) || isPositionInGap(x - 70 * scene.personalScale, gapPercentages, scene.mapWidth, gapWidth));
+        } while (isPositionInGap(x + 120 * scene.personalScale, gapPercentages, scene.mapWidth, gapWidth) || isPositionInGap(x - 120 * scene.personalScale, gapPercentages, scene.mapWidth, gapWidth));
         const decor = scene.add.image(x, scene.mapHeight - boxWidth + 2, texture)
             .setOrigin(0.5, 1)
             .setScale(scale * scene.personalScale);
@@ -496,7 +509,7 @@ export function spawnSkull(scene, texture, gapPercentages, gapWidth, boxWidth) {
     let skull;
     do {
         x = Phaser.Math.Between(0, scene.mapWidth);
-    } while (isPositionInGap(x + 100 * scene.personalScale, gapPercentages, scene.mapWidth, gapWidth) || isPositionInGap(x - 100 * scene.personalScale, gapPercentages, scene.mapWidth, gapWidth));
+    } while (isPositionInGap(x + 120 * scene.personalScale, gapPercentages, scene.mapWidth, gapWidth) || isPositionInGap(x - 120 * scene.personalScale, gapPercentages, scene.mapWidth, gapWidth));
 
     if (scene.isVertical) {
         y = Phaser.Math.Between(scene.mapHeight + boxWidth, scene.screenHeight * 0.90);
@@ -521,6 +534,16 @@ export function isPositionInGap(x, gapPercentages, mapWidth, gapWidth) {
 }
 
 export function createIngredients(scene, key, setXYConfig, xRange, yRange, scaleMultiplier = 0.95, bounceRange = { min: 0.4, max: 0.8 }) {
+
+    if (!scene.anims.exists(key + '_anim')) {
+        scene.anims.create({
+            key: key + '_anim',
+            frames: scene.anims.generateFrameNumbers(key, { start: 0, end: 2 }),
+            frameRate: 4,
+            repeat: -1
+        });
+    }
+
     let group = scene.physics.add.group({
         key: key,
         repeat: scene[key + "Number"] - 1,
@@ -532,10 +555,16 @@ export function createIngredients(scene, key, setXYConfig, xRange, yRange, scale
         item.y = Phaser.Math.Between(yRange.min, yRange.max);
         item.setBounceY(Phaser.Math.FloatBetween(bounceRange.min, bounceRange.max));
         item.setScale(scene.personalScale * scaleMultiplier).refreshBody();
-        item.setSize(item.width * 0.70, item.height * 0.90);
+        item.setSize(item.width * 0.50, item.height * 0.95);
+
+        item.anims.play(key + '_anim'); // Avvia animazione
     });
+
     scene.physics.add.collider(group, scene.platforms);
-    scene.physics.add.overlap(scene.player, group, (player, item) => { collectIngredient(scene, player, item, key, scene.sceneName); }, null, scene);
+    scene.physics.add.overlap(scene.player, group, (player, item) => {
+        collectIngredient(scene, player, item, key, scene.sceneName);
+    }, null, scene);
+
     return group;
 }
 
@@ -601,7 +630,7 @@ export function createAcorns(scene, num, sceneName) {
         acorn.setScale(scene.personalScale).refreshBody();
         acorn.setCollideWorldBounds(true);
         acorn.allowGravity = false;
-        acorn.setSize(acorn.width * 0.70, acorn.height * 0.7);
+        acorn.setSize(acorn.width * 0.8, acorn.height * 0.8);
 
         let velocityX;
         do {
@@ -692,60 +721,58 @@ export function createFish(scene, gapPercentages, gapWidth) {
     });
 }
 
-export function createRafts(scene, gapPercentages, gapWidth, opts = {}) {
-    const yOffset = opts.yOffset || 0;
-    const speed   = 200; // px/s
-    const scale   = scene.personalScale * 1.3;
-    const mapW    = scene.mapWidth;
-    const baseY   = scene.mapHeight - scene.platformWidth / 2 + yOffset;
+export function createRafts(scene, gapPercentages, gapWidth, velocity) {
+    scene.rafts = []; // Lista delle zattere
+    scene.player.isOnRaft = false;
 
-    const rafts = scene.physics.add.group({
-        allowGravity: false,
-        immovable:    true
-    });
+    gapPercentages.forEach((gapPerc, index) => {
+        const gapCenter = gapPerc * scene.mapWidth;
+        const leftBound = gapCenter - gapWidth / 2 + scene.boxWidth + 100 * scene.personalScale;
+        const rightBound = gapCenter + gapWidth / 2 - scene.boxWidth - 100 * scene.personalScale;
+        const raftX = (leftBound + rightBound) / 2;
 
-    rafts.raftsData = [];
+        const raft = scene.physics.add.sprite(raftX, scene.mapHeight - 50 * scene.personalScale, 'raft')
+            .setOrigin(0.5, 1)
+            .setScale(scene.personalScale * 1.3)
+            .refreshBody();
 
-    gapPercentages.forEach(gap => {
-        const textureWidth = scene.textures.get('raft').getSourceImage().width;
-        const raftWidth = textureWidth * scale;
-
-        const gapCenter = mapW * gap;
-        const padding = 20 * scale;
-        const gapStart = gapCenter - gapWidth / 2 + raftWidth / 2 + padding;
-        const gapEnd   = gapCenter + gapWidth / 2 - raftWidth / 2 - padding;
-
-        const raft = rafts.create(gapStart, baseY, 'raft').setOrigin(0.5, 1).setScale(scale);
         raft.body.setAllowGravity(false);
-        raft.body.setImmovable(true);
-        raft.body.setVelocityX(speed * scale);
-        raft._gapStart = gapStart;
-        raft._gapEnd   = gapEnd;
+        raft.setImmovable(true);
 
-        rafts.raftsData.push(raft);
+        // Alterna direzione iniziale (optional, rimuovi se non vuoi)
+        const dir = index % 2 === 0 ? 1 : -1;
+        raft.setVelocityX(dir * velocity * scene.personalScale);
+
+        // Salva i limiti per questo raft
+        raft.movementBounds = { left: leftBound, right: rightBound };
+        scene.rafts.push(raft);
+
+        // Collider con il player
+        scene.physics.add.collider(scene.player, raft, (player, raft) => {
+            const playerBottom = player.y + player.body.height / 2;
+            const raftTop = raft.y - raft.body.height / 2;
+
+            if (playerBottom <= raftTop + 10) {
+                player.isOnRaft = true;
+                player.body.velocity.x += raft.body.velocity.x;
+            }
+        }, null, scene);
     });
-
-    scene.physics.add.collider(scene.player, rafts, (player, raft) => {
-        if (player.body.touching.down && raft.body.touching.up) {
-            player.currentRaft = raft;
-        }
-    });
-
-    if (scene.acorns) {
-        scene.physics.add.collider(scene.acorns, rafts);
-    }
-
-    return { rafts, speed, scale };
 }
 
-export function updateRafts(rafts, speed, scale) {
-    rafts.raftsData.forEach(raft => {
-        if (raft.x >= raft._gapEnd && raft.body.velocity.x > 0) {
-            raft.body.setVelocityX(-speed * scale);
-            raft.setFlipX(true);
-        } else if (raft.x <= raft._gapStart && raft.body.velocity.x < 0) {
-            raft.body.setVelocityX(speed * scale);
-            raft.setFlipX(false);
+export function updateRafts(scene, velocity) {
+    scene.rafts.forEach(raft => {
+        const { left, right } = raft.movementBounds;
+
+        if (raft.x >= right) {
+            raft.setVelocityX(-velocity * scene.personalScale);
+        } else if (raft.x <= left) {
+            raft.setVelocityX(velocity * scene.personalScale);
+        }
+
+        const touching = scene.physics.world.overlap(scene.player, raft);
+        if (!touching && scene.player.isOnRaft) {
+            scene.player.isOnRaft = false;
         }
     });
 }
@@ -773,24 +800,28 @@ export function createEnemy(scene, xPosition, enemy, velocity, numberOfSprites) 
 }
 
 export function createFlies(scene, n, enemyKey, numberOfSprites, speed = 250) {
-    const flies = [];
+    const flies    = [];
+    const margin   = 50;
+    // verticale tra metà mappa e bottom‑20px
+    const minY     = 0.5 * scene.mapHeight;
+    const maxY     = scene.mapHeight - 80 * scene.personalScale;
 
     for (let i = 0; i < n; i++) {
+        // spawn X casuale nella metà destra [mapWidth/2, mapWidth]
         const xStart = Phaser.Math.Between(scene.mapWidth / 2, scene.mapWidth);
-        const yStart = Phaser.Math.Between(scene.mapHeight - 400 * scene.personalScale, scene.mapHeight - 200 * scene.personalScale);
-        const direction = Phaser.Math.Between(0, 1) === 0 ? -1 : 1;
+        const yStart = Phaser.Math.Between(minY, maxY);
 
         const fly = scene.physics.add.sprite(xStart, yStart, enemyKey)
             .setOrigin(0.5, 1)
             .setScale(scene.personalScale)
             .setCollideWorldBounds(false);
 
-        fly.setVelocityX(direction * speed * scene.personalScale);
-        fly.setFlipX(direction < 0);
         fly.body.setAllowGravity(false);
-        fly.body.bounce.set(1); // Rimbalzo su oggetti solidi
+        // muove sempre verso sinistra
+        fly.setVelocityX(-speed * scene.personalScale);
+        fly.setFlipX(true);  // specchiata perché va verso sinistra
 
-        // Animazione volo
+        // Animazione di volo
         if (!scene.anims.exists(enemyKey + 'Fly')) {
             scene.anims.create({
                 key: enemyKey + 'Fly',
@@ -799,51 +830,55 @@ export function createFlies(scene, n, enemyKey, numberOfSprites, speed = 250) {
                 repeat: -1
             });
         }
-
         fly.play(enemyKey + 'Fly');
 
-        // Movimento verticale irregolare (sinusoide + random)
+        // Zig‑zag: cambia velocità Y ogni 1.2 s
         scene.time.addEvent({
-            delay: 500,
+            delay: 1200,
             loop: true,
             callback: () => {
-                const newVelocityY = Phaser.Math.Between(-100, 100);
-                fly.setVelocityY(newVelocityY);
+                fly.setVelocityY(Phaser.Math.Between(-100, 100));
             }
         });
 
-        // Rimbalzo contro piattaforme
-        scene.physics.add.collider(fly, scene.platforms);
-
-        // Collisione con il player
-        scene.physics.add.overlap(scene.player, fly, (player, enemy) =>
-            hitEnemy(scene, player, enemy, scene.sceneName), null, scene);
+        // overlap con il player
+        scene.physics.add.overlap(
+            scene.player,
+            fly,
+            (player, enemy) => hitEnemy(scene, player, enemy, scene.sceneName),
+            null,
+            scene
+        );
 
         flies.push(fly);
     }
 
-    // Wrapping laterale e verticale
+    // wrap orizzontale + “rimbalzo” verticale ai limiti in ogni frame
     scene.events.on('update', () => {
         flies.forEach(fly => {
-            if (fly.x > scene.mapWidth + 50) {
-                fly.x = -50;
-                fly.y = Phaser.Math.Between(scene.mapHeight - 400 * scene.personalScale, scene.mapHeight - 200 * scene.personalScale);
+            // quando esce a sinistra rientra a destra
+            if (fly.x < -margin) {
+                fly.x = scene.mapWidth + margin;
+            }
+            // e viceversa
+            else if (fly.x > scene.mapWidth + margin) {
+                fly.x = -margin;
             }
 
-            if (fly.x < -50) {
-                fly.x = scene.mapWidth + 50;
-                fly.y = Phaser.Math.Between(scene.mapHeight - 400 * scene.personalScale, scene.mapHeight - 200 * scene.personalScale);
-            }
-
-            if (fly.y < -50) {
-                fly.y = scene.mapHeight - 250 * scene.personalScale;
-                fly.x = Phaser.Math.Between(0, 1) === 0 ? -50 : scene.mapWidth + 50;
+            // bounce Y entro [minY, maxY]
+            if (fly.y < minY) {
+                fly.y = minY;
+                fly.setVelocityY(Math.abs(fly.body.velocity.y));
+            } else if (fly.y > maxY) {
+                fly.y = maxY;
+                fly.setVelocityY(-Math.abs(fly.body.velocity.y));
             }
         });
     });
 
     return flies;
 }
+
 
 export function updateEnemy(scene, lBound, rBound, velocity) {
     if (scene.enemy.x >= rBound) {
@@ -856,6 +891,7 @@ export function updateEnemy(scene, lBound, rBound, velocity) {
 }
 
 function hitEnemy(scene, player, enemy, sceneName) {
+    console.log("Sono entrato nell'hitEnemy");
     if (enemy.texture.key === 'acorn') {
         scene.popSound.play();
         explode(scene, enemy);
@@ -869,8 +905,17 @@ function hitEnemy(scene, player, enemy, sceneName) {
         }
     }
     else {
-        if (enemy.texture.key === 'boar') {
+        if (enemy.texture.key == 'boar') {
             scene.boarSound.play();
+        }
+        else if (enemy.texture.key == 'fly'){
+            scene.flySound.play();
+        }
+        else if (enemy.texture.key == 'snake'){
+            scene.snakeSound.play();
+        }
+        else if (enemy.texture.key == 'spider'){
+            scene.spiderSound.play();
         }
         takeDamage(scene, player, enemy, sceneName);
     }
@@ -890,6 +935,7 @@ function takeDamage(scene, player, enemy, sceneName) {
         });
 
         if (scene.lives === 0) {
+            console.log("Sono nella takeDamage");
             die(scene, sceneName);
         }
     }
@@ -905,6 +951,7 @@ function explode(scene, acorn) {
 }
 
 export function die(scene, sceneName) {
+    console.log("Sono nella funzione die");
     scene.gameOver = true;
     scene.isInvincible = true;
     scene.input.keyboard.removeAllKeys(true);

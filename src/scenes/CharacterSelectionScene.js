@@ -13,9 +13,23 @@ class CharacterSelectionScene extends Phaser.Scene {
         this.scale.refresh();
         this.cameras.main.fadeIn(800, 0, 0, 0);
         this.personalScale = (this.scale.height + this.scale.width)/2200;
-        this.selectedCharacter = 1; // Default
+        this.selectedCharacter = 1;
 
-        this.selectionBox = this.add.rectangle(this.scale.width / 2 - 150*this.personalScale, this.scale.height / 2, 200*this.personalScale, 250*this.personalScale, 0xffff88).setStrokeStyle(2, 0xffff88).setOrigin(0.5);
+        this.background = this.add.sprite(0, 0, 'forest_background').setOrigin(0.5, 1);
+        const aspectRatio = this.background.width / this.background.height;
+        let newW, newH;
+        if (this.scale.width / this.scale.height > aspectRatio) {
+            newW = this.scale.width;
+            newH = newW / aspectRatio;
+        } else {
+            newH = this.scale.height;
+            newW = newH * aspectRatio;
+        }
+        newH *= 1.1;
+        newW = newH * aspectRatio;
+        this.background.setDisplaySize(newW, newH).setPosition(this.scale.width / 2, this.scale.height);
+
+        this.selectionBox = this.add.rectangle(this.scale.width / 2 - 150*this.personalScale, this.scale.height / 2, 200*this.personalScale, 250*this.personalScale, 0xa9b6f5).setStrokeStyle(2, 0xa9b6f5).setOrigin(0.5);
         this.char1 = this.add.image(this.scale.width / 2 - 150*this.personalScale, this.scale.height / 2, 'player1').setInteractive().setScale(1.8*this.personalScale).setOrigin(0.5);
         this.char2 = this.add.image(this.scale.width / 2 + 150*this.personalScale, this.scale.height / 2, 'player2').setInteractive().setScale(1.8*this.personalScale).setOrigin(0.5);
 
@@ -25,18 +39,18 @@ class CharacterSelectionScene extends Phaser.Scene {
         this.input.keyboard.on('keydown-LEFT', () => this.changeCharacter(-1));
         this.input.keyboard.on('keydown-RIGHT', () => this.changeCharacter(1));
 
-        this.add.text(this.scale.width / 2, this.selectionBox.y - this.selectionBox.height/2 - 100*this.personalScale, 'Wähle einen Spieler', { 
+        this.add.text(this.scale.width / 2, this.selectionBox.y - this.selectionBox.height/2 - 120*this.personalScale, 'Wähle eine\nSpieler', { 
             fontFamily: 'PressStart2P', 
-            fontSize: 35*this.personalScale,
-            fill: '#fff' 
+            fontSize: 50*this.personalScale,
+            fill: '#1f1f1f',
+            align: 'center'
         }).setOrigin(0.5);
 
         // Pulsante per confermare
         this.startButton = this.add.text(this.scale.width / 2, this.selectionBox.y + this.selectionBox.height/2 + 100*this.personalScale, 'START', { 
             fontFamily: 'PressStart2P',
-            fontSize: 30*this.personalScale, 
-            fill: '#fff', 
-            backgroundColor: '#000' 
+            fontSize: 35*this.personalScale, 
+            fill: '#5a67b0',  
         }).setOrigin(0.5);
 
         this.startButton.setInteractive(new Phaser.Geom.Rectangle(0, 0, this.startButton.width, this.startButton.height), Phaser.Geom.Rectangle.Contains);

@@ -80,8 +80,8 @@ class OrchardScene extends Phaser.Scene {
         if (this.gameOver || this.victory) return;
         updatePlayer(this);
         //updateAcorns(this);
-        updateIngredients(this, this.sugar, { min: 100 * this.personalScale, max: this.mapWidth - 100 * this.personalScale });
-        updateIngredients(this, this.apples, { min: 100 * this.personalScale, max: this.mapWidth - 100 * this.personalScale });
+        updateIngredients(this, this.sugar, { min: 100 * this.personalScale, max: this.mapWidth - 100 * this.personalScale - this.finishPoint *this.personalScale });
+        updateIngredients(this, this.apples, { min: 100 * this.personalScale, max: this.mapWidth - 100 * this.personalScale - this.finishPoint *this.personalScale });
         updateEnemy(this, 100 * this.personalScale, this.mapWidth - 100 * this.personalScale, 250);
     }
 }

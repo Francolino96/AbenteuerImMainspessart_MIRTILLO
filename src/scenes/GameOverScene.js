@@ -15,28 +15,28 @@ class GameOverScene extends Phaser.Scene {
         this.personalScale = (this.scale.height + this.scale.width)/2200;
         this.cameras.main.setBackgroundColor('#444');
 
-        const firstText = this.add.text(this.scale.width / 2, this.scale.height * 0.35, 'Mission\ngescheitert', { 
+        const firstText = this.add.text(this.scale.width / 2, this.scale.height/2 - 140 * this.personalScale, 'Mission\ngescheitert', { 
             fontFamily: 'PressStart2P', 
-            fontSize: 60*this.personalScale, 
-            fill: '#f00',
+            fontSize: 50*this.personalScale, 
+            fill: '#f55',
             align: 'center'
         }).setOrigin(0.5);
         console.log("reason: ", this.reason)
 
-        this.add.text(this.scale.width / 2, firstText.y + 120 * this.personalScale, 'Wir haben nicht\nalle Zutaten gesammelt', { 
+        const text_2 = this.add.text(this.scale.width / 2, firstText.y + 160 * this.personalScale, 'Wir haben nicht\nalle Zutaten\ngesammelt', { 
             fontFamily: 'PressStart2P', 
-            fontSize: 30*this.personalScale, 
-            fill: '#f99',
+            fontSize: 35*this.personalScale, 
+            fill: '#fff',
             align: 'center'
         }).setOrigin(0.5);
 
         let replayButton;
 
         if (this.callingScene == 'FirstScene'){
-            replayButton = this.add.text(this.scale.width / 2, firstText.y + 250 * this.personalScale, 'NOCHMAL SPIELEN', { 
+            replayButton = this.add.text(this.scale.width / 2, text_2.y + 180 * this.personalScale, 'NOCHMAL SPIELEN', { 
                 fontFamily: 'PressStart2P', 
-                fontSize: 30*this.personalScale, 
-                fill: '#fff' 
+                fontSize: 35*this.personalScale, 
+                fill: '#8896e3' 
             }).setOrigin(0.5).setInteractive();
 
             this.input.keyboard.on('keydown-ENTER', () => {
@@ -45,17 +45,17 @@ class GameOverScene extends Phaser.Scene {
             });
         }
         else {
-            replayButton = this.add.text(this.scale.width / 2 - 30* this.personalScale * 6, firstText.y + 250 * this.personalScale, "NOCHMAL\nSPIELEN", {
+            replayButton = this.add.text(this.scale.width / 2 - 30* this.personalScale * 6, text_2.y + 150 * this.personalScale, "NOCHMAL\nSPIELEN", {
                 fontFamily: "PressStart2P",
-                fontSize: 30*this.personalScale, 
-                fill: "#fff",
+                fontSize: 35*this.personalScale, 
+                fill: "#8896e3",
                 align: 'center'
             }).setOrigin(0.5).setInteractive();
     
-            let newMissionsButton = this.add.text(this.scale.width / 2 + 30* this.personalScale * 6, firstText.y + 250 * this.personalScale, "WEITERE\nMISSIONEN", {
+            let newMissionsButton = this.add.text(this.scale.width / 2 + 30* this.personalScale * 6, text_2.y + 150 * this.personalScale, "WEITERE\nMISSIONEN", {
                 fontFamily: "PressStart2P",
-                fontSize: 30*this.personalScale, 
-                fill: "#fff",
+                fontSize: 35*this.personalScale, 
+                fill: "#8896e3",
                 align: 'center'
             }).setOrigin(0.5).setInteractive();
     
