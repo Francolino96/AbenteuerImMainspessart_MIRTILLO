@@ -18,7 +18,7 @@ class VictoryScene extends Phaser.Scene {
 
         const text_2 = this.add.text(this.scale.width/2, text_1.y + 200 * this.personalScale, "Jetzt können wir\nEis machen!", {
             fontFamily: "PressStart2P",
-            fontSize: 30*this.personalScale, 
+            fontSize: 35*this.personalScale, 
             fill: "#fff",
             align: 'center'
         }).setOrigin(0.5);

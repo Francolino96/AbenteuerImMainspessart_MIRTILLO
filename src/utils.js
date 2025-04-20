@@ -116,9 +116,9 @@ export function createSounds(scene) {
         scene.spiderSound = scene.sound.add('spider', { loop: false, volume: 0.8 });
     }
     scene.boarSound = scene.sound.add('boar', { loop: false, volume: 0.5 });
-    scene.collectSound = scene.sound.add('collect', { loop: false, volume: 0.08 });
+    scene.collectSound = scene.sound.add('collect', { loop: false, volume: 0.05 });
     scene.gameOverSound = scene.sound.add('gameOver', { loop: false, volume: 0.3 });
-    scene.jumpSound = scene.sound.add('jump', { loop: false, volume: 0.3 });
+    scene.jumpSound = scene.sound.add('jump', { loop: false, volume: 0.2 });
     scene.jumpOverSound = scene.sound.add('jumpOver', { loop: false, volume: 0.3 });
     scene.popSound = scene.sound.add('pop', { loop: false, volume: 0.5 });
     scene.music = scene.sound.add('soundtrack', { loop: true, volume: 0.5 });
@@ -219,8 +219,8 @@ export function updateWater(scene){
 
 export function createPlayer(scene) {
     scene.player = scene.physics.add.sprite(100 * scene.personalScale, 400 * scene.personalScale, 'player');
-    scene.cameras.main.startFollow(scene.player, true, 0.08, 0.08);
-    scene.player.setScale(scene.personalScale * 1.3).refreshBody();
+    scene.cameras.main.startFollow(scene.player, true, 0.25, 0.25);
+    scene.player.setScale(scene.personalScale * 1.35).refreshBody();
     scene.player.setSize(scene.player.width * 0.70, scene.player.height);
     scene.player.setBounce(0.1);
     scene.player.setCollideWorldBounds(true);
