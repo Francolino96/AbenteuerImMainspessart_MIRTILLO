@@ -539,7 +539,7 @@ export function createIngredients(scene, key, setXYConfig, xRange, yRange, scale
         scene.anims.create({
             key: key + '_anim',
             frames: scene.anims.generateFrameNumbers(key, { start: 0, end: 2 }),
-            frameRate: 4,
+            frameRate: 8,
             repeat: -1
         });
     }
@@ -555,7 +555,7 @@ export function createIngredients(scene, key, setXYConfig, xRange, yRange, scale
         item.y = Phaser.Math.Between(yRange.min, yRange.max);
         item.setBounceY(Phaser.Math.FloatBetween(bounceRange.min, bounceRange.max));
         item.setScale(scene.personalScale * scaleMultiplier).refreshBody();
-        item.setSize(item.width * 0.50, item.height * 0.95);
+        item.setSize(item.width * 0.30, item.height * 1.1);
 
         item.anims.play(key + '_anim'); // Avvia animazione
     });
@@ -803,7 +803,7 @@ export function createFlies(scene, n, enemyKey, numberOfSprites, speed = 250) {
     const flies    = [];
     const margin   = 50;
     // verticale tra metà mappa e bottom‑20px
-    const minY     = 0.5 * scene.mapHeight;
+    const minY     = 0.6 * scene.mapHeight;
     const maxY     = scene.mapHeight - 80 * scene.personalScale;
 
     for (let i = 0; i < n; i++) {
@@ -834,7 +834,7 @@ export function createFlies(scene, n, enemyKey, numberOfSprites, speed = 250) {
 
         // Zig‑zag: cambia velocità Y ogni 1.2 s
         scene.time.addEvent({
-            delay: 1200,
+            delay: 800,
             loop: true,
             callback: () => {
                 fly.setVelocityY(Phaser.Math.Between(-100, 100));

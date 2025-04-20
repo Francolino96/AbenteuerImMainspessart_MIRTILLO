@@ -29,9 +29,38 @@ class CharacterSelectionScene extends Phaser.Scene {
         newW = newH * aspectRatio;
         this.background.setDisplaySize(newW, newH).setPosition(this.scale.width / 2, this.scale.height);
 
-        this.selectionBox = this.add.rectangle(this.scale.width / 2 - 150*this.personalScale, this.scale.height / 2, 200*this.personalScale, 250*this.personalScale, 0xa9b6f5).setStrokeStyle(2, 0xa9b6f5).setOrigin(0.5);
+        this.selectionBox = this.add.rectangle(this.scale.width / 2 - 150*this.personalScale, this.scale.height / 2 + 25 * this.personalScale, 240*this.personalScale, 300*this.personalScale, 0xa9b6f5).setStrokeStyle(2, 0xa9b6f5).setOrigin(0.5);
         this.char1 = this.add.image(this.scale.width / 2 - 150*this.personalScale, this.scale.height / 2, 'player1').setInteractive().setScale(1.8*this.personalScale).setOrigin(0.5);
         this.char2 = this.add.image(this.scale.width / 2 + 150*this.personalScale, this.scale.height / 2, 'player2').setInteractive().setScale(1.8*this.personalScale).setOrigin(0.5);
+
+        const nameStyle = {
+            fontFamily: 'PressStart2P',
+            fontSize: 28 * this.personalScale,
+            fill: '#1f1f1f'
+        };
+        
+        // calcola un offset verticale basato sull'altezza delle immagini
+        const labelOffset = this.char1.displayHeight/2 + this.char1.y + 40 * this.personalScale;
+        
+        // etichetta per il primo personaggio
+        this.char1Name = this.add
+            .text(
+              this.char1.x,
+              labelOffset,
+              'Tiberto',     // qui metti il vero nome
+              nameStyle
+            )
+            .setOrigin(0.5);
+          
+          // etichetta per il secondo personaggio
+        this.char2Name = this.add
+            .text(
+            this.char2.x,
+            labelOffset,
+            'Arianna',     // qui metti il vero nome
+            nameStyle
+            )
+            .setOrigin(0.5);
 
         // Cliccando su un personaggio, lo seleziona
         this.char1.on('pointerdown', () => this.selectCharacter(1, this.scale.width / 2 - 150*this.personalScale));
@@ -77,7 +106,7 @@ class CharacterSelectionScene extends Phaser.Scene {
 
     selectCharacter(character, x) {
         this.selectedCharacter = character;
-        this.selectionBox.setPosition(x, this.scale.height / 2);
+        this.selectionBox.setPosition(x, this.scale.height / 2  + 25 * this.personalScale);
     }
 
     goToNextScene() {

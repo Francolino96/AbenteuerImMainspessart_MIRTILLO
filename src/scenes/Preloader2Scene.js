@@ -10,6 +10,7 @@ class Preloader2Scene extends Phaser.Scene {
 
     preload() {
         this.personalScale = (this.scale.height + this.scale.width) / 2200;
+        this.cameras.main.fadeIn(800, 0, 0, 0);
 
         let backgroundImage;
         if (this.selectedScene == 'OrchardScene'){
@@ -127,6 +128,7 @@ class Preloader2Scene extends Phaser.Scene {
 
         else if (this.selectedScene == "FieldsScene") {
             this.load.image('sunflowers', 'assets/Sprites_sunflowers.png');
+            this.load.image('hay', 'assets/Sprites_hay.png');
             this.load.audio('spider', 'sounds/spider.mp3');
             this.load.spritesheet('spider', 'assets/Sprites_spider.png', {
                 frameWidth: 611.87/4,

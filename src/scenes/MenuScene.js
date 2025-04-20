@@ -41,7 +41,7 @@ class MenuScene extends Phaser.Scene {
         }
         else {
             fontSize = 25 * this.personalScale;
-            spacing = this.personalScale;
+            spacing = 1.5 * this.personalScale;
         }
         for (let i = 0; i < this.missions.length; i++) {
             let text = this.add.text(this.scale.width / 2, this.scale.height * 0.25 + 10 * this.personalScale + (i+1) * spacing * 80 *this.personalScale, this.missions[i], { 

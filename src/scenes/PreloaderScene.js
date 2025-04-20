@@ -11,7 +11,7 @@ class PreloaderScene extends Phaser.Scene {
         this.loadStartTime = this.time.now;
         this.cameras.main.fadeIn(800, 0, 0, 0);
         this.personalScale = (this.scale.height + this.scale.width) / 2200;
-        
+
         this.background = this.add.sprite(0, 0, 'forest_background').setOrigin(0.5, 1);
         const aspectRatio = this.background.width / this.background.height;
         let newW, newH;
@@ -166,7 +166,7 @@ class PreloaderScene extends Phaser.Scene {
         console.log("Sono nella PreloaderScene");
         const elapsed = this.time.now - this.loadStartTime;
         console.log("elapsed: " + elapsed);
-        const remaining = Math.max(0, 14000 - elapsed);
+        const remaining = Math.max(0, 16000 - elapsed);
         console.log("remaining: " + remaining);
         if (this.progressBar) this.progressBar.destroy();
 
