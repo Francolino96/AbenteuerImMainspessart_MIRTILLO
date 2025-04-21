@@ -26,9 +26,9 @@ class FieldsScene extends Phaser.Scene {
         const gapWidth = 500 * this.personalScale;
         createGround(this, gapPercentages, gapWidth, false);
 
-        spawnDecor(this, 1.6, true, 'appleTree1', 0.0005 * this.mapWidth, this.mapWidth * 0.2, this.mapWidth - 500 * this.personalScale, gapPercentages, gapWidth, this.boxWidth);
-        spawnDecor(this, 1.6, true, 'appleTree2', 0.0005 * this.mapWidth, this.mapWidth * 0.2, this.mapWidth - 500 * this.personalScale, gapPercentages, gapWidth, this.boxWidth);
-        spawnDecor(this, 1.6, true, 'appleTree3', 0.0005 * this.mapWidth, this.mapWidth * 0.2, this.mapWidth - 500 * this.personalScale, gapPercentages, gapWidth, this.boxWidth);
+        spawnDecor(this, 1.6, true, 'appleTree1', 0.0003 * this.mapWidth, this.mapWidth * 0.4, this.mapWidth - 500 * this.personalScale, gapPercentages, gapWidth, this.boxWidth);
+        spawnDecor(this, 1.6, true, 'appleTree2', 0.0003 * this.mapWidth, this.mapWidth * 0.4, this.mapWidth - 500 * this.personalScale, gapPercentages, gapWidth, this.boxWidth);
+        spawnDecor(this, 1.6, true, 'appleTree3', 0.0003 * this.mapWidth, this.mapWidth * 0.4, this.mapWidth - 500 * this.personalScale, gapPercentages, gapWidth, this.boxWidth);
         
         createPlatforms(this, 2, this.lev3PlatformHeight, 100);
         createPlatforms(this, 3, this.lev1PlatformHeight, 300);

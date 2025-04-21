@@ -103,6 +103,13 @@ class PreloaderScene extends Phaser.Scene {
         else console.log("Errore nel caricamento del chosenCharacter");
         this.load.image('ground_background', 'assets/underground_background.jpg');
 
+        this.load.spritesheet('truck', 'assets/Sprites_truck.png', {
+            frameWidth: 2798.45/6,
+            frameHeight: 240,
+            margin: 0,
+            spacing: 6.71,
+        });
+
         this.load.image('ground', 'assets/Sprites_ground.png');
         this.load.image('flower', 'assets/Sprites_flowers.png');
         this.load.image('grass', 'assets/Sprites_grass.png');

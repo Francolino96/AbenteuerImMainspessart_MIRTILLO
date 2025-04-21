@@ -71,7 +71,7 @@ class FirstScene extends Phaser.Scene {
         );
 
         spawnDecor(this, 1, true, 'grass', 0.006 * this.mapWidth, 0, this.mapWidth, gapPercentages, gapWidth, this.boxWidth);
-        createAcorns(this, 4, 'ForestScene');
+        createAcorns(this, 4, 'FirstScene');
         createMushroom(this, this.mapWidth * 0.85);
         createEnemy(this, 500 * this.personalScale, 'boar', 300, 3);
         initializeSceneInputs(this, 'blueberry', 'sugar');

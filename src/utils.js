@@ -43,7 +43,7 @@ export function initializeScene(scene, sceneName, backgroundType) {
     
     createSounds(scene);
 
-    const groundHeight = scene.screenHeight - scene.mapHeight;
+    const groundHeight = scene.screenHeight - scene.mapHeight + 70 * scene.personalScale;
     if (groundHeight > 0) {
         const groundSource = scene.textures.get('ground_background').getSourceImage();
         const groundScaleFactor = groundHeight / groundSource.height;
@@ -54,7 +54,7 @@ export function initializeScene(scene, sceneName, backgroundType) {
             scene.mapWidth+5,
             groundHeight,
             'ground_background'
-        ).setOrigin(0.5, 1).setScrollFactor(0.2).setScale(1.57);
+        ).setOrigin(0.5, 1).setScrollFactor(0.2);
         scene.groundBackground.setTileScale(groundScaleFactor, groundScaleFactor);
     }
 
@@ -64,7 +64,7 @@ export function initializeScene(scene, sceneName, backgroundType) {
 
     scene.background = scene.add.tileSprite(
         scene.mapWidth / 2,
-        scene.mapHeight-10,
+        scene.mapHeight - 50 * scene.personalScale,
         scene.mapWidth,
         desiredHeight,
         backgroundType
@@ -323,7 +323,6 @@ export function updatePlayer(scene) {
             scene.time.delayedCall(1000, () => {
                 scene.cameras.main.fadeOut(800, 0, 0, 0);
                 scene.time.delayedCall(800, () => {
-
                     scene.scene.start('GameOverScene', { callingScene: scene.sceneName, reason: "failed" });
                 });
             });
@@ -571,7 +570,7 @@ export function createIngredients(scene, key, setXYConfig, xRange, yRange, scale
 export function updateIngredients(scene, group, xRange, gravityResetSpeed = 200) {
     if (!group) return;
     group.children.iterate((item) => {
-        if (item.y - item.displayHeight / 2 > scene.screenHeight) {
+        if (item.y - item.displayHeight / 2 > scene.mapHeight) {
             item.y = -item.displayHeight;
             item.x = Phaser.Math.Between(xRange.min, xRange.max);
             item.setVelocityY(gravityResetSpeed * scene.personalScale);
@@ -804,7 +803,7 @@ export function createFlies(scene, n, enemyKey, numberOfSprites, speed = 250) {
     const margin   = 50;
     // verticale tra metà mappa e bottom‑20px
     const minY     = 0.6 * scene.mapHeight;
-    const maxY     = scene.mapHeight - 80 * scene.personalScale;
+    const maxY     = scene.mapHeight - 90 * scene.personalScale;
 
     for (let i = 0; i < n; i++) {
         // spawn X casuale nella metà destra [mapWidth/2, mapWidth]

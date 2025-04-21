@@ -9,11 +9,11 @@ class GameOverScene extends Phaser.Scene {
     }
     
     create(){
-        console.log("Sono nella gameOverScene"); 
+        console.log("Sono nella gameOverScene");
+        console.log("callingScene: " + this.callingScene);
         this.scale.refresh();
         this.cameras.main.fadeIn(800, 0, 0, 0);
         this.personalScale = (this.scale.height + this.scale.width)/2200;
-        this.cameras.main.setBackgroundColor('#444');
 
         const firstText = this.add.text(this.scale.width / 2, this.scale.height/2 - 140 * this.personalScale, 'Mission\ngescheitert', { 
             fontFamily: 'PressStart2P', 

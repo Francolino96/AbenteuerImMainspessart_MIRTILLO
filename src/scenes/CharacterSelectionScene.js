@@ -68,7 +68,7 @@ class CharacterSelectionScene extends Phaser.Scene {
         this.input.keyboard.on('keydown-LEFT', () => this.changeCharacter(-1));
         this.input.keyboard.on('keydown-RIGHT', () => this.changeCharacter(1));
 
-        this.add.text(this.scale.width / 2, this.selectionBox.y - this.selectionBox.height/2 - 120*this.personalScale, 'Wähle eine\nSpieler', { 
+        this.add.text(this.scale.width / 2, this.selectionBox.y - this.selectionBox.height/2 - 140 * this.personalScale, 'Wähle eine\nSpieler', { 
             fontFamily: 'PressStart2P', 
             fontSize: 50*this.personalScale,
             fill: '#1f1f1f',
@@ -76,7 +76,7 @@ class CharacterSelectionScene extends Phaser.Scene {
         }).setOrigin(0.5);
 
         // Pulsante per confermare
-        this.startButton = this.add.text(this.scale.width / 2, this.selectionBox.y + this.selectionBox.height/2 + 100*this.personalScale, 'START', { 
+        this.startButton = this.add.text(this.scale.width / 2, this.selectionBox.y + this.selectionBox.height/2 + 100 * this.personalScale, 'START', { 
             fontFamily: 'PressStart2P',
             fontSize: 35*this.personalScale, 
             fill: '#5a67b0',  
