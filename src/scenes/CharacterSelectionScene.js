@@ -27,7 +27,7 @@ class CharacterSelectionScene extends Phaser.Scene {
         }
         newH *= 1.1;
         newW = newH * aspectRatio;
-        this.background.setDisplaySize(newW, newH).setPosition(this.scale.width / 2, this.scale.height);
+        this.background.setDisplaySize(newW, newH).setPosition(this.scale.width / 2, this.scale.height + 20 * this.personalScale);
 
         this.selectionBox = this.add.rectangle(this.scale.width / 2 - 150*this.personalScale, this.scale.height / 2, 200*this.personalScale, 300*this.personalScale, 0xa9b6f5).setStrokeStyle(2, 0xa9b6f5).setOrigin(0.5);
         this.char1 = this.add.image(this.scale.width / 2 - 150*this.personalScale, this.scale.height / 2, 'player1').setInteractive().setScale(0.65*this.personalScale).setOrigin(0.5);
@@ -35,7 +35,7 @@ class CharacterSelectionScene extends Phaser.Scene {
 
         const nameStyle = {
             fontFamily: 'PressStart2P',
-            fontSize: 28 * this.personalScale,
+            fontSize: 24 * this.personalScale,
             fill: '#1f1f1f'
         };
         

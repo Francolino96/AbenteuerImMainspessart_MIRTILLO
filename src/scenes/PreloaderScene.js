@@ -24,7 +24,7 @@ class PreloaderScene extends Phaser.Scene {
         }
         newH *= 1.1;
         newW = newH * aspectRatio;
-        this.background.setDisplaySize(newW, newH).setPosition(this.scale.width / 2, this.scale.height);
+        this.background.setDisplaySize(newW, newH).setPosition(this.scale.width / 2, this.scale.height + 20 * this.personalScale);
 
         const progressBar = this.add.graphics();
         const chargingBar = this.add.image(this.scale.width / 2, this.scale.height / 2 + 90 * this.personalScale * 0.8 + 40*this.personalScale, 'chargingBarFrame').setOrigin(0.5).setScale(this.personalScale * 0.8);

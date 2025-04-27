@@ -31,7 +31,7 @@ class TitleScene extends Phaser.Scene {
         }
         newH *= 1.1;
         newW = newH * aspectRatio;
-        this.background.setDisplaySize(newW, newH).setPosition(this.scale.width / 2, this.scale.height);
+        this.background.setDisplaySize(newW, newH).setPosition(this.scale.width / 2, this.scale.height + 20 * this.personalScale);
 
         const title = this.add.text(this.scale.width / 2, this.scale.height * 0.4, 'Abenteuer', { 
             fontFamily: 'PressStart2P', 
@@ -53,12 +53,27 @@ class TitleScene extends Phaser.Scene {
             fill: '#5a67b0' 
         }).setOrigin(0.5).setInteractive();
 
-        this.add.text(this.scale.width - 20 * this.personalScale, 20* this.personalScale, 'Copyright © 2025 Zambon Gelato. All right reserved', { 
-            fontFamily: 'PressStart2P', 
-            fontSize: 10*this.personalScale, 
-            fill: '#fff',
-            align: 'center'
-        }).setOrigin(1, 1);
+        // Controlla il sistema operativo
+        const userAgent = navigator.userAgent || navigator.vendor || window.opera;
+        const isAndroid = /android/i.test(userAgent);
+        const isIOS = /iPad|iPhone|iPod/.test(userAgent) && !window.MSStream;
+
+        // Scegli la posizione Y in base al sistema
+        const posY = isIOS 
+            ? this.scale.height - 170 * this.personalScale   // se è iOS
+            : this.scale.height - 20 * this.personalScale;   // se è Android (o altro)
+
+        this.add.text(
+            this.scale.width - 20 * this.personalScale, 
+            posY, 
+            'Copyright © 2025 Zambon Gelato.\nAll rights reserved', 
+            { 
+                fontFamily: 'PressStart2P', 
+                fontSize: 15 * this.personalScale, 
+                fill: '#fff',
+                align: 'right'
+            }
+        ).setOrigin(1, 1);
 
         startButton.on('pointerdown', () => {
             startButton.disableInteractive();

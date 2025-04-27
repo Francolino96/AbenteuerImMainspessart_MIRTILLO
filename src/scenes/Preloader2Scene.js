@@ -37,7 +37,7 @@ class Preloader2Scene extends Phaser.Scene {
         }
         newH *= 1.1;
         newW = newH * aspectRatio;
-        this.background.setDisplaySize(newW, newH).setPosition(this.scale.width / 2, this.scale.height);
+        this.background.setDisplaySize(newW, newH).setPosition(this.scale.width / 2, this.scale.height + 20 * this.personalScale);
 
         let centerX = this.scale.width / 2;
         let centerY = this.scale.height / 2;
