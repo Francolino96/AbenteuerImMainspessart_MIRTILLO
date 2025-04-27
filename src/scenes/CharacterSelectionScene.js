@@ -29,9 +29,9 @@ class CharacterSelectionScene extends Phaser.Scene {
         newW = newH * aspectRatio;
         this.background.setDisplaySize(newW, newH).setPosition(this.scale.width / 2, this.scale.height);
 
-        this.selectionBox = this.add.rectangle(this.scale.width / 2 - 150*this.personalScale, this.scale.height / 2 + 25 * this.personalScale, 240*this.personalScale, 300*this.personalScale, 0xa9b6f5).setStrokeStyle(2, 0xa9b6f5).setOrigin(0.5);
-        this.char1 = this.add.image(this.scale.width / 2 - 150*this.personalScale, this.scale.height / 2, 'player1').setInteractive().setScale(1.8*this.personalScale).setOrigin(0.5);
-        this.char2 = this.add.image(this.scale.width / 2 + 150*this.personalScale, this.scale.height / 2, 'player2').setInteractive().setScale(1.8*this.personalScale).setOrigin(0.5);
+        this.selectionBox = this.add.rectangle(this.scale.width / 2 - 150*this.personalScale, this.scale.height / 2, 200*this.personalScale, 300*this.personalScale, 0xa9b6f5).setStrokeStyle(2, 0xa9b6f5).setOrigin(0.5);
+        this.char1 = this.add.image(this.scale.width / 2 - 150*this.personalScale, this.scale.height / 2, 'player1').setInteractive().setScale(0.65*this.personalScale).setOrigin(0.5);
+        this.char2 = this.add.image(this.scale.width / 2 + 150*this.personalScale, this.scale.height / 2, 'player2').setInteractive().setScale(0.65*this.personalScale).setOrigin(0.5);
 
         const nameStyle = {
             fontFamily: 'PressStart2P',
@@ -106,7 +106,7 @@ class CharacterSelectionScene extends Phaser.Scene {
 
     selectCharacter(character, x) {
         this.selectedCharacter = character;
-        this.selectionBox.setPosition(x, this.scale.height / 2  + 25 * this.personalScale);
+        this.selectionBox.setPosition(x, this.scale.height / 2);
     }
 
     goToNextScene() {

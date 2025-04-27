@@ -767,7 +767,7 @@ export function updateRafts(scene, velocity) {
             raft.setVelocityX(-velocity * scene.personalScale);
         } else if (raft.x <= left) {
             raft.setVelocityX(velocity * scene.personalScale);
-        }
+        } 
 
         const touching = scene.physics.world.overlap(scene.player, raft);
         if (!touching && scene.player.isOnRaft) {

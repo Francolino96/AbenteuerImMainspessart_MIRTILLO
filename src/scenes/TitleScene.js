@@ -53,6 +53,13 @@ class TitleScene extends Phaser.Scene {
             fill: '#5a67b0' 
         }).setOrigin(0.5).setInteractive();
 
+        this.add.text(this.scale.width - 20 * this.personalScale, 20* this.personalScale, 'Copyright © 2025 Zambon Gelato. All right reserved', { 
+            fontFamily: 'PressStart2P', 
+            fontSize: 10*this.personalScale, 
+            fill: '#fff',
+            align: 'center'
+        }).setOrigin(1, 1);
+
         startButton.on('pointerdown', () => {
             startButton.disableInteractive();
             this.goToNextScene();

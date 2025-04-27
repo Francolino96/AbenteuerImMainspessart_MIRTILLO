@@ -104,7 +104,7 @@ class PreloaderScene extends Phaser.Scene {
         this.load.image('ground_background', 'assets/underground_background.jpg');
 
         this.load.spritesheet('truck', 'assets/Sprites_truck.png', {
-            frameWidth: 2798.45/6,
+            frameWidth: 2795/6,
             frameHeight: 240,
             margin: 0,
             spacing: 6.71,
