@@ -2,8 +2,7 @@ import {
     spawnDecor,
     spawnSkull,
     createIngredients,
-    createAcorns,
-    updateAcorns,
+    createFlies,
     spawnGapEnemies,
     updateEnemy,
     updateIngredients,
@@ -33,7 +32,7 @@ class WaterScene extends Phaser.Scene {
         this.gapWidth = 1200 * this.personalScale;
         createGround(this, gapPercentages, this.gapWidth, true);
 
-        spawnDecor(this, 1.3, true, 'stiancia', 0.002 * this.mapWidth, this.mapWidth * 0.2, this.mapWidth - 500 * this.personalScale, gapPercentages, this.gapWidth, this.boxWidth);
+        spawnDecor(this, 1.3, true, 'stiancia', 0.001 * this.mapWidth, this.mapWidth * 0.2, this.mapWidth - 500 * this.personalScale, gapPercentages, this.gapWidth, this.boxWidth);
         
         createPlatforms(this, 2, this.lev3PlatformHeight, 100);
         createPlatforms(this, 3, this.lev1PlatformHeight, 300);
@@ -79,7 +78,7 @@ class WaterScene extends Phaser.Scene {
         );
         updateWater(this);
         spawnDecor(this, 1, true, 'grass', 0.006 * this.mapWidth, 0, this.mapWidth, gapPercentages, this.gapWidth, this.boxWidth);       
-        createAcorns(this, 4, 'WaterScene');
+        createFlies(this, 6, 'fly', 2, 200);
         const excludedGaps = [ 2, 3 ];
         this.snakes = spawnGapEnemies(this, 'snake', gapPercentages, 350, 3, excludedGaps);
         createRafts(this, gapPercentages, this.gapWidth, 300);
@@ -89,7 +88,6 @@ class WaterScene extends Phaser.Scene {
     update() {
         if (this.gameOver || this.victory) return;
         updatePlayer(this);
-        updateAcorns(this);
         updateIngredients(this, this.milk, { min: 100 * this.personalScale, max: this.mapWidth - 100 * this.personalScale - this.finishPoint *this.personalScale });
         updateIngredients(this, this.hazelnuts, { min: 100 * this.personalScale, max: this.mapWidth - 100 * this.personalScale - this.finishPoint *this.personalScale });
         this.snakes.forEach(({ enemy, bounds }) => {

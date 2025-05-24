@@ -94,6 +94,11 @@ class Preloader2Scene extends Phaser.Scene {
                 margin: 0,
                 spacing: 6.71
             });
+            this.load.audio('fly', 'sounds/fly.mp3');
+            this.load.spritesheet('fly', 'assets/Sprites_fly.png', {
+                frameWidth: 147/2,
+                frameHeight: 75
+            });
             this.load.image('fence', 'assets/Sprites_fence.png');
             this.load.image('raft', 'assets/Sprites_raft.png');
             this.load.image('stiancia', 'assets/Sprites_stiancia.png');
@@ -164,11 +169,6 @@ class Preloader2Scene extends Phaser.Scene {
                 frameHeight: 73,
                 margin: 2,
                 spacing: 6.71
-            });
-            this.load.audio('fly', 'sounds/fly.mp3');
-            this.load.spritesheet('fly', 'assets/Sprites_fly.png', {
-                frameWidth: 147/2,
-                frameHeight: 75
             });
             this.load.image('sugar_icon', 'assets/Sprites_sugar_cube_icon.png');
             this.load.spritesheet('sugar', 'assets/Sprites_sugar_cube.png', {

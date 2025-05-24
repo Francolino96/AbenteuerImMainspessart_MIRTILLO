@@ -109,10 +109,10 @@ export function createSounds(scene) {
         scene.spiderSound = scene.sound.add('spider', { loop: false, volume: 0.8 });
     }
     else if (scene.sceneName == 'WaterScene'){
+        scene.flySound = scene.sound.add('fly', { loop: false, volume: 1 });
         scene.snakeSound = scene.sound.add('snake', { loop: false, volume: 1 });
     }
     else if (scene.sceneName == 'OrchardScene'){
-        scene.flySound = scene.sound.add('fly', { loop: false, volume: 1 });
         scene.spiderSound = scene.sound.add('spider', { loop: false, volume: 0.8 });
     }
     scene.boarSound = scene.sound.add('boar', { loop: false, volume: 0.5 });
@@ -492,7 +492,7 @@ export function spawnDecor(scene, scale, flip, texture, count, startingPoint, en
         let x;
         do {
             x = Phaser.Math.Between(startingPoint, endingPoint);
-        } while (isPositionInGap(x + 120 * scene.personalScale, gapPercentages, scene.mapWidth, gapWidth) || isPositionInGap(x - 120 * scene.personalScale, gapPercentages, scene.mapWidth, gapWidth));
+        } while (isPositionInGap(x + 150 * scene.personalScale, gapPercentages, scene.mapWidth, gapWidth) || isPositionInGap(x - 150 * scene.personalScale, gapPercentages, scene.mapWidth, gapWidth));
         const decor = scene.add.image(x, scene.mapHeight - boxWidth + 2, texture)
             .setOrigin(0.5, 1)
             .setScale(scale * scene.personalScale);
@@ -779,7 +779,6 @@ export function updateRafts(scene, velocity) {
 export function createFlies(scene, n, enemyKey, numberOfSprites, speed) {
     const flies    = [];
     const margin   = 50;
-    // verticale tra metà mappa e bottom‑20px
     const minY     = 0.6 * scene.mapHeight;
     const maxY     = scene.mapHeight - 90 * scene.personalScale;
 
@@ -787,17 +786,15 @@ export function createFlies(scene, n, enemyKey, numberOfSprites, speed) {
         // spawn X casuale nella metà destra [mapWidth/2, mapWidth]
         const xStart = Phaser.Math.Between(scene.mapWidth / 2, scene.mapWidth);
         const yStart = Phaser.Math.Between(minY, maxY);
-
+        const direction = Phaser.Math.Between(0, 1) === 0 ? -1 : 1;
         const fly = scene.physics.add.sprite(xStart, yStart, enemyKey)
             .setOrigin(0.5, 1)
             .setScale(scene.personalScale)
             .setCollideWorldBounds(false);
 
         fly.body.setAllowGravity(false);
-        // muove sempre verso sinistra
-        fly.setVelocityX(-speed * scene.personalScale);
-        fly.setFlipX(true);  // specchiata perché va verso sinistra
-
+        fly.setVelocityX(direction * speed * scene.personalScale);
+        fly.setFlipX(direction < 0);
         // Animazione di volo
         if (!scene.anims.exists(enemyKey + 'Fly')) {
             scene.anims.create({
