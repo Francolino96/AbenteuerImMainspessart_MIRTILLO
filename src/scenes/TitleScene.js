@@ -64,16 +64,16 @@ class TitleScene extends Phaser.Scene {
             : this.scale.height - 20 * this.personalScale;   // se è Android (o altro)
 
         this.add.text(
-            this.scale.width - 20 * this.personalScale, 
+            this.scale.width/2, 
             posY, 
-            'Copyright © 2025 Zambon Gelato.\nAll rights reserved', 
+            'Copyright © 2025 Zambon Gelato\nAll rights reserved', 
             { 
                 fontFamily: 'PressStart2P', 
                 fontSize: 15 * this.personalScale, 
                 fill: '#fff',
-                align: 'right'
+                align: 'center'
             }
-        ).setOrigin(1, 1);
+        ).setOrigin(0.5, 1);
 
         startButton.on('pointerdown', () => {
             startButton.disableInteractive();

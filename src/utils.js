@@ -776,29 +776,7 @@ export function updateRafts(scene, velocity) {
     });
 }
 
-export function createEnemy(scene, xPosition, enemy, velocity, numberOfSprites) {
-    scene.enemy = scene.physics.add.sprite(xPosition, scene.mapHeight - scene.boxWidth, enemy).setOrigin(0.5, 1);
-    scene.enemy.setScale(scene.personalScale * 1.2).refreshBody();
-    scene.enemy.setCollideWorldBounds(false);
-    scene.enemy.body.setAllowGravity(false);
-
-    scene.anims.create({
-        key: enemy + 'Run',
-        frames: scene.anims.generateFrameNumbers(enemy, { start: 0, end: numberOfSprites-1 }),
-        frameRate: 8,
-        repeat: -1
-    });
-
-    scene.enemy.play(enemy + 'Run');
-    scene.enemy.setVelocityX(velocity * scene.personalScale);
-    scene.enemy.setFlipX(false);
-    scene.enemyDirection = 1;
-
-    //scene.physics.add.collider(scene.enemy, scene.platforms);
-    scene.physics.add.overlap(scene.player, scene.enemy, (player, enemy) => hitEnemy(scene, player, enemy, scene.sceneName), null, scene);
-}
-
-export function createFlies(scene, n, enemyKey, numberOfSprites, speed = 250) {
+export function createFlies(scene, n, enemyKey, numberOfSprites, speed) {
     const flies    = [];
     const margin   = 50;
     // verticale tra metà mappa e bottom‑20px
@@ -878,14 +856,84 @@ export function createFlies(scene, n, enemyKey, numberOfSprites, speed = 250) {
     return flies;
 }
 
+export function createEnemy(scene, xPosition, enemy, velocity, numberOfSprites) {
+    scene.enemy = scene.physics.add.sprite(xPosition, scene.mapHeight - scene.boxWidth, enemy).setOrigin(0.5, 1);
+    scene.enemy.setScale(scene.personalScale * 1.2).refreshBody();
+    scene.enemy.setCollideWorldBounds(false);
+    scene.enemy.body.setAllowGravity(false);
 
-export function updateEnemy(scene, lBound, rBound, velocity) {
-    if (scene.enemy.x >= rBound) {
-        scene.enemy.setVelocityX(-velocity * scene.personalScale);
-        scene.enemy.setFlipX(true);
-    } else if (scene.enemy.x <= lBound) {
-        scene.enemy.setVelocityX(velocity * scene.personalScale);
-        scene.enemy.setFlipX(false);
+    scene.anims.create({
+        key: enemy + 'Run',
+        frames: scene.anims.generateFrameNumbers(enemy, { start: 0, end: numberOfSprites-1 }),
+        frameRate: 8,
+        repeat: -1
+    });
+
+    scene.enemy.play(enemy + 'Run');
+    scene.enemy.setVelocityX(velocity * scene.personalScale);
+    scene.enemy.setFlipX(false);
+    scene.enemyDirection = 1;
+
+    //scene.physics.add.collider(scene.enemy, scene.platforms);
+    scene.physics.add.overlap(scene.player, scene.enemy, (player, enemy) => hitEnemy(scene, player, enemy, scene.sceneName), null, scene);
+}
+
+export function spawnGapEnemies(scene, key, gaps, speed, frameCount, excludedGaps) {
+    const gapPos = gaps.map(p => p * scene.mapWidth);
+    gapPos.unshift( - 300 * scene.personalScale);
+    gapPos.push(scene.mapWidth + 300 * scene.personalScale);
+
+    const result = [];
+
+    for (let i = 0; i < gapPos.length - 1; i++) {
+        if (excludedGaps.length == 0 || (excludedGaps.length > 0 && excludedGaps.indexOf(i) === -1)) {
+            let lBound;
+            let rBound;
+            if (key == "snake"){
+                lBound = gapPos[i] + scene.gapWidth/2 + 300 * scene.personalScale;
+                rBound = gapPos[i+1] - scene.gapWidth/2 - 300 * scene.personalScale;
+            }
+            else{
+                lBound = gapPos[i] + scene.gapWidth/2 + 100 * scene.personalScale;
+                rBound = gapPos[i+1] - scene.gapWidth/2 - 100 * scene.personalScale;
+            }
+            const spawnX = (lBound + rBound) / 2;
+
+            const e = scene.physics.add.sprite(spawnX, scene.mapHeight - scene.boxWidth, key).setOrigin(0.5, 1).setScale(scene.personalScale * 1.2).refreshBody();
+            e.body.setAllowGravity(false);
+            e.body.setCollideWorldBounds(false);
+            e.setVelocityX(speed * scene.personalScale);
+
+            const animKey = `${key}Run_${i}`;
+            if (!scene.anims.exists(animKey)) {
+            scene.anims.create({
+                key: animKey,
+                frames: scene.anims.generateFrameNumbers(key, { start: 0, end: frameCount - 1 }),
+                frameRate: 8,
+                repeat: -1
+            });
+            }
+            e.play(animKey);
+
+            scene.physics.add.overlap(scene.player, e,
+            (player, enemyObj) => hitEnemy(scene, player, enemyObj, scene.sceneName),
+            null, scene);
+
+            result.push({ enemy: e, bounds: { lBound, rBound } });
+        }
+    }
+
+    return result;
+}
+
+export function updateEnemy(scene, enemy, lBound, rBound, velocity) {
+    if (enemy.x >= rBound && enemy.body.velocity.x > 0) {
+        enemy.setVelocityX(-velocity * scene.personalScale);
+        enemy.setFlipX(true);
+    }
+    else if (enemy.x <= lBound && enemy.body.velocity.x < 0) {
+        enemy.setVelocityX(velocity * scene.personalScale);
+        enemy.setFlipX(false);
     }
 }
 
