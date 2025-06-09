@@ -5,9 +5,9 @@ class TitleScene extends Phaser.Scene {
 
     preload () {
         this.load.image('forest_background', 'assets/forest_background.png');
-        this.load.image('water_background', 'assets/water_background.jpg');
-        this.load.image('orchard_background', 'assets/orchard_background.jpg');
-        this.load.image('fields_background', 'assets/fields_background.jpg');
+        this.load.image('water_background', 'assets/water_background.png');
+        this.load.image('orchard_background', 'assets/orchard_background.png');
+        this.load.image('fields_background', 'assets/fields_background.png');
 
         let newFont = new FontFace('PressStart2P', 'url(PressStart2P-Regular.ttf)');
         newFont.load().then(function(loadedFont) {

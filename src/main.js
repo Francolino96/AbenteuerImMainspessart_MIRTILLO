@@ -41,8 +41,8 @@ let config = {
         AnswerScene, 
         MenuScene,
         ForestScene,
-        FieldsScene,
         WaterScene,
+        FieldsScene,
         OrchardScene,
     ],
     scale: {

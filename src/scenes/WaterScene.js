@@ -32,15 +32,19 @@ class WaterScene extends Phaser.Scene {
         this.gapWidth = 1200 * this.personalScale;
         createGround(this, gapPercentages, this.gapWidth, true);
 
-        spawnDecor(this, 1.3, true, 'stiancia', 0.001 * this.mapWidth, this.mapWidth * 0.2, this.mapWidth - 500 * this.personalScale, gapPercentages, this.gapWidth, this.boxWidth);
+        spawnDecor(this, 1.2, true, 'stiancia', 0.001 * this.mapWidth, this.mapWidth * 0.2, this.mapWidth - 500 * this.personalScale, gapPercentages, this.gapWidth, this.boxWidth);
         
-        createPlatforms(this, 2, this.lev3PlatformHeight, 100);
-        createPlatforms(this, 3, this.lev1PlatformHeight, 300);
-        createPlatforms(this, 1, this.lev2PlatformHeight, 600);
-        createPlatforms(this, 4, this.lev2PlatformHeight, 800);
-        createPlatforms(this, 1, this.lev3PlatformHeight, 1300);
-        createPlatforms(this, 3, this.lev2PlatformHeight, 1700);
-        createPlatforms(this, 3, this.lev1PlatformHeight, 2200);
+        createPlatforms(this, 4, this.lev2PlatformHeight, 300);
+        createPlatforms(this, 2, this.lev1PlatformHeight, 850);
+        createPlatforms(this, 3, this.lev2PlatformHeight, 1150);
+        createPlatforms(this, 2, this.lev3PlatformHeight, 5150);
+        createPlatforms(this, 3, this.lev1PlatformHeight, 5500);
+        createPlatforms(this, 1, this.lev1PlatformHeight, 9400);
+        createPlatforms(this, 2, this.lev2PlatformHeight, 9600);
+        createPlatforms(this, 4, this.lev2PlatformHeight, 10000);
+        createPlatforms(this, 3, this.lev3PlatformHeight, 10550);
+        createPlatforms(this, 1, this.lev2PlatformHeight, 10950);
+        createPlatforms(this, 3, this.lev1PlatformHeight, 11100);
 
         spawnDecor(this, 1, true, 'flower', 0.004 * this.mapWidth, 0, this.mapWidth, gapPercentages, this.gapWidth, this.boxWidth);
         spawnDecor(this, 1, true, 'grass', 0.015 * this.mapWidth, 0, this.mapWidth, gapPercentages, this.gapWidth, this.boxWidth);
@@ -52,7 +56,6 @@ class WaterScene extends Phaser.Scene {
         spawnSkull(this, 'skull_2', gapPercentages, this.gapWidth, this.boxWidth);
         spawnSkull(this, 'skull_3', gapPercentages, this.gapWidth, this.boxWidth);
 
-        console.log("Ciao Mondo 1");
         createFish(this, gapPercentages, this.gapWidth);
         createPlayer(this);
         this.events.on('preupdate', () => {
@@ -78,10 +81,10 @@ class WaterScene extends Phaser.Scene {
         );
         updateWater(this);
         spawnDecor(this, 1, true, 'grass', 0.006 * this.mapWidth, 0, this.mapWidth, gapPercentages, this.gapWidth, this.boxWidth);       
-        createFlies(this, 6, 'fly', 2, 200);
+        createFlies(this, 4, 'fly', 2, 150);
         const excludedGaps = [ 2, 3 ];
-        this.snakes = spawnGapEnemies(this, 'snake', gapPercentages, 350, 3, excludedGaps);
-        createRafts(this, gapPercentages, this.gapWidth, 300);
+        this.snakes = spawnGapEnemies(this, 'snake', gapPercentages, 250, 3, excludedGaps);
+        createRafts(this, gapPercentages, this.gapWidth, 250);
         initializeSceneInputs(this, 'hazelnut', 'milk');
     }
 
@@ -91,9 +94,9 @@ class WaterScene extends Phaser.Scene {
         updateIngredients(this, this.milk, { min: 100 * this.personalScale, max: this.mapWidth - 100 * this.personalScale - this.finishPoint *this.personalScale });
         updateIngredients(this, this.hazelnuts, { min: 100 * this.personalScale, max: this.mapWidth - 100 * this.personalScale - this.finishPoint *this.personalScale });
         this.snakes.forEach(({ enemy, bounds }) => {
-            updateEnemy(this, enemy, bounds.lBound, bounds.rBound, 350);
+            updateEnemy(this, enemy, bounds.lBound, bounds.rBound, 250);
         });
-        updateRafts(this, 300);
+        updateRafts(this, 250);
     }
 }
 

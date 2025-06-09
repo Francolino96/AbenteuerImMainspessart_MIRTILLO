@@ -23,21 +23,27 @@ class OrchardScene extends Phaser.Scene {
 
     create() {     
         initializeScene(this, 'OrchardScene', 'orchard_background');
-        const gapPercentages = [0.2, 0.5, 0.8];
+        const gapPercentages = [0.2, 0.7];
         this.gapWidth = 500 * this.personalScale;
         createGround(this, gapPercentages, this.gapWidth, false);
 
-        spawnDecor(this, 1.6, true, 'appleTree1', 0.0005 * this.mapWidth, this.mapWidth * 0.2, this.mapWidth - 500 * this.personalScale, gapPercentages, this.gapWidth, this.boxWidth);
-        spawnDecor(this, 1.6, true, 'appleTree2', 0.0005 * this.mapWidth, this.mapWidth * 0.2, this.mapWidth - 500 * this.personalScale, gapPercentages, this.gapWidth, this.boxWidth);
-        spawnDecor(this, 1.6, true, 'appleTree3', 0.0005 * this.mapWidth, this.mapWidth * 0.2, this.mapWidth - 500 * this.personalScale, gapPercentages, this.gapWidth, this.boxWidth);
+        spawnDecor(this, 1.6, true, 'appleTree1', 0.0005 * this.mapWidth, this.mapWidth * 0.1, this.mapWidth - 500 * this.personalScale, gapPercentages, this.gapWidth, this.boxWidth);
+        spawnDecor(this, 1.6, true, 'appleTree2', 0.0005 * this.mapWidth, this.mapWidth * 0.1, this.mapWidth - 500 * this.personalScale, gapPercentages, this.gapWidth, this.boxWidth);
+        spawnDecor(this, 1.6, true, 'appleTree3', 0.0005 * this.mapWidth, this.mapWidth * 0.1, this.mapWidth - 500 * this.personalScale, gapPercentages, this.gapWidth, this.boxWidth);
         
-        createPlatforms(this, 2, this.lev3PlatformHeight, 100);
-        createPlatforms(this, 3, this.lev1PlatformHeight, 300);
-        createPlatforms(this, 1, this.lev2PlatformHeight, 600);
-        createPlatforms(this, 4, this.lev2PlatformHeight, 800);
-        createPlatforms(this, 1, this.lev3PlatformHeight, 1300);
-        createPlatforms(this, 3, this.lev2PlatformHeight, 1700);
-        createPlatforms(this, 3, this.lev1PlatformHeight, 2200);
+        createPlatforms(this, 3, this.lev1PlatformHeight, 400);
+        createPlatforms(this, 2, this.lev3PlatformHeight, 850);
+        createPlatforms(this, 1, this.lev3PlatformHeight, 1150);
+        createPlatforms(this, 2, this.lev3PlatformHeight, 1350);
+        createPlatforms(this, 1, this.lev1PlatformHeight, 4000);
+        createPlatforms(this, 2, this.lev2PlatformHeight, 4200);
+        createPlatforms(this, 4, this.lev3PlatformHeight, 4600);
+        createPlatforms(this, 1, this.lev1PlatformHeight, 5100);
+        createPlatforms(this, 1, this.lev1PlatformHeight, 5300);
+        createPlatforms(this, 1, this.lev2PlatformHeight, 5500);
+        createPlatforms(this, 1, this.lev3PlatformHeight, 5700);
+        createPlatforms(this, 3, this.lev2PlatformHeight, 7500);
+        createPlatforms(this, 1, this.lev1PlatformHeight, 7900);
 
         spawnDecor(this, 1, true, 'flower', 0.004 * this.mapWidth, 0, this.mapWidth, gapPercentages, this.gapWidth, this.boxWidth);
         spawnDecor(this, 1, true, 'grass', 0.015 * this.mapWidth, 0, this.mapWidth, gapPercentages, this.gapWidth, this.boxWidth);
