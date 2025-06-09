@@ -40,7 +40,7 @@ class TitleScene extends Phaser.Scene {
             align: 'center'
         }).setOrigin(0.5);
         
-        const subtitle = this.add.text(this.scale.width / 2, title.y + title.height, 'im Main-Spessart!', { 
+        const subtitle = this.add.text(this.scale.width / 2, title.y + title.height, 'im Main-Spessart', { 
             fontFamily: 'PressStart2P', 
             fontSize: 34*this.personalScale, 
             fill: '#1f1f1f',
