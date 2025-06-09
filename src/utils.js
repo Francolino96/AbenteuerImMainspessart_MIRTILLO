@@ -64,7 +64,7 @@ export function initializeScene(scene, sceneName, backgroundType) {
 
     scene.background = scene.add.tileSprite(
         scene.mapWidth / 2,
-        scene.mapHeight - 50 * scene.personalScale,
+        scene.mapHeight - 40 * scene.personalScale,
         scene.mapWidth,
         desiredHeight,
         backgroundType
@@ -319,7 +319,10 @@ export function updatePlayer(scene) {
         if (scene.sugarCollected < scene.sugarNumber ||
             scene.strawberryCollected < scene.strawberryNumber ||
             scene.blueberryCollected < scene.blueberryNumber ||
-            scene.appleCollected < scene.appleNumber ) {
+            scene.appleCollected < scene.appleNumber ||
+            scene.milkCollected < scene.milkNumber ||
+            scene.hazelnutCollected < scene.hazelnutNumber
+        ) {
             scene.time.delayedCall(1000, () => {
                 scene.cameras.main.fadeOut(800, 0, 0, 0);
                 scene.time.delayedCall(800, () => {
@@ -392,8 +395,8 @@ export function createVolumeButton(scene) {
         mute: 'volume_mute'
     };
     scene.volumeLevels = {
-        high: 0.4,
-        low: 0.1,
+        high: 0.5,
+        low: 0.15,
         mute: 0.0
     };
     scene.volumeButton = scene.add.image(scene.screenWidth - scene.margin / 2, scene.margin / 2, scene.volumeIcons.low).setInteractive().setOrigin(1, 0).setScale(scene.personalScale).setScrollFactor(0);
@@ -585,7 +588,6 @@ export function collectIngredient(scene, player, ingredient, type, sceneName) {
     scene[type + "Collected"]++;
     scene[type + "Text"].setText(scene[type + "Collected"] + '/' + scene[type + "Number"]);
 
-    // ➕ Aggiungi effetto di "pop" all'icona
     const icon = scene[type + "Icon"];
     const originalScale = scene.personalScale * 0.85;
     scene.tweens.add({

@@ -72,7 +72,7 @@ class FieldsScene extends Phaser.Scene {
         spawnDecor(this, 1, true, 'grass', 0.006 * this.mapWidth, 0, this.mapWidth, gapPercentages, this.gapWidth, this.boxWidth);       
         const excludedGaps = [];
         this.spiders = spawnGapEnemies(this, 'spider', gapPercentages, 250, 4, excludedGaps);
-        createFlies(this, 6, 'fly', 2, 200);
+        createFlies(this, 4, 'fly', 2, 150);
         initializeSceneInputs(this, 'strawberry', 'sugar');
     }
 

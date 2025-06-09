@@ -24,7 +24,8 @@ class FirstScene extends Phaser.Scene {
 
     create() {     
         initializeScene(this, 'FirstScene', 'forest_background');
-        const gapPercentages = [0.2, 0.5, 0.8];
+        //const gapPercentages = [0.2, 0.5, 0.8];
+        const gapPercentages = [];
         this.gapWidth = 500 * this.personalScale;
         createGround(this, gapPercentages, this.gapWidth, false);
 
@@ -52,7 +53,7 @@ class FirstScene extends Phaser.Scene {
 
         createPlayer(this);
 
-        this.blueberryNumber = 5;
+        this.blueberryNumber = 0;
         this.blueberries = createIngredients(
             this,
             'blueberry',
@@ -61,7 +62,7 @@ class FirstScene extends Phaser.Scene {
             { min: 50, max: 300 }
         );
 
-        this.sugarNumber = 5;
+        this.sugarNumber = 0;
         this.sugar = createIngredients(
             this,
             'sugar',
@@ -71,26 +72,25 @@ class FirstScene extends Phaser.Scene {
         );
 
         spawnDecor(this, 1, true, 'grass', 0.006 * this.mapWidth, 0, this.mapWidth, gapPercentages, this.gapWidth, this.boxWidth);
-        createAcorns(this, 4, 'FirstScene');
-        createMushroom(this, this.mapWidth * 0.35);
-        createMushroom(this, this.mapWidth * 0.65);
-        createMushroom(this, this.mapWidth * 0.55);
-        createMushroom(this, this.mapWidth * 0.85);
+        //createAcorns(this, 4, 'FirstScene');
+        //createMushroom(this, this.mapWidth * 0.35);
+        //createMushroom(this, this.mapWidth * 0.65);
+        //createMushroom(this, this.mapWidth * 0.55);
+        //createMushroom(this, this.mapWidth * 0.85);
         const excludedGaps = [];
-        this.boars = spawnGapEnemies(this, 'boar', gapPercentages, 300, 3, excludedGaps);
+        //this.boars = spawnGapEnemies(this, 'boar', gapPercentages, 250, 3, excludedGaps);
         initializeSceneInputs(this, 'blueberry', 'sugar');
     }
 
     update() {
         if (this.gameOver || this.victory) return;
         updatePlayer(this);
-        updateAcorns(this);
+        //updateAcorns(this);
         updateIngredients(this, this.sugar, { min: 100 * this.personalScale, max: this.mapWidth - 100 * this.personalScale - this.finishPoint *this.personalScale });
         updateIngredients(this, this.blueberries, { min: 100 * this.personalScale, max: this.mapWidth - 100 * this.personalScale - this.finishPoint *this.personalScale });
-        //updateEnemy(this, 100 * this.personalScale, 0.2 * this.mapWidth - this.gapWidth/2 - 50*this.personalScale, 300);
-        this.boars.forEach(({ enemy, bounds }) => {
-            updateEnemy(this, enemy, bounds.lBound, bounds.rBound, 300);
-        });
+        /*this.boars.forEach(({ enemy, bounds }) => {
+            updateEnemy(this, enemy, bounds.lBound, bounds.rBound, 250);
+        });*/
     }
 }
 

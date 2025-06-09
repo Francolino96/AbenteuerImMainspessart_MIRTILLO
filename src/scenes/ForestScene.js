@@ -72,9 +72,12 @@ class ForestScene extends Phaser.Scene {
 
         spawnDecor(this, 1, true, 'grass', 0.006 * this.mapWidth, 0, this.mapWidth, gapPercentages, this.gapWidth, this.boxWidth);
         createAcorns(this, 4, 'ForestScene');
+        createMushroom(this, this.mapWidth * 0.35);
+        createMushroom(this, this.mapWidth * 0.65);
+        createMushroom(this, this.mapWidth * 0.55);
         createMushroom(this, this.mapWidth * 0.85);
         const excludedGaps = [];
-        this.boars = spawnGapEnemies(this, 'boar', gapPercentages, 300, 3, excludedGaps);
+        this.boars = spawnGapEnemies(this, 'boar', gapPercentages, 250, 3, excludedGaps);
         initializeSceneInputs(this, 'blueberry', 'sugar');
     }
 
@@ -85,7 +88,7 @@ class ForestScene extends Phaser.Scene {
         updateIngredients(this, this.sugar, { min: 100 * this.personalScale, max: this.mapWidth - 100 * this.personalScale - this.finishPoint *this.personalScale });
         updateIngredients(this, this.blueberries, { min: 100 * this.personalScale, max: this.mapWidth - 100 * this.personalScale - this.finishPoint *this.personalScale });
         this.boars.forEach(({ enemy, bounds }) => {
-            updateEnemy(this, enemy, bounds.lBound, bounds.rBound, 300);
+            updateEnemy(this, enemy, bounds.lBound, bounds.rBound, 250);
         });
     }
 }
