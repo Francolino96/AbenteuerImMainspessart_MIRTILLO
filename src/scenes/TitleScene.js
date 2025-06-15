@@ -19,7 +19,7 @@ class TitleScene extends Phaser.Scene {
         this.scale.refresh();
         this.personalScale = (this.scale.height + this.scale.width)/2200;
 
-        this.background = this.add.sprite(0, 0, 'forest_background').setOrigin(0.5, 1);
+        this.background = this.add.sprite(0, 0, 'fields_background').setOrigin(0.5, 1);
         const aspectRatio = this.background.width / this.background.height;
         let newW, newH;
         if (this.scale.width / this.scale.height > aspectRatio) {
@@ -60,8 +60,8 @@ class TitleScene extends Phaser.Scene {
 
         // Scegli la posizione Y in base al sistema
         const posY = isIOS 
-            ? this.scale.height - 170 * this.personalScale   // se è iOS
-            : this.scale.height - 20 * this.personalScale;   // se è Android (o altro)
+            ? this.scale.height - 180 * this.personalScale   // se è iOS
+            : this.scale.height - 30 * this.personalScale;   // se è Android (o altro)
 
         this.add.text(
             this.scale.width/2, 

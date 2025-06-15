@@ -52,6 +52,11 @@ class ForestScene extends Phaser.Scene {
 
         createPlayer(this);
 
+        createMushroom(this, this.mapWidth * 0.35);
+        createMushroom(this, this.mapWidth * 0.65);
+        createMushroom(this, this.mapWidth * 0.55);
+        createMushroom(this, this.mapWidth * 0.85);
+
         this.blueberryNumber = 5;
         this.blueberries = createIngredients(
             this,
@@ -72,10 +77,6 @@ class ForestScene extends Phaser.Scene {
 
         spawnDecor(this, 1, true, 'grass', 0.006 * this.mapWidth, 0, this.mapWidth, gapPercentages, this.gapWidth, this.boxWidth);
         createAcorns(this, 4, 'ForestScene');
-        createMushroom(this, this.mapWidth * 0.35);
-        createMushroom(this, this.mapWidth * 0.65);
-        createMushroom(this, this.mapWidth * 0.55);
-        createMushroom(this, this.mapWidth * 0.85);
         const excludedGaps = [];
         this.boars = spawnGapEnemies(this, 'boar', gapPercentages, 250, 3, excludedGaps);
         initializeSceneInputs(this, 'blueberry', 'sugar');

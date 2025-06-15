@@ -8,7 +8,7 @@ class AnswerScene extends Phaser.Scene {
         this.personalScale = (this.scale.height + this.scale.width)/2200;
         this.cameras.main.fadeIn(800, 0, 0, 0);
 
-        const text_1 = this.add.text(this.scale.width/2, this.scale.height/2 - 140 * this.personalScale, "Wie viele\nHeidelbeeren\nsind in einer\nKugel Eis?", {
+        const text_1 = this.add.text(this.scale.width/2, this.scale.height/2 - 140 * this.personalScale, "Wie viele\nHeidelbeeren\nsind in einer\nKugel Heidelbeereis?", {
             fontFamily: "PressStart2P",
             fontSize: 35*this.personalScale, 
             fill: "#fff",

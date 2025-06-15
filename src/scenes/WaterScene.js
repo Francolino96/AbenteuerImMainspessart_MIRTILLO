@@ -3,6 +3,7 @@ import {
     spawnSkull,
     createIngredients,
     createFlies,
+    createBomb,
     spawnGapEnemies,
     updateEnemy,
     updateIngredients,
@@ -62,6 +63,11 @@ class WaterScene extends Phaser.Scene {
             this.player.currentRaft = null;
         });
 
+        createBomb(this, 450, this.mapHeight - 630 * this.personalScale);
+        createBomb(this, 1300, this.mapHeight - 630 * this.personalScale);
+        createBomb(this, 5700, this.mapHeight - 430 * this.personalScale);
+        createBomb(this, 10550, this.mapHeight - 830 * this.personalScale);
+
         this.hazelnutNumber = 5;
         this.hazelnuts = createIngredients(
             this,
@@ -82,7 +88,8 @@ class WaterScene extends Phaser.Scene {
         updateWater(this);
         spawnDecor(this, 1, true, 'grass', 0.006 * this.mapWidth, 0, this.mapWidth, gapPercentages, this.gapWidth, this.boxWidth);       
         createFlies(this, 4, 'fly', 2, 150);
-        const excludedGaps = [ 2, 3 ];
+
+        const excludedGaps = [ 0, 2, 3 ];
         this.snakes = spawnGapEnemies(this, 'snake', gapPercentages, 250, 3, excludedGaps);
         createRafts(this, gapPercentages, this.gapWidth, 250);
         initializeSceneInputs(this, 'hazelnut', 'milk');

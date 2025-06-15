@@ -58,7 +58,7 @@ class Victory2Scene extends Phaser.Scene {
     }
 
     goToNextScene(nextMissionName) {
-        this.cameras.main.fadeOut(800, 0, 0, 0);
+        this.cameras.main.fadeOut(800, 0, 0, 0); 
         this.time.delayedCall(800, () => {
             this.scene.start(nextMissionName);
         });

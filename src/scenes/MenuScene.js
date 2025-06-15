@@ -8,7 +8,7 @@ class MenuScene extends Phaser.Scene {
         this.cameras.main.fadeIn(800, 0, 0, 0);
         this.personalScale = (this.scale.height + this.scale.width) / 2200;
 
-        this.background = this.add.sprite(0, 0, 'forest_background').setOrigin(0.5, 1);
+        this.background = this.add.sprite(0, 0, 'fields_background').setOrigin(0.5, 1);
         const aspectRatio = this.background.width / this.background.height;
         let newW, newH;
         if (this.scale.width / this.scale.height > aspectRatio) {
@@ -41,7 +41,7 @@ class MenuScene extends Phaser.Scene {
         }
         else {
             fontSize = 25 * this.personalScale;
-            spacing = 1.5 * this.personalScale;
+            spacing = 0.8 * this.personalScale;
         }
         for (let i = 0; i < this.missions.length; i++) {
             let text = this.add.text(this.scale.width / 2, this.scale.height * 0.25 + 10 * this.personalScale + (i+1) * spacing * 80 *this.personalScale, this.missions[i], { 
@@ -50,14 +50,10 @@ class MenuScene extends Phaser.Scene {
                 fill: '#000',
                 align: 'center',
                 padding: { left: 10, right: 10, top: 5, bottom: 5 }
-            })
-            .setOrigin(0.5)
-            .setInteractive()
-            .on('pointerdown', () => {
+            }).setOrigin(0.5).setInteractive().on('pointerdown', () => {
                 this.selectedMission = i;
                 this.updateSelection();
             });
-
             this.menuItems.push(text);
         }
 

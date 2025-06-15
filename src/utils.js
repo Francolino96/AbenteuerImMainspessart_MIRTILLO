@@ -104,7 +104,7 @@ export function createPlatforms(scene, numIterations, platformHeight, startX) {
 }
 
 export function createSounds(scene) {
-    if (scene.sceneName == 'FieldsScene'){
+    if (scene.sceneName == 'FieldsScene' || scene.sceneName == 'FirstScene'){
         scene.flySound = scene.sound.add('fly', { loop: false, volume: 1 });
         scene.spiderSound = scene.sound.add('spider', { loop: false, volume: 0.8 });
     }
@@ -115,7 +115,9 @@ export function createSounds(scene) {
     else if (scene.sceneName == 'OrchardScene'){
         scene.spiderSound = scene.sound.add('spider', { loop: false, volume: 0.8 });
     }
-    scene.boarSound = scene.sound.add('boar', { loop: false, volume: 0.5 });
+    else if (scene.sceneName == 'ForestScene'){
+        scene.boarSound = scene.sound.add('boar', { loop: false, volume: 0.5 });
+    }
     scene.collectSound = scene.sound.add('collect', { loop: false, volume: 0.05 });
     scene.gameOverSound = scene.sound.add('gameOver', { loop: false, volume: 0.3 });
     scene.jumpSound = scene.sound.add('jump', { loop: false, volume: 0.2 });
@@ -124,7 +126,6 @@ export function createSounds(scene) {
     scene.music = scene.sound.add('soundtrack', { loop: true, volume: 0.5 });
     scene.music.play();
     scene.sound.setVolume(0.1);
-    scene.boarSound.play(); scene.boarSound.stop();
     scene.input.once('pointerdown', () => {
         if (scene.sound.context.state === 'suspended') {
             scene.sound.context.resume();
@@ -592,7 +593,7 @@ export function collectIngredient(scene, player, ingredient, type, sceneName) {
     const originalScale = scene.personalScale * 0.85;
     scene.tweens.add({
         targets: icon,
-        scale: originalScale * 1.3,  // Ingrandisce leggermente
+        scale: originalScale * 1.5,  // Ingrandisce leggermente
         duration: 150,
         yoyo: true,                  // Torna alla scala originale
         ease: 'Power1',
@@ -655,8 +656,8 @@ export function createAcorns(scene, num, sceneName) {
 
 export function updateAcorns(scene) {
     scene.acorns.children.iterate((acorn) => {
-        if (acorn.y + acorn.displayHeight / 2 >= scene.screenHeight - 5) {
-            acorn.y = -acorn.displayHeight;
+        if (acorn.y + acorn.displayHeight / 2 >= scene.screenHeight -5) {
+            acorn.y = -30*scene.personalScale;
             acorn.x = Phaser.Math.Between(100, scene.mapWidth - 100 * scene.personalScale);
 
             let newVelocityX;
@@ -677,6 +678,31 @@ export function createMushroom(scene, xPosition) {
     scene.mushroom.body.setImmovable(true);
     scene.physics.add.collider(scene.mushroom, scene.platforms);
     scene.physics.add.collider(scene.player, scene.mushroom, (player, enemy) => hitEnemy(scene, player, enemy, scene.sceneName), null, scene);
+}
+
+export function createWhiteMushroom(scene, xPosition, yPosition) {
+    scene.whiteMushroom = scene.physics.add.sprite(xPosition * scene.personalScale, yPosition, 'whiteMushroom').setOrigin(0.5, 1);
+    scene.whiteMushroom.setScale(scene.personalScale * 1.2).refreshBody();
+    scene.whiteMushroom.body.setAllowGravity(false);
+    scene.whiteMushroom.body.setImmovable(true);
+    scene.physics.add.collider(scene.whiteMushroom, scene.platforms);
+    scene.physics.add.collider(scene.player, scene.whiteMushroom, (player, enemy) => hitEnemy(scene, player, enemy, scene.sceneName), null, scene);
+}
+
+export function createBomb(scene, xPosition, yPosition) {
+    let spriteName = "";
+    if (scene.sceneName == 'OrchardScene'){
+        spriteName = 'pumpkin'
+    }
+    else if (scene.sceneName == 'WaterScene'){
+        spriteName = 'bomb'
+    }
+    scene.bomb = scene.physics.add.sprite(xPosition * scene.personalScale, yPosition, spriteName).setOrigin(0.5, 1);
+    scene.bomb.setScale(0.85 * scene.personalScale).refreshBody();
+    scene.bomb.body.setAllowGravity(false);
+    scene.bomb.body.setImmovable(true);
+    scene.physics.add.collider(scene.bomb, scene.platforms);
+    scene.physics.add.collider(scene.player, scene.bomb, (player, enemy) => hitEnemy(scene, player, enemy, scene.sceneName), null, scene);
 }
 
 export function createFish(scene, gapPercentages, gapWidth) {
@@ -921,7 +947,6 @@ export function spawnGapEnemies(scene, key, gaps, speed, frameCount, excludedGap
             result.push({ enemy: e, bounds: { lBound, rBound } });
         }
     }
-
     return result;
 }
 
@@ -937,7 +962,6 @@ export function updateEnemy(scene, enemy, lBound, rBound, velocity) {
 }
 
 function hitEnemy(scene, player, enemy, sceneName) {
-    console.log("Sono entrato nell'hitEnemy");
     if (enemy.texture.key === 'acorn') {
         scene.popSound.play();
         explode(scene, enemy);
@@ -947,6 +971,18 @@ function hitEnemy(scene, player, enemy, sceneName) {
         scene.jumpOverSound.play();
         if (enemy.texture.key === 'mushroom') {
             enemy.setTexture('mushroom_smashed');
+            scene.time.delayedCall(100, () => enemy.destroy(), [], scene);
+        }
+        else if (enemy.texture.key === 'whiteMushroom') {
+            enemy.setTexture('whiteMushroom_smashed');
+            scene.time.delayedCall(100, () => enemy.destroy(), [], scene);
+        }
+        else if (enemy.texture.key === 'bomb') {
+            enemy.setTexture('bomb_2');
+            scene.time.delayedCall(100, () => enemy.destroy(), [], scene);
+        }
+        else if (enemy.texture.key === 'pumpkin') {
+            enemy.setTexture('pumpkin_2');
             scene.time.delayedCall(100, () => enemy.destroy(), [], scene);
         }
     }
@@ -962,6 +998,16 @@ function hitEnemy(scene, player, enemy, sceneName) {
         }
         else if (enemy.texture.key == 'spider'){
             scene.spiderSound.play();
+        }
+        else if (enemy.texture.key == 'bomb' || enemy.texture.key == 'pumpkin'){
+            if (enemy.texture.key == 'bomb'){
+                enemy.setTexture('bomb_2');
+            }
+            else {
+                enemy.setTexture('pumpkin_2');
+            }
+            scene.time.delayedCall(100, () => enemy.destroy(), [], scene);
+            scene.popSound.play();
         }
         takeDamage(scene, player, enemy, sceneName);
     }

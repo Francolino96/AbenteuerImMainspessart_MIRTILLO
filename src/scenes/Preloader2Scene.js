@@ -94,6 +94,8 @@ class Preloader2Scene extends Phaser.Scene {
                 margin: 0,
                 spacing: 6.71
             });
+            this.load.image('bomb', 'assets/Sprites_bomb.png');
+            this.load.image('bomb_2', 'assets/Sprites_bomb_2.png');
             this.load.audio('fly', 'sounds/fly.mp3');
             this.load.spritesheet('fly', 'assets/Sprites_fly.png', {
                 frameWidth: 147/2,
@@ -125,6 +127,16 @@ class Preloader2Scene extends Phaser.Scene {
                 frameWidth: 91,
                 frameHeight: 91
             });
+            this.load.audio('boar', 'sounds/boar.mp3');
+            this.load.spritesheet('boar', 'assets/Sprites_boar.png', {
+                frameWidth: 133,
+                frameHeight: 101
+            });
+            this.load.image('mushroom', 'assets/Sprites_mushroom.png');
+            this.load.image('mushroom_smashed', 'assets/Sprites_mushroom_2.png');
+            this.load.image('acorn', 'assets/Sprites_acorn.png');
+            this.load.image('acorn_expl_1', 'assets/Sprites_acorn_explosion_1.png');
+            this.load.image('acorn_expl_2', 'assets/Sprites_acorn_explosion_2.png');
             this.load.image('tree_1', 'assets/Sprites_tree_1.png');
             this.load.image('tree_2', 'assets/Sprites_tree_2.png');
             this.load.image('tree_3', 'assets/Sprites_tree_3.png');
@@ -157,6 +169,8 @@ class Preloader2Scene extends Phaser.Scene {
                 frameHeight: 91
             });
             this.load.image('fence', 'assets/Sprites_fence.png');
+            this.load.image('whiteMushroom', 'assets/Sprites_white-mushroom.png');
+            this.load.image('whiteMushroom_smashed', 'assets/Sprites_white-mushroom_2.png');
             this.load.image('appleTree1', 'assets/Sprites_apple_tree_1.png');
             this.load.image('appleTree2', 'assets/Sprites_apple_tree_2.png');
             this.load.image('appleTree3', 'assets/Sprites_apple_tree_3.png');
@@ -170,6 +184,8 @@ class Preloader2Scene extends Phaser.Scene {
                 margin: 2,
                 spacing: 6.71
             });
+            this.load.image('pumpkin', 'assets/Sprites_pumpkin.png');
+            this.load.image('pumpkin_2', 'assets/Sprites_pumpkin_2.png');
             this.load.image('sugar_icon', 'assets/Sprites_sugar_cube_icon.png');
             this.load.spritesheet('sugar', 'assets/Sprites_sugar_cube.png', {
                 frameWidth: 91,

@@ -3,6 +3,7 @@ import {
     spawnSkull,
     createIngredients,
     createAcorns,
+    createBomb,
     updateAcorns,
     spawnGapEnemies,
     updateEnemy,
@@ -42,6 +43,7 @@ class OrchardScene extends Phaser.Scene {
         createPlatforms(this, 1, this.lev1PlatformHeight, 5300);
         createPlatforms(this, 1, this.lev2PlatformHeight, 5500);
         createPlatforms(this, 1, this.lev3PlatformHeight, 5700);
+        createPlatforms(this, 1, this.lev1PlatformHeight, 7250);
         createPlatforms(this, 3, this.lev2PlatformHeight, 7500);
         createPlatforms(this, 1, this.lev1PlatformHeight, 7900);
 
@@ -56,6 +58,10 @@ class OrchardScene extends Phaser.Scene {
         spawnSkull(this, 'skull_3', gapPercentages, this.gapWidth, this.boxWidth);
 
         createPlayer(this);
+        createBomb(this, 1150, this.mapHeight - 830 * this.personalScale);
+        createBomb(this, 4800, this.mapHeight - 830 * this.personalScale);
+        createBomb(this, 7600, this.mapHeight - 630 * this.personalScale);
+        createBomb(this, 9600, this.mapHeight - this.boxWidth + 20 * this.personalScale);
 
         this.appleNumber = 5;
         this.apples = createIngredients(
