@@ -15,7 +15,7 @@ class AnswerScene extends Phaser.Scene {
             align: 'center'
         }).setOrigin(0.5);
 
-        const text_2 = this.add.text(this.scale.width/2, text_1.y + 180 * this.personalScale, "5 Heidelbeeren", {
+        const text_2 = this.add.text(this.scale.width/2, text_1.y + 180 * this.personalScale, "100 Heidelbeeren", {
             fontFamily: "PressStart2P",
             fontSize: 35*this.personalScale, 
             fill: "#99f",
