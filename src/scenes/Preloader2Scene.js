@@ -127,16 +127,6 @@ class Preloader2Scene extends Phaser.Scene {
                 frameWidth: 91,
                 frameHeight: 91
             });
-            this.load.audio('boar', 'sounds/boar.mp3');
-            this.load.spritesheet('boar', 'assets/Sprites_boar.png', {
-                frameWidth: 133,
-                frameHeight: 101
-            });
-            this.load.image('mushroom', 'assets/Sprites_mushroom.png');
-            this.load.image('mushroom_smashed', 'assets/Sprites_mushroom_2.png');
-            this.load.image('acorn', 'assets/Sprites_acorn.png');
-            this.load.image('acorn_expl_1', 'assets/Sprites_acorn_explosion_1.png');
-            this.load.image('acorn_expl_2', 'assets/Sprites_acorn_explosion_2.png');
             this.load.image('tree_1', 'assets/Sprites_tree_1.png');
             this.load.image('tree_2', 'assets/Sprites_tree_2.png');
             this.load.image('tree_3', 'assets/Sprites_tree_3.png');

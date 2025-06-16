@@ -104,7 +104,7 @@ export function createPlatforms(scene, numIterations, platformHeight, startX) {
 }
 
 export function createSounds(scene) {
-    if (scene.sceneName == 'FieldsScene' || scene.sceneName == 'FirstScene'){
+    if (scene.sceneName == 'FieldsScene'){
         scene.flySound = scene.sound.add('fly', { loop: false, volume: 1 });
         scene.spiderSound = scene.sound.add('spider', { loop: false, volume: 0.8 });
     }
@@ -115,7 +115,7 @@ export function createSounds(scene) {
     else if (scene.sceneName == 'OrchardScene'){
         scene.spiderSound = scene.sound.add('spider', { loop: false, volume: 0.8 });
     }
-    else if (scene.sceneName == 'ForestScene'){
+    else if (scene.sceneName == 'ForestScene' || scene.sceneName == 'FirstScene'){
         scene.boarSound = scene.sound.add('boar', { loop: false, volume: 0.5 });
     }
     scene.collectSound = scene.sound.add('collect', { loop: false, volume: 0.05 });

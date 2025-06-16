@@ -8,7 +8,7 @@ class MenuScene extends Phaser.Scene {
         this.cameras.main.fadeIn(800, 0, 0, 0);
         this.personalScale = (this.scale.height + this.scale.width) / 2200;
 
-        this.background = this.add.sprite(0, 0, 'fields_background').setOrigin(0.5, 1);
+        this.background = this.add.sprite(0, 0, 'forest_background').setOrigin(0.5, 1);
         const aspectRatio = this.background.width / this.background.height;
         let newW, newH;
         if (this.scale.width / this.scale.height > aspectRatio) {

@@ -12,7 +12,7 @@ class PreloaderScene extends Phaser.Scene {
         this.cameras.main.fadeIn(800, 0, 0, 0);
         this.personalScale = (this.scale.height + this.scale.width) / 2200;
 
-        this.background = this.add.sprite(0, 0, 'fields_background').setOrigin(0.5, 1);
+        this.background = this.add.sprite(0, 0, 'forest_background').setOrigin(0.5, 1);
         const aspectRatio = this.background.width / this.background.height;
         let newW, newH;
         if (this.scale.width / this.scale.height > aspectRatio) {
@@ -106,6 +106,10 @@ class PreloaderScene extends Phaser.Scene {
         this.load.image('ground', 'assets/Sprites_ground.png');
         this.load.image('flower', 'assets/Sprites_flowers.png');
         this.load.image('grass', 'assets/Sprites_grass.png');
+        this.load.image('tree_1', 'assets/Sprites_tree_1.png');
+        this.load.image('tree_2', 'assets/Sprites_tree_2.png');
+        this.load.image('tree_3', 'assets/Sprites_tree_3.png');
+        this.load.image('tree_4', 'assets/Sprites_tree_4.png');
         this.load.image('deepGround', 'assets/Sprites_deep-ground.png');
         this.load.image('box', 'assets/Sprites_box.png');
         this.load.image('skull_1', 'assets/Sprites_skeleton_1.png');
@@ -113,35 +117,25 @@ class PreloaderScene extends Phaser.Scene {
         this.load.image('skull_3', 'assets/Sprites_skeleton_3.png');
         this.load.image('direction_board', 'assets/Sprites_direction_board.png');
         this.load.image('end_board', 'assets/Sprites_end_board.png');
-        
-        this.load.image('sunflowers', 'assets/Sprites_sunflowers.png');
-        this.load.image('hay', 'assets/Sprites_hay.png');
-        this.load.spritesheet('spider', 'assets/Sprites_spider.png', {
-            frameWidth: 611.87/4,
-            frameHeight: 73,
-            margin: 2,
-            spacing: 6.71
+        this.load.spritesheet('boar', 'assets/Sprites_boar.png', {
+            frameWidth: 133,
+            frameHeight: 101
         });
-        this.load.spritesheet('fly', 'assets/Sprites_fly.png', {
-            frameWidth: 147/2,
-            frameHeight: 75
-        });
-        this.load.image('strawberry_icon', 'assets/Sprites_strawberry_icon.png');
-        this.load.spritesheet('strawberry', 'assets/Sprites_strawberry.png', {
-            frameWidth: 91,
-            frameHeight: 91
-        });
+        this.load.image('mushroom', 'assets/Sprites_mushroom.png');
+        this.load.image('mushroom_smashed', 'assets/Sprites_mushroom_2.png');
+        this.load.image('blueberry_icon', 'assets/Sprites_blueberry_icon.png');
         this.load.image('sugar_icon', 'assets/Sprites_sugar_cube_icon.png');
         this.load.spritesheet('sugar', 'assets/Sprites_sugar_cube.png', {
             frameWidth: 91,
             frameHeight: 91
         });
-        this.load.image('fence', 'assets/Sprites_fence.png');
-        this.load.image('whiteMushroom', 'assets/Sprites_white-mushroom.png');
-        this.load.image('whiteMushroom_smashed', 'assets/Sprites_white-mushroom_2.png');
-        this.load.image('appleTree1', 'assets/Sprites_apple_tree_1.png');
-        this.load.image('appleTree2', 'assets/Sprites_apple_tree_2.png');
-        this.load.image('appleTree3', 'assets/Sprites_apple_tree_3.png');
+        this.load.spritesheet('blueberry', 'assets/Sprites_blueberry.png', {
+            frameWidth: 91,
+            frameHeight: 91
+        });
+        this.load.image('acorn', 'assets/Sprites_acorn.png');
+        this.load.image('acorn_expl_1', 'assets/Sprites_acorn_explosion_1.png');
+        this.load.image('acorn_expl_2', 'assets/Sprites_acorn_explosion_2.png');
 
         // bottoni movimento
         this.load.image('buttonRight', 'assets/Sprites_right-arrow-button.png');
@@ -152,8 +146,7 @@ class PreloaderScene extends Phaser.Scene {
         this.load.audio('soundtrack', 'sounds/soundtrack.mp3');
         this.load.audio('jump', 'sounds/jump.mp3');
         this.load.audio('collect', 'sounds/coin.mp3');
-        this.load.audio('spider', 'sounds/spider.mp3');
-        this.load.audio('fly', 'sounds/fly.mp3');
+        this.load.audio('boar', 'sounds/boar.mp3');
         this.load.audio('pop', 'sounds/pop.mp3');
         this.load.audio('jumpOver', 'sounds/jumpOver.mp3');
         this.load.audio('gameOver', 'sounds/gameOver.mp3');
