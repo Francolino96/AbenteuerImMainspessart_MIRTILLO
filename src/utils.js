@@ -222,7 +222,7 @@ export function createPlayer(scene) {
     scene.player = scene.physics.add.sprite(100 * scene.personalScale, 400 * scene.personalScale, 'player');
     scene.cameras.main.startFollow(scene.player, true, 0.25, 0.25);
     scene.player.setScale(scene.personalScale * 1.35).refreshBody();
-    scene.player.setSize(scene.player.width * 0.70, scene.player.height);
+    scene.player.setSize(scene.player.width * 0.60, scene.player.height);
     scene.player.setBounce(0.1);
     scene.player.setCollideWorldBounds(true);
 
