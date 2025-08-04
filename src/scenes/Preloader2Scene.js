@@ -186,6 +186,9 @@ class Preloader2Scene extends Phaser.Scene {
                 frameWidth: 91,
                 frameHeight: 91
             });
+            this.load.image('acorn', 'assets/Sprites_acorn.png');
+            this.load.image('acorn_expl_1', 'assets/Sprites_acorn_explosion_1.png');
+            this.load.image('acorn_expl_2', 'assets/Sprites_acorn_explosion_2.png');
             this.load.image('fence', 'assets/Sprites_fence.png');
             this.load.image('appleTree1', 'assets/Sprites_apple_tree_1.png');
             this.load.image('appleTree2', 'assets/Sprites_apple_tree_2.png');
